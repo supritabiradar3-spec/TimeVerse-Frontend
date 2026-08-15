@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - TimeVerse</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Style Sheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <style>
+        .profile-container {
+            max-width: 700px;
+            margin: 120px auto 60px auto;
+            padding: 40px 30px;
+            background: rgba(13, 13, 14, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: var(--border);
+            box-shadow: var(--border-glow);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .profile-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 35px;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+            padding-bottom: 25px;
+        }
+
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: var(--black);
+            font-size: 2.2rem;
+            font-family: var(--font-body);
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--gold-light);
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.25);
+            margin-bottom: 15px;
+        }
+
+        .profile-hero h2 {
+            font-family: var(--font-title);
+            font-size: 1.6rem;
+            color: var(--light);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .profile-hero .role-tag {
+            background: rgba(197, 160, 89, 0.12);
+            color: var(--gold-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 4px 14px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+        }
+
+        .profile-fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            text-align: left;
+            margin-bottom: 35px;
+        }
+
+        @media (max-width: 576px) {
+            .profile-fields-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        .profile-field-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-field-group label {
+            font-family: var(--font-title);
+            font-size: 0.75rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .profile-field-group input {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            color: var(--light);
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .profile-field-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(197, 160, 89, 0.03);
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.1);
+        }
+
+        .profile-field-group input:disabled {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.05);
+            color: var(--light-gray);
+            cursor: not-allowed;
+        }
+
+        .profile-actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* TimeVerse Premium Light Theme Profile Section Override */
+        body.light-theme {
+            background-color: #FAF9F6 !important; /* Main profile background: warm ivory */
+        }
+
+        body.light-theme .glass-card {
+            background-color: #FFFFFF !important; /* Profile card/panel: white */
+            border: 1px solid #E6DEC9 !important; /* Border: soft beige instead of gray */
+            box-shadow: var(--border-glow) !important;
+            color: #1C1A17 !important; /* Main text: dark charcoal */
+        }
+
+        body.light-theme .sidebar-btn {
+            background-color: #F3EDE2 !important; /* Section/menu background: soft warm beige */
+            color: #1C1A17 !important; /* Main text: dark charcoal */
+            border: 1px solid #E6DEC9 !important;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        body.light-theme .sidebar-btn:hover {
+            background-color: #EBDCB9 !important;
+            color: #A88548 !important; /* Active hover text: muted luxury gold */
+            transform: translateX(4px);
+        }
+
+        body.light-theme .sidebar-btn.active {
+            background-color: #A88548 !important; /* Active item: muted luxury gold background */
+            color: #FFFFFF !important; /* White text for contrast */
+            border-color: #A88548 !important;
+            font-weight: 600;
+        }
+
+        body.light-theme .profile-field-group label {
+            color: #A88548 !important; /* Muted luxury gold labels */
+        }
+
+        body.light-theme .profile-field-group input {
+            background-color: #FFFFFF !important;
+            border: 1px solid #E6DEC9 !important;
+            color: #1C1A17 !important;
+        }
+
+        body.light-theme .profile-field-group input:disabled {
+            background-color: #FAF9F6 !important;
+            color: #6B6A67 !important; /* Secondary text: warm gray */
+        }
+
+        body.light-theme h2,
+        body.light-theme h3,
+        body.light-theme h4,
+        body.light-theme h5 {
+            color: #1C1A17 !important; /* Main text: dark charcoal */
+        }
+
+        body.light-theme p,
+        body.light-theme div,
+        body.light-theme td {
+            color: #6B6A67 !important; /* Secondary text: warm gray */
+        }
+
+        body.light-theme .role-tag {
+            background: #F3EDE2 !important;
+            color: #A88548 !important;
+            border: 1px solid #E6DEC9 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Container -->
+    <header></header>
+
+    <!-- Main Content Container -->
+    <main class="container" style="margin-top: 140px; margin-bottom: 60px;">
+        <div style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;" class="profile-layout-wrapper">
+            
+            <!-- Left Sidebar -->
+            <aside class="glass-card" style="width: 280px; flex-shrink: 0; padding: 30px; text-align: center; border-radius: 12px; box-shadow: var(--border-glow);">
+                <div class="profile-avatar-large" id="profile-avatar" style="margin: 0 auto 15px auto;">--</div>
+                <h2 id="profile-display-name" style="font-family: var(--font-title); font-size: 1.3rem; margin-bottom: 5px;">Collector</h2>
+                <span class="role-tag" id="profile-role" style="font-size: 0.75rem; padding: 4px 12px; background: rgba(197,160,89,0.15); color: var(--gold); border-radius: 20px; text-transform: uppercase;">CUSTOMER</span>
+                
+                <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px;">
+                    <button class="sidebar-btn active" id="tab-profile-btn" style="text-align: left; font-size: 0.9rem;">👤 My Details</button>
+                    <button class="sidebar-btn" id="tab-orders-btn" style="text-align: left; font-size: 0.9rem;">📦 My Orders</button>
+                    <button class="sidebar-btn" id="tab-wishlist-btn" style="text-align: left; font-size: 0.9rem;">❤️ My Wishlist</button>
+                    <button class="sidebar-btn" id="tab-reviews-btn" style="text-align: left; font-size: 0.9rem;">★ My Reviews</button>
+                    <button class="sidebar-btn" id="tab-address-btn" style="text-align: left; font-size: 0.9rem;">📍 My Addresses</button>
+                </div>
+            </aside>
+
+            <!-- Right Content Area -->
+            <main class="glass-card" style="flex-grow: 1; padding: 30px; min-height: 450px; border-radius: 12px; box-shadow: var(--border-glow);">
+                
+                <!-- Tab: Profile Details -->
+                <div id="sect-profile" style="display: block;">
+                    <h3 class="luxury-text" style="color: var(--gold); margin-bottom: 25px; font-size: 1.25rem;">My Collector Details</h3>
+                    <form id="profile-form">
+                        <div class="profile-fields-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div class="profile-field-group">
+                                <label for="profile-username" class="form-label">Username</label>
+                                <input type="text" id="profile-username" class="form-control" disabled>
+                            </div>
+                            <div class="profile-field-group">
+                                <label for="profile-email" class="form-label">Email Address</label>
+                                <input type="email" id="profile-email" class="form-control" disabled>
+                            </div>
+                            <div class="profile-field-group">
+                                <label for="profile-fullname" class="form-label">Full Name</label>
+                                <input type="text" id="profile-fullname" class="form-control" placeholder="Provide your full name" required disabled>
+                            </div>
+                            <div class="profile-field-group">
+                                <label for="profile-mobile" class="form-label">Mobile Number</label>
+                                <input type="tel" id="profile-mobile" class="form-control" placeholder="Provide mobile number" disabled>
+                            </div>
+                            <div class="profile-field-group">
+                                <label for="profile-member-since" class="form-label">Member Since</label>
+                                <input type="text" id="profile-member-since" class="form-control" disabled>
+                            </div>
+                            <div class="profile-field-group">
+                                <label for="profile-status" class="form-label">Account Level</label>
+                                <input type="text" id="profile-status" class="form-control" value="Premium Collector" disabled>
+                            </div>
+                        </div>
+                        <div class="profile-actions-row" style="display: flex; gap: 15px; margin-top: 30px;">
+                            <button type="button" class="btn-luxury" id="btn-edit-profile">✏️ Edit Profile</button>
+                            <button type="submit" class="btn-luxury btn-luxury-solid" id="btn-save-profile" style="display: none;">💾 Save Changes</button>
+                            <button type="button" class="btn-luxury" id="btn-change-password">🔒 Change Password</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab: My Orders -->
+                <div id="sect-orders" style="display: none;">
+                    <h3 class="luxury-text" style="color: var(--gold); margin-bottom: 25px; font-size: 1.25rem;">Order Logs</h3>
+                    <div id="profile-orders-list" style="display: flex; flex-direction: column; gap: 15px;">
+                        <p style="color: var(--light-gray);">Loading order logs...</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Wishlist -->
+                <div id="sect-wishlist" style="display: none;">
+                    <h3 class="luxury-text" style="color: var(--gold); margin-bottom: 25px; font-size: 1.25rem;">Bookmarked Timepieces</h3>
+                    <div class="product-grid" id="profile-wishlist-grid" style="margin-top: 0;">
+                        <p style="color: var(--light-gray);">Loading wishlisted timepieces...</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Reviews -->
+                <div id="sect-reviews" style="display: none;">
+                    <h3 class="luxury-text" style="color: var(--gold); margin-bottom: 25px; font-size: 1.25rem;">Reviews Left</h3>
+                    <div id="profile-reviews-list" style="display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Tab: My Addresses -->
+                <div id="sect-address" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h3 class="luxury-text" style="color: var(--gold); font-size: 1.25rem; margin: 0;">My Address Book</h3>
+                        <button class="btn-luxury" id="btn-add-address">➕ Add New Address</button>
+                    </div>
+                    
+                    <!-- Address List Container -->
+                    <div id="profile-address-list" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
+                        <!-- Addresses loaded dynamically -->
+                    </div>
+
+                    <!-- Address Form Section (for Adding/Editing) -->
+                    <div id="address-form-section" style="display: none; border-top: 1px solid rgba(197, 160, 89, 0.2); padding-top: 25px;">
+                        <h4 id="address-form-title" style="color: var(--gold); margin-bottom: 20px; font-family: var(--font-title); font-size: 1.1rem;">Add New Address</h4>
+                        <form id="address-form">
+                            <input type="hidden" id="address-id">
+                            <div class="profile-fields-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                                <div class="profile-field-group">
+                                    <label for="address-fullname">Full Name</label>
+                                    <input type="text" id="address-fullname" required>
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="address-phone">Phone Number</label>
+                                    <input type="tel" id="address-phone" required>
+                                </div>
+                                <div class="profile-field-group" style="grid-column: 1 / -1;">
+                                    <label for="address-street">Street Address</label>
+                                    <input type="text" id="address-street" required>
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="address-city">City</label>
+                                    <input type="text" id="address-city" required>
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="address-state">State</label>
+                                    <input type="text" id="address-state" required>
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="address-zip">Zip Code</label>
+                                    <input type="text" id="address-zip" required>
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="address-country">Country</label>
+                                    <input type="text" id="address-country" required value="India">
+                                </div>
+                                <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                                    <input type="checkbox" id="address-default" style="width: auto;">
+                                    <label for="address-default" style="color: var(--light-gray); font-size: 0.85rem; cursor: pointer;">Set as Default Address</label>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                                <button type="submit" class="btn-luxury btn-luxury-solid">Save Address</button>
+                                <button type="button" class="btn-luxury" id="btn-cancel-address">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </main>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <!-- Profile Integration Page Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = './login.html';
+                return;
+            }
+
+            const userId = auth.getUserId();
+            const editBtn = document.getElementById('btn-edit-profile');
+            const saveBtn = document.getElementById('btn-save-profile');
+            const changePwBtn = document.getElementById('btn-change-password');
+            const form = document.getElementById('profile-form');
+
+            const fullNameInput = document.getElementById('profile-fullname');
+            const mobileInput = document.getElementById('profile-mobile');
+            const usernameInput = document.getElementById('profile-username');
+            const emailInput = document.getElementById('profile-email');
+            const memberSinceInput = document.getElementById('profile-member-since');
+
+            const avatarEl = document.getElementById('profile-avatar');
+            const displayNameEl = document.getElementById('profile-display-name');
+            const roleEl = document.getElementById('profile-role');
+
+            // Load profile data from API
+            async function loadProfile() {
+                try {
+                    const response = await api.getUserProfile(userId);
+                    if (response.success && response.data) {
+                        const user = response.data;
+                        
+                        // Extract and display name details
+                        const displayName = user.fullName && user.fullName.trim() !== 'null' ? user.fullName : user.username;
+                        displayNameEl.textContent = displayName;
+                        const role = user.role || 'CUSTOMER';
+                        roleEl.textContent = role;
+
+                        if (role === 'ADMIN') {
+                            const ordBtn = document.getElementById('tab-orders-btn');
+                            const wishBtn = document.getElementById('tab-wishlist-btn');
+                            const revBtn = document.getElementById('tab-reviews-btn');
+                            if (ordBtn) ordBtn.style.display = 'none';
+                            if (wishBtn) wishBtn.style.display = 'none';
+                            if (revBtn) revBtn.style.display = 'none';
+                        }
+
+                        // Fill Form Values
+                        usernameInput.value = user.username || '';
+                        emailInput.value = user.email || '';
+                        fullNameInput.value = (user.fullName && user.fullName.trim() !== 'null') ? user.fullName : '';
+                        mobileInput.value = (user.mobile && user.mobile.trim() !== 'null') ? user.mobile : '';
+
+                        // Member Since Formatting
+                        if (user.createdAt) {
+                            const date = new Date(user.createdAt);
+                            memberSinceInput.value = date.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+                        } else {
+                            memberSinceInput.value = 'N/A';
+                        }
+
+                        // Generate initials for large avatar display
+                        let initials = '';
+                        if (displayName) {
+                            const parts = displayName.split(' ');
+                            if (parts.length > 1 && parts[0][0] && parts[1][0]) {
+                                initials = parts[0][0] + parts[1][0];
+                            } else {
+                                initials = displayName[0] + (displayName[1] || '');
+                            }
+                        }
+                        avatarEl.textContent = initials.toUpperCase();
+
+                        // Cache in localStorage to ensure sync with navigation bar
+                        localStorage.setItem('fullName', user.fullName || '');
+                        localStorage.setItem('mobile', user.mobile || '');
+                        localStorage.setItem('role', user.role || 'CUSTOMER');
+
+                        // Update global header components if they exist
+                        if (typeof renderNavbar === 'function') {
+                            renderNavbar();
+                        }
+                    } else {
+                        showAlert('Failed to retrieve user profile data.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile:', error);
+                    showAlert('Error loading profile details.', 'error');
+                }
+            }
+
+            // Edit Profile click handler
+            editBtn.addEventListener('click', () => {
+                fullNameInput.disabled = false;
+                mobileInput.disabled = false;
+                fullNameInput.focus();
+
+                editBtn.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+            });
+
+            // Form Submit / Save click handler
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const profileData = {
+                    fullName: fullNameInput.value.trim(),
+                    mobile: mobileInput.value.trim()
+                };
+
+                try {
+                    const response = await api.updateUserProfile(userId, profileData);
+                    if (response.success) {
+                        showAlert('Profile details updated successfully!', 'success');
+                        
+                        // Disable fields again
+                        fullNameInput.disabled = true;
+                        mobileInput.disabled = true;
+                        
+                        editBtn.style.display = 'inline-block';
+                        saveBtn.style.display = 'none';
+
+                        // Reload data
+                        await loadProfile();
+                    } else {
+                        showAlert(response.message || 'Failed to update profile.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    showAlert('Failed to contact server to update profile.', 'error');
+                }
+            });
+
+            // Change Password click handler
+            changePwBtn.addEventListener('click', () => {
+                const modal = document.getElementById('change-pw-modal');
+                if (modal) modal.style.display = 'flex';
+            });
+
+            // Sidebar Tabs switching
+            const tabs = [
+                { id: 'profile', btn: 'tab-profile-btn', sect: 'sect-profile' },
+                { id: 'orders', btn: 'tab-orders-btn', sect: 'sect-orders', load: loadOrdersTab },
+                { id: 'wishlist', btn: 'tab-wishlist-btn', sect: 'sect-wishlist', load: loadWishlistTab },
+                { id: 'reviews', btn: 'tab-reviews-btn', sect: 'sect-reviews', load: loadReviewsTab },
+                { id: 'address', btn: 'tab-address-btn', sect: 'sect-address', load: loadAddressesTab }
+            ];
+
+            tabs.forEach(t => {
+                const btnEl = document.getElementById(t.btn);
+                if (btnEl) {
+                    btnEl.addEventListener('click', async () => {
+                        tabs.forEach(item => {
+                            const b = document.getElementById(item.btn);
+                            const s = document.getElementById(item.sect);
+                            if (b) b.classList.remove('active');
+                            if (s) s.style.display = 'none';
+                        });
+                        btnEl.classList.add('active');
+                        document.getElementById(t.sect).style.display = 'block';
+                        if (t.load) {
+                            await t.load();
+                        }
+                    });
+                }
+            });
+
+            async function loadOrdersTab() {
+                const list = document.getElementById('profile-orders-list');
+                if (!list) return;
+                list.innerHTML = '<p style="color:var(--light-gray);">Loading orders...</p>';
+                try {
+                    const response = await api.getUserOrders(userId);
+                    if (!response || response.length === 0) {
+                        list.innerHTML = '<p style="color:var(--light-gray);">No orders placed yet.</p>';
+                        return;
+                    }
+                    response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    let html = '';
+                    response.forEach(order => {
+                        const total = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(order.totalAmount);
+                        const date = new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                        let items = '';
+                        if (order.items) {
+                            items = order.items.map(it => `${it.productName} <strong style="color:var(--gold)">x${it.quantity}</strong>`).join(', ');
+                        }
+                        html += `
+                            <div class="glass-card" style="padding: 20px; border-color: rgba(197, 160, 89, 0.15);">
+                                <div style="display:flex; justify-content:space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <span style="font-size:0.75rem; color:var(--gold);">Ref: #TV-ORD-${order.orderId}</span>
+                                        <div style="font-size:0.95rem; color:var(--white); margin-top:2px;">${items}</div>
+                                    </div>
+                                    <span class="badge ${order.status === 'DELIVERED' || order.status === 'SHIPPED' ? 'badge-success' : 'badge-gold'}">${order.status}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; font-size:0.85rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 10px;">
+                                    <span style="color:var(--light-gray);">Placed: ${date}</span>
+                                    <span style="color:var(--gold-light); font-weight:600; font-size: 1.05rem;">${total}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    list.innerHTML = html;
+                } catch (e) {
+                    list.innerHTML = '<p style="color:var(--error);">Failed to load order logs.</p>';
+                }
+            }
+
+            async function loadWishlistTab() {
+                const grid = document.getElementById('profile-wishlist-grid');
+                if (!grid) return;
+                grid.innerHTML = '<p style="color:var(--light-gray); grid-column:1/-1; text-align:center;">Loading bookmarks...</p>';
+                try {
+                    const response = await api.getWishlist();
+                    if (!response || response.length === 0) {
+                        grid.innerHTML = '<p style="color:var(--light-gray); grid-column:1/-1; text-align:center;">No bookmarked timepieces.</p>';
+                        return;
+                    }
+                    let html = '';
+                    response.forEach(item => {
+                        html += createProductCardHtml(item);
+                    });
+                    grid.innerHTML = html;
+                } catch (e) {
+                    grid.innerHTML = '<p style="color:var(--error); grid-column:1/-1; text-align:center;">Failed to load wishlist.</p>';
+                }
+            }
+
+            async function loadReviewsTab() {
+                const list = document.getElementById('profile-reviews-list');
+                if (!list) return;
+
+                list.innerHTML = '<p style="color:var(--light-gray);">Loading your review history...</p>';
+
+                try {
+                    const [reviews, orders] = await Promise.all([
+                        api.getUserReviews(),
+                        api.getUserOrders(userId)
+                    ]);
+
+                    const deliveredProducts = [];
+                    const seenProducts = new Set();
+
+                    (orders || []).forEach(order => {
+                        if (String(order.status || '').toUpperCase() !== 'DELIVERED') return;
+                        (order.items || []).forEach(item => {
+                            if (!seenProducts.has(item.productId)) {
+                                seenProducts.add(item.productId);
+                                deliveredProducts.push({
+                                    productId: item.productId,
+                                    productName: item.productName || `Timepiece #${item.productId}`
+                                });
+                            }
+                        });
+                    });
+
+                    const reviewedIds = new Set((reviews || []).map(r => r.productId));
+                    const eligibleProducts = deliveredProducts.filter(p => !reviewedIds.has(p.productId));
+
+                    let html = `
+                        <div class="glass-card" style="padding:22px; margin-bottom:20px; border-color:rgba(197,160,89,0.25);">
+                            <h4 style="color:var(--gold); margin-bottom:8px;">Share Your TimeVerse Experience</h4>
+                            <p style="color:var(--light-gray); font-size:0.85rem; margin-bottom:18px;">
+                                Reviews are available for products from orders marked as delivered.
+                            </p>
+                            ${eligibleProducts.length ? `
+                            <form id="profile-review-form">
+                                <div style="display:grid; grid-template-columns:1fr 140px; gap:12px; margin-bottom:12px;">
+                                    <select id="review-product" class="form-control" required>
+                                        <option value="">Select a delivered timepiece</option>
+                                        ${eligibleProducts.map(p => `<option value="${p.productId}">${p.productName}</option>`).join('')}
+                                    </select>
+                                    <select id="review-rating" class="form-control" required>
+                                        <option value="">Rating</option>
+                                        <option value="5">★★★★★ 5</option>
+                                        <option value="4">★★★★☆ 4</option>
+                                        <option value="3">★★★☆☆ 3</option>
+                                        <option value="2">★★☆☆☆ 2</option>
+                                        <option value="1">★☆☆☆☆ 1</option>
+                                    </select>
+                                </div>
+                                <textarea id="review-comment" class="form-control" rows="4"
+                                    maxlength="1000" required
+                                    placeholder="Tell us about the quality, experience and details of your timepiece..."
+                                    style="resize:vertical; margin-bottom:12px;"></textarea>
+                                <button type="submit" class="btn-luxury btn-luxury-solid">Submit Review</button>
+                            </form>` : `
+                            <p style="color:var(--light-gray); font-size:0.9rem;">
+                                ${deliveredProducts.length
+                                    ? 'You have already reviewed all delivered timepieces.'
+                                    : 'Once an order is delivered, you can leave a review here.'}
+                            </p>`}
+                        </div>
+                    `;
+
+                    if (!reviews || reviews.length === 0) {
+                        html += '<p style="color:var(--light-gray); text-align:center; padding:20px;">You have not submitted any reviews yet.</p>';
+                    } else {
+                        html += (reviews || []).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).map(review => {
+                            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                            const date = new Date(review.createdAt).toLocaleDateString('en-IN', {
+                                day: 'numeric', month: 'short', year: 'numeric'
+                            });
+                            return `
+                                <div class="glass-card" style="padding:20px; border-color:rgba(197,160,89,0.15);">
+                                    <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px;">
+                                        <strong style="color:var(--white);">${review.productName || `Timepiece #${review.productId}`}</strong>
+                                        <span style="color:var(--gold); letter-spacing:2px;">${stars}</span>
+                                    </div>
+                                    <p style="font-size:0.9rem; color:var(--light-gray); line-height:1.5;">${review.comment}</p>
+                                    <div style="font-size:0.75rem; color:var(--gold-light); margin-top:10px; text-align:right;">Reviewed on ${date}</div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    list.innerHTML = html;
+
+                    const reviewForm = document.getElementById('profile-review-form');
+                    if (reviewForm) {
+                        reviewForm.addEventListener('submit', async (e) => {
+                            e.preventDefault();
+                            const productId = document.getElementById('review-product').value;
+                            const rating = document.getElementById('review-rating').value;
+                            const comment = document.getElementById('review-comment').value.trim();
+
+                            if (!productId || !rating || !comment) {
+                                showAlert('Please select a product, rating and write a review.', 'error');
+                                return;
+                            }
+
+                            try {
+                                await api.addReview(productId, rating, comment);
+                                showAlert('Review submitted successfully.', 'success');
+                                await loadReviewsTab();
+                            } catch (err) {
+                                showAlert(err.message || 'Unable to submit review.', 'error');
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error('Failed to load reviews:', e);
+                    list.innerHTML = '<p style="color:var(--error); text-align:center; padding:20px;">Failed to load reviews.</p>';
+                }
+            }
+
+            async function loadAddressesTab() {
+                const list = document.getElementById('profile-address-list');
+                const formSec = document.getElementById('address-form-section');
+                if (!list || !formSec) return;
+
+                formSec.style.display = 'none';
+                list.style.display = 'flex';
+                
+                list.innerHTML = '<p style="color:var(--light-gray);">Loading addresses...</p>';
+
+                try {
+                    const addresses = await api.getAddresses();
+                    if (!addresses || addresses.length === 0) {
+                        list.innerHTML = '<p style="color:var(--light-gray);">No addresses saved yet.</p>';
+                        return;
+                    }
+
+                    let html = '';
+                    addresses.forEach(addr => {
+                        html += `
+                            <div class="glass-card" style="padding: 20px; border-color: rgba(197, 160, 89, 0.15); display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+                                <div style="flex-grow: 1; text-align: left;">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                        <strong style="color: var(--white); font-size: 1.05rem;">${addr.fullName}</strong>
+                                        ${addr.default ? '<span class="badge badge-success" style="font-size: 0.65rem; padding: 2px 8px; text-transform: uppercase;">Default</span>' : ''}
+                                    </div>
+                                    <div style="color: var(--light-gray); font-size: 0.9rem; line-height: 1.5;">
+                                        <div>${addr.street}</div>
+                                        <div>${addr.city}, ${addr.state} - ${addr.zipCode}</div>
+                                        <div>${addr.country}</div>
+                                        <div style="margin-top: 5px; font-size: 0.85rem; color: var(--gold-light);">📞 Phone: ${addr.phone}</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    ${!addr.default ? `
+                                        <button class="btn-luxury set-default-address-btn" data-id="${addr.addressId}" style="padding: 6px 12px; font-size: 0.75rem;">
+                                            Set Default
+                                        </button>
+                                    ` : ''}
+                                    <button class="btn-luxury edit-address-btn" data-id='${escapeHtml(JSON.stringify(addr))}' style="padding: 6px 12px; font-size: 0.75rem; color: var(--gold);">
+                                        Edit
+                                    </button>
+                                    <button class="btn-luxury delete-address-btn" data-id="${addr.addressId}" style="padding: 6px 12px; font-size: 0.75rem; color: var(--error); border-color: rgba(220,53,69,0.3);">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    list.innerHTML = html;
+
+                    // Bind action listeners
+                    list.querySelectorAll('.set-default-address-btn').forEach(btn => {
+                        btn.addEventListener('click', async function () {
+                            const addressId = this.getAttribute('data-id');
+                            try {
+                                await api.setDefaultAddress(addressId);
+                                showAlert('Default address updated.', 'success');
+                                await loadAddressesTab();
+                            } catch (err) {
+                                showAlert('Failed to set default address.', 'error');
+                            }
+                        });
+                    });
+
+                    list.querySelectorAll('.delete-address-btn').forEach(btn => {
+                        btn.addEventListener('click', async function () {
+                            const addressId = this.getAttribute('data-id');
+                            if (confirm('Are you sure you want to delete this address?')) {
+                                try {
+                                    await api.deleteAddress(addressId);
+                                    showAlert('Address deleted successfully.', 'success');
+                                    await loadAddressesTab();
+                                } catch (err) {
+                                    showAlert('Failed to delete address.', 'error');
+                                }
+                            }
+                        });
+                    });
+
+                    list.querySelectorAll('.edit-address-btn').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            const addr = JSON.parse(this.getAttribute('data-id'));
+                            
+                            document.getElementById('address-form-title').textContent = 'Edit Address';
+                            document.getElementById('address-id').value = addr.addressId;
+                            document.getElementById('address-fullname').value = addr.fullName;
+                            document.getElementById('address-phone').value = addr.phone;
+                            document.getElementById('address-street').value = addr.street;
+                            document.getElementById('address-city').value = addr.city;
+                            document.getElementById('address-state').value = addr.state;
+                            document.getElementById('address-zip').value = addr.zipCode;
+                            document.getElementById('address-country').value = addr.country || 'India';
+                            document.getElementById('address-default').checked = addr.default;
+
+                            list.style.display = 'none';
+                            formSec.style.display = 'block';
+                        });
+                    });
+
+                } catch (e) {
+                    list.innerHTML = '<p style="color:var(--error);">Failed to load addresses.</p>';
+                }
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            // Bind address add and cancel actions
+            const addAddrBtn = document.getElementById('btn-add-address');
+            const cancelAddrBtn = document.getElementById('btn-cancel-address');
+            const addrForm = document.getElementById('address-form');
+            const addrList = document.getElementById('profile-address-list');
+            const addrFormSec = document.getElementById('address-form-section');
+
+            if (addAddrBtn && cancelAddrBtn && addrForm) {
+                addAddrBtn.addEventListener('click', () => {
+                    document.getElementById('address-form-title').textContent = 'Add New Address';
+                    addrForm.reset();
+                    document.getElementById('address-id').value = '';
+                    addrList.style.display = 'none';
+                    addrFormSec.style.display = 'block';
+                });
+
+                cancelAddrBtn.addEventListener('click', () => {
+                    addrFormSec.style.display = 'none';
+                    addrList.style.display = 'flex';
+                });
+
+                addrForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const addressId = document.getElementById('address-id').value;
+                    const addressData = {
+                        fullName: document.getElementById('address-fullname').value.trim(),
+                        phone: document.getElementById('address-phone').value.trim(),
+                        street: document.getElementById('address-street').value.trim(),
+                        city: document.getElementById('address-city').value.trim(),
+                        state: document.getElementById('address-state').value.trim(),
+                        zipCode: document.getElementById('address-zip').value.trim(),
+                        country: document.getElementById('address-country').value.trim(),
+                        isDefault: document.getElementById('address-default').checked
+                    };
+
+                    try {
+                        if (addressId) {
+                            await api.updateAddress(addressId, addressData);
+                            showAlert('Address updated successfully!', 'success');
+                        } else {
+                            await api.addAddress(addressData);
+                            showAlert('Address added successfully!', 'success');
+                        }
+                        await loadAddressesTab();
+                    } catch (err) {
+                        showAlert(err.message || 'Failed to save address.', 'error');
+                    }
+                });
+            }
+
+            // Initial load
+            await loadProfile();
+        });
+    </script>
+</body>
+</html>

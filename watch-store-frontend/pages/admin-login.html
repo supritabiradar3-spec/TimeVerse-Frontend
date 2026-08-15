@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Admin Login</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 85vh;
+            padding: 120px 20px 60px;
+            background: radial-gradient(circle at center, rgba(197, 160, 89, 0.03) 0%, rgba(6, 6, 6, 1) 70%);
+        }
+
+        .auth-card {
+            background: rgba(13, 13, 14, 0.75);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: var(--border);
+            box-shadow: var(--border-glow);
+            max-width: 450px;
+            width: 100%;
+            padding: 45px;
+            border-radius: 12px;
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: var(--light-gray);
+            margin-bottom: 30px;
+        }
+
+        .auth-redirect {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .password-box {
+            position: relative;
+        }
+
+        .password-box input {
+            padding-right: 45px;
+        }
+
+        #togglePassword {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--gold);
+            font-size: 18px;
+            user-select: none;
+        }
+
+        #otp-section {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header></header>
+
+    <div class="auth-container">
+
+        <div class="auth-card">
+
+            <!-- LOGIN -->
+
+            <div id="credentials-section">
+
+                <h2>Admin Login</h2>
+
+                <p class="auth-subtitle">
+                    Only administrators can access the dashboard.
+                </p>
+
+                <form id="login-form">
+
+                    <div class="form-group">
+
+                        <label class="form-label">Email</label>
+
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="form-label" style="display:flex;justify-content:space-between;">
+
+                            <span>Password</span>
+
+                            <a href="./forgot-password.html" style="color:var(--gold);font-size:13px;">
+                                Forgot Password?
+                            </a>
+
+                        </label>
+
+                        <div class="password-box">
+
+                            <input type="password" id="password" class="form-control" placeholder="Enter your password"
+                                required>
+
+                            <span id="togglePassword">👁</span>
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="btn-luxury btn-luxury-solid" style="width:100%;">
+
+                        Admin Login
+
+                    </button>
+
+                </form>
+
+                <p class="auth-redirect">
+
+                    Customer?
+
+                    <a href="./login.html">
+
+                        Customer Login
+
+                    </a>
+
+                </p>
+
+            </div>
+
+            <!-- OTP -->
+
+            <div id="otp-section">
+
+                <h2>Verify Identity</h2>
+
+                <p class="auth-subtitle">
+
+                    Enter the 6-digit OTP sent to your email.
+
+                </p>
+
+                <div id="dev-otp-indicator" style="display:none;
+                border:1px dashed var(--gold);
+                padding:10px;
+                margin-bottom:20px;
+                color:var(--gold);">
+
+                    Developer OTP:
+                    <strong>123456</strong>
+
+                </div>
+
+                <form id="otp-form">
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+
+                            OTP
+
+                        </label>
+
+                        <input type="text" id="otp" class="form-control" maxlength="6" placeholder="Enter OTP" style="text-align:center;
+                        font-size:22px;
+                        letter-spacing:5px;">
+
+                    </div>
+
+                    <button type="submit" class="btn-luxury btn-luxury-solid" style="width:100%;">
+
+                        Verify & Login
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer></footer>
+
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <script>
+
+        const togglePassword = document.getElementById("togglePassword");
+        const password = document.getElementById("password");
+
+        togglePassword.addEventListener("click", function () {
+
+            if (password.type === "password") {
+
+                password.type = "text";
+                this.textContent = "🚫";
+
+            } else {
+
+                password.type = "password";
+                this.textContent = "👁";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

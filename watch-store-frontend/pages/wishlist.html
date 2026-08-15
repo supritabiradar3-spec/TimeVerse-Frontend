@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - TimeVerse</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Style Sheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <style>
+        .wishlist-section {
+            margin: 120px auto 60px auto;
+            min-height: 50vh;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .wishlist-card {
+            background: rgba(13, 13, 14, 0.6);
+            border: var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .wishlist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--border-glow);
+            border-color: var(--gold);
+        }
+
+        .wishlist-remove-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: var(--light-gray);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .wishlist-remove-btn:hover {
+            color: var(--error);
+            transform: scale(1.1);
+        }
+
+        .wishlist-img {
+            width: 100%;
+            height: 190px;
+            max-height: 190px;
+            object-fit: contain;
+            object-position: center;
+            margin-bottom: 15px;
+        }
+
+        .wishlist-name {
+            font-family: var(--font-title);
+            font-size: 1.1rem;
+            color: var(--light);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .wishlist-price {
+            color: var(--gold-light);
+            font-weight: 500;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-wishlist {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(13, 13, 14, 0.4);
+            border: var(--border);
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .empty-wishlist h3 {
+            font-family: var(--font-title);
+            font-size: 1.4rem;
+            color: var(--gold-light);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .empty-wishlist p {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Container -->
+    <header></header>
+
+    <!-- Main Content Container -->
+    <main class="container wishlist-section">
+        <h1 class="luxury-text text-center" style="font-size: 2.2rem; margin-bottom: 10px; text-transform: uppercase;">Bespoke Wishlist</h1>
+        <p class="text-center" style="color: var(--light-gray); font-size: 0.95rem; margin-bottom: 40px;">Review and acquire your curated selections.</p>
+
+        <!-- Dynamic List Container -->
+        <div id="wishlist-container">
+            <p style="text-align: center; color: var(--light-gray); padding: 40px 0;">Synchronizing your luxury shortlist...</p>
+        </div>
+    </main>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <!-- Page Specific Wishlist Implementation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = './login.html';
+                return;
+            }
+
+            const container = document.getElementById('wishlist-container');
+
+            // Fetch and render wishlist items
+            async function loadWishlist() {
+                try {
+                    const wishlist = await api.getWishlist();
+                    renderWishlist(wishlist);
+                } catch (error) {
+                    console.error('Error fetching wishlist:', error);
+                    container.innerHTML = `<p style="text-align: center; color: var(--error); padding: 40px 0;">Failed to fetch your wishlist from the server.</p>`;
+                }
+            }
+
+            function renderWishlist(items) {
+                if (!items || items.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-wishlist">
+                            <h3>Your Wishlist is Vacant</h3>
+                            <p>You have not bookmarked any luxury watches yet. Explore our premier collections to add them here.</p>
+                            <a href="./products.html" class="btn-luxury btn-luxury-solid">Browse Timepieces</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="wishlist-grid">';
+                items.forEach(item => {
+                    const formattedPrice = new Intl.NumberFormat('en-IN', {
+                        style: 'currency',
+                        currency: 'INR',
+                        maximumFractionDigits: 0
+                    }).format(item.price);
+
+                    const img = item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600';
+
+                    html += `
+                        <div class="wishlist-card" data-product-id="${item.productId}">
+                            <button class="wishlist-remove-btn" title="Remove selection" data-id="${item.productId}">&times;</button>
+                            <img src="${img}" alt="${item.productName}" class="wishlist-img">
+                            <h3 class="wishlist-name">${item.productName}</h3>
+                            <div class="wishlist-price">${formattedPrice}</div>
+                            <button class="btn-luxury btn-luxury-solid btn-add-bag" style="width: 100%;" data-id="${item.productId}">Add to Bag</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+
+                // Bind Remove handlers
+                document.querySelectorAll('.wishlist-remove-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const productId = e.target.getAttribute('data-id');
+                        try {
+                            const res = await api.removeFromWishlist(productId);
+                            showAlert('Timepiece removed from wishlist.', 'success');
+                            
+                            // Remove from DOM locally
+                            const card = document.querySelector(`.wishlist-card[data-product-id="${productId}"]`);
+                            if (card) card.remove();
+
+                            if (window.wishlistProductIds) {
+                                window.wishlistProductIds.delete(parseInt(productId));
+                            }
+
+                            // Update navbar count
+                            if (typeof window.updateNavbarWishlistCount === 'function') {
+                                window.updateNavbarWishlistCount();
+                            }
+
+                            // If no cards left, trigger empty state load
+                            if (document.querySelectorAll('.wishlist-card').length === 0) {
+                                renderWishlist([]);
+                            }
+                        } catch (err) {
+                            console.error('Failed to remove from wishlist:', err);
+                            showAlert('Could not remove timepiece.', 'error');
+                        }
+                    });
+                });
+
+                // Bind Add to Bag handlers
+                document.querySelectorAll('.btn-add-bag').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const productId = e.target.getAttribute('data-id');
+                        try {
+                            const res = await api.addToCart(productId, 1);
+                            showAlert('Watch successfully added to your shopping bag!', 'success');
+                            
+                            if (typeof window.updateNavbarCartCount === 'function') {
+                                window.updateNavbarCartCount();
+                            }
+                        } catch (err) {
+                            console.error('Failed to add to cart:', err);
+                            showAlert('Error adding timepiece to shopping bag.', 'error');
+                        }
+                    });
+                });
+            }
+
+            // Initial load
+            await loadWishlist();
+        });
+    </script>
+</body>
+</html>

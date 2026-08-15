@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Luxury Online Watch Boutique</title>
+    <meta name="description"
+        content="Explore TimeVerse, the premium watch boutique featuring mechanical masterworks and luxury analog, digital, and sports chronometers.">
+
+    <!-- Link Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/product.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        /* Hero Section Styling */
+        .hero {
+            height: 95vh;
+            background: linear-gradient(rgba(250, 249, 246, 0.7), rgba(250, 249, 246, 0.95)),
+                url('https://images.unsplash.com/photo-1526045431048-f857369baa09?q=80&w=1920&cb=2') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            border-bottom: var(--border);
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 650px;
+            padding: 0 20px;
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-title);
+            font-size: 1.1rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .hero-title {
+            font-size: 3.8rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            color: var(--light);
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            color: #3C3B39;
+            margin-bottom: 35px;
+            line-height: 1.8;
+        }
+
+        /* Categories Section */
+        #categories-section {
+            background-color: #FFFFFF !important;
+            /* Pure white background */
+            padding: 80px 0;
+            border-top: var(--border);
+            border-bottom: var(--border);
+        }
+
+        #categories-section .section-title h2 {
+            font-family: var(--font-title);
+            font-size: 2.2rem;
+            color: #1C1A17;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .categories-divider {
+            width: 80px;
+            height: 1.5px;
+            background-color: var(--gold, #A88548);
+            margin: 15px auto 40px auto;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .category-card {
+            background-color: #1A1916;
+            /* Dark/black luxury card background */
+            border: 1px solid rgba(168, 133, 72, 0.2);
+            border-radius: 12px;
+            /* Rounded corners */
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            height: 420px;
+            /* Exact height to fit top image and content area */
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold, #A88548);
+            box-shadow: 0 12px 30px rgba(168, 133, 72, 0.15), 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-card-img-wrapper {
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .category-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .category-card:hover .category-card-img {
+            transform: scale(1.08);
+        }
+
+        .category-card-info {
+            padding: 24px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            border-top: 1px solid rgba(168, 133, 72, 0.15);
+        }
+
+        .category-icon {
+            color: var(--gold, #A88548);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+        }
+
+        .category-card-title {
+            font-family: var(--font-title);
+            font-size: 1.15rem;
+            color: #FFFFFF !important;
+            font-weight: 500;
+            margin: 5px 0 10px 0;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .category-card-divider {
+            width: 35px;
+            height: 1.5px;
+            background-color: var(--gold, #A88548);
+            margin-bottom: 18px;
+            transition: width 0.3s ease;
+        }
+
+        .category-card:hover .category-card-divider {
+            width: 55px;
+        }
+
+        .btn-view-collection {
+            border: 1px solid var(--gold, #A88548);
+            color: var(--gold, #A88548);
+            background: transparent;
+            padding: 8px 20px;
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .category-card:hover .btn-view-collection {
+            background-color: var(--gold, #A88548);
+            color: #FFFFFF !important;
+        }
+
+        @media (max-width: 992px) {
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* TimeVerse Premium Light Theme Collector Testimonial Overrides */
+        body.light-theme .glass-card {
+            background-color: #FFFFFF !important;
+            /* Card background: white */
+            border: 1px solid #E6DEC9 !important;
+            /* Border: soft beige */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+            /* Subtle shadow */
+        }
+
+        body.light-theme .glass-card p {
+            color: #1C1A17 !important;
+            /* Quote/testimonial text: dark charcoal */
+        }
+
+        body.light-theme .glass-card h4.luxury-text {
+            color: #6B6A67 !important;
+            /* Author/location text: warm gray */
+        }
+
+        /* ================================================== */
+        /* CUSTOM PREMIUM CUSTOMER THEME OVERRIDES            */
+        /* ================================================== */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+        /* Global Font & Background Overrides */
+        body {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        body * {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        body.light-theme {
+            background-color: #F8F7F4 !important;
+            background: #F8F7F4 !important;
+        }
+
+        body:not(.light-theme) {
+            background-color: #0d0d0e !important;
+            background: #0d0d0e !important;
+        }
+
+        /* Headings Styling */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .section-title h2,
+        .luxury-text {
+            font-family: 'Poppins', sans-serif !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1.5px !important;
+        }
+
+        /* Premium Light Mode Cards & Sections */
+        body.light-theme #categories-section,
+        body.light-theme section:not(.hero) {
+            background-color: #F8F7F4 !important;
+            background: #F8F7F4 !important;
+        }
+
+        body.light-theme .category-card,
+        body.light-theme .product-card,
+        body.light-theme .glass-card {
+            background: #FFFFFF !important;
+            background-color: #FFFFFF !important;
+            border: 1px solid #EAEAEA !important;
+            border-radius: 16px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        body.light-theme .category-card-title,
+        body.light-theme .product-card .product-title,
+        body.light-theme .product-card .price {
+            color: #000000 !important;
+        }
+
+        /* Premium Dark Mode Cards & Sections */
+        body:not(.light-theme) #categories-section,
+        body:not(.light-theme) section:not(.hero) {
+            background-color: #0d0d0e !important;
+            background: #0d0d0e !important;
+        }
+
+        body:not(.light-theme) .category-card,
+        body:not(.not-used) .product-card,
+        body:not(.light-theme) .product-card,
+        body:not(.light-theme) .glass-card {
+            background: #161617 !important;
+            background-color: #161617 !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body:not(.light-theme) .category-card-title,
+        body:not(.light-theme) .product-card .product-title,
+        body:not(.light-theme) .product-card .price {
+            color: #FFFFFF !important;
+        }
+
+        /* Hover states for cards */
+        .category-card:hover,
+        .product-card:hover {
+            transform: translateY(-5px) !important;
+            border-color: #1F3A5F !important;
+            box-shadow: 0 8px 24px rgba(31, 58, 95, 0.15) !important;
+        }
+
+        /* TIME VERSE Logo styling */
+        .logo,
+        .logo span {
+            color: #A67C52 !important;
+        }
+
+        /* Accent & Buttons Styling */
+        .btn-luxury,
+        .btn-luxury-solid,
+        .btn-view-collection,
+        a.btn-luxury,
+        button.btn-luxury {
+            background: #1F3A5F !important;
+            background-color: #1F3A5F !important;
+            color: #FFFFFF !important;
+            border: 1px solid #1F3A5F !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            transition: background 0.2s ease, border-color 0.2s ease !important;
+        }
+
+        .btn-luxury:hover,
+        .btn-luxury-solid:hover,
+        .btn-view-collection:hover,
+        a.btn-luxury:hover,
+        button.btn-luxury:hover {
+            background: #162D4A !important;
+            background-color: #162D4A !important;
+            border-color: #162D4A !important;
+            color: #FFFFFF !important;
+        }
+
+        /* Dynamic Header Override (Light Mode) */
+        body.light-theme header,
+        body.light-theme header.scrolled {
+            background: #FFFFFF !important;
+            background-color: #FFFFFF !important;
+            border-bottom: 1px solid #EAEAEA !important;
+            box-shadow: none !important;
+        }
+
+        body.light-theme header .nav-link,
+        body.light-theme header .nav-action-btn,
+        body.light-theme header .nav-action-btn i {
+            color: #1C1A17 !important;
+        }
+
+        body.light-theme header .nav-link:hover,
+        body.light-theme header .nav-link.active {
+            color: #1F3A5F !important;
+        }
+
+        body.light-theme header .nav-link::after {
+            background-color: #1F3A5F !important;
+        }
+
+        /* Dynamic Header Override (Dark Mode) */
+        body:not(.light-theme) header,
+        body:not(.light-theme) header.scrolled {
+            background: #0d0d0e !important;
+            background-color: #0d0d0e !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: none !important;
+        }
+
+        body:not(.light-theme) header .nav-link,
+        body:not(.light-theme) header .nav-action-btn,
+        body:not(.light-theme) header .nav-action-btn i {
+            color: #FAF9F6 !important;
+        }
+
+        body:not(.light-theme) header .nav-link:hover,
+        body:not(.light-theme) header .nav-link.active {
+            color: #1F3A5F !important;
+        }
+
+        body:not(.light-theme) header .nav-link::after {
+            background-color: #1F3A5F !important;
+        }
+
+        /* Category Card Icons & Accents */
+        .category-icon {
+            color: #1F3A5F !important;
+        }
+
+        .categories-divider,
+        .category-card-divider {
+            background-color: #1F3A5F !important;
+        }
+
+        /* Hero Text Alignments for Legibility */
+        body.light-theme .hero-desc {
+            color: #3C3B39 !important;
+        }
+
+        body:not(.light-theme) .hero-desc {
+            color: #A0AEC0 !important;
+        }
+
+        body.light-theme .hero-title {
+            color: #000000 !important;
+        }
+
+        body:not(.light-theme) .hero-title {
+            color: #FFFFFF !important;
+        }
+
+        body.light-theme .hero {
+            background: linear-gradient(rgba(248, 247, 244, 0.8), rgba(248, 247, 244, 0.95)),
+                url('https://images.unsplash.com/photo-1526045431048-f857369baa09?q=80&w=1920&cb=2') center/cover no-repeat !important;
+        }
+
+        body:not(.light-theme) .hero {
+            background: linear-gradient(rgba(13, 13, 14, 0.85), rgba(13, 13, 14, 0.98)),
+                url('https://images.unsplash.com/photo-1526045431048-f857369baa09?q=80&w=1920&cb=2') center/cover no-repeat !important;
+        }
+
+        /* Premium Carousel Hero Banner Styles */
+        .hero-carousel {
+            position: relative;
+            height: 75vh;
+            min-height: 500px;
+            width: 100%;
+            overflow: hidden;
+            background-color: #0d0d0e;
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            display: flex;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s;
+            z-index: 1;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 2;
+        }
+
+        .carousel-slide .hero-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+        }
+
+        .carousel-slide.active .hero-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .carousel-slide .hero-title {
+            font-size: 3rem !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            color: #FFFFFF !important;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        .carousel-slide .hero-subtitle {
+            color: #A67C52 !important;
+            /* Gold luxury accent */
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            letter-spacing: 4px !important;
+            text-transform: uppercase !important;
+            margin-bottom: 15px !important;
+            display: block !important;
+        }
+
+        /* Arrows styling */
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(13, 13, 14, 0.6);
+            border: 1px solid rgba(166, 124, 82, 0.3);
+            color: #FFFFFF;
+            font-size: 1.5rem;
+            padding: 12px 18px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-arrow:hover {
+            background: #1F3A5F;
+            border-color: #1F3A5F;
+            color: #FFFFFF;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-prev {
+            left: 30px;
+        }
+
+        .carousel-next {
+            right: 30px;
+        }
+
+        /* Dots styling */
+        .carousel-dots {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .carousel-dot.active {
+            background: #A67C52;
+            transform: scale(1.2);
+            box-shadow: 0 0 8px rgba(166, 124, 82, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            .hero-carousel {
+                height: 60vh;
+            }
+
+            .carousel-slide .hero-title {
+                font-size: 2.2rem !important;
+            }
+
+            .carousel-arrow {
+                padding: 8px 14px;
+                font-size: 1.2rem;
+            }
+
+            .carousel-prev {
+                left: 15px;
+            }
+
+            .carousel-next {
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Holder -->
+    <header></header>
+
+    <!-- Hero Carousel Section -->
+    <section class="hero-carousel">
+        <div class="carousel-container">
+            <div class="carousel-track" id="carousel-track">
+                <!-- Slide 1 -->
+                <div class="carousel-slide active"
+                    style="background: url('../sports-watch.jpg') center/cover no-repeat;">
+                    <div class="container">
+                        <div class="hero-content">
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px;">
+                                <a href="./products.html" class="btn-luxury btn-luxury-solid">Shop Now</a>
+                                <a href="./products.html" class="btn-luxury">Explore Collection</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="carousel-slide"
+                    style="background: linear-gradient(rgba(13, 13, 14, 0.65), rgba(13, 13, 14, 0.85)), url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1920') center/cover no-repeat;">
+                    <div class="container">
+                        <div class="hero-content">
+                            <span class="hero-subtitle">THE PREMIUM COLLECTION</span>
+                            <h1 class="hero-title">Precision. Style. Perfection.</h1>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px;">
+                                <a href="./products.html" class="btn-luxury">Shop Collection</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="carousel-slide"
+                    style="background: linear-gradient(rgba(13, 13, 14, 0.65), rgba(13, 13, 14, 0.85)), url('https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1920') center/cover no-repeat;">
+                    <div class="container">
+                        <div class="hero-content">
+                            <span class="hero-subtitle">BUILT FOR EVERY MOMENT</span>
+                            <h1 class="hero-title">Performance Meets Modern Design</h1>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px;">
+                                <a href="./products.html?categoryId=4" class="btn-luxury">Explore Sports Watches</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 4 -->
+                <div class="carousel-slide"
+                    style="background: linear-gradient(rgba(13, 13, 14, 0.65), rgba(13, 13, 14, 0.85)), url('https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=1920') center/cover no-repeat;">
+                    <div class="container">
+                        <div class="hero-content">
+                            <span class="hero-subtitle">NEW ARRIVALS</span>
+                            <h1 class="hero-title">Discover Your Next Statement Timepiece</h1>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px;">
+                                <a href="./products.html" class="btn-luxury">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Arrows -->
+            <button class="carousel-arrow carousel-prev" id="carousel-prev"
+                aria-label="Previous slide">&#10094;</button>
+            <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next slide">&#10095;</button>
+
+            <!-- Navigation Dots -->
+            <div class="carousel-dots" id="carousel-dots">
+                <span class="carousel-dot active" data-index="0"></span>
+                <span class="carousel-dot" data-index="1"></span>
+                <span class="carousel-dot" data-index="2"></span>
+                <span class="carousel-dot" data-index="3"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories-section">
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Exquisite Categories</h2>
+                <div class="categories-divider"></div>
+            </div>
+            <div class="category-grid">
+                <!-- Category 1 -->
+                <div class="category-card" onclick="window.location.href='./products.html?categoryId=3'">
+                    <div class="category-card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&cb=2"
+                            alt="Luxury Watches" class="category-card-img">
+                    </div>
+                    <div class="category-card-info">
+                        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z" />
+                            <path d="M3 20h18" stroke-width="2" />
+                        </svg>
+                        <h3 class="category-card-title">Luxury Watches</h3>
+                        <div class="category-card-divider"></div>
+                        <div class="btn-view-collection">View Collection &rarr;</div>
+                    </div>
+                </div>
+                <!-- Category 2 -->
+                <div class="category-card" onclick="window.location.href='./products.html?categoryId=1'">
+                    <div class="category-card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2"
+                            alt="Analog Watches" class="category-card-img">
+                    </div>
+                    <div class="category-card-info">
+                        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                        <h3 class="category-card-title">Analog Watches</h3>
+                        <div class="category-card-divider"></div>
+                        <div class="btn-view-collection">View Collection &rarr;</div>
+                    </div>
+                </div>
+                <!-- Category 3 -->
+                <div class="category-card" onclick="window.location.href='./products.html?categoryId=4'">
+                    <div class="category-card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2"
+                            alt="Sports Watches" class="category-card-img">
+                    </div>
+                    <div class="category-card-info">
+                        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 15 15" />
+                            <path d="M16.24 7.76a6 6 0 1 0 0 8.49" />
+                        </svg>
+                        <h3 class="category-card-title">Sports Watches</h3>
+                        <div class="category-card-divider"></div>
+                        <div class="btn-view-collection">View Collection &rarr;</div>
+                    </div>
+                </div>
+                <!-- Category 4 -->
+                <div class="category-card" onclick="window.location.href='./products.html?categoryId=2'">
+                    <div class="category-card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=600&cb=2"
+                            alt="Digital Watches" class="category-card-img">
+                    </div>
+                    <div class="category-card-info">
+                        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="6" y="2" width="12" height="20" rx="4" />
+                            <path d="M6 12h12" />
+                            <path d="M12 2v20" />
+                            <circle cx="12" cy="12" r="4" fill="none" />
+                        </svg>
+                        <h3 class="category-card-title">Digital Watches</h3>
+                        <div class="category-card-divider"></div>
+                        <div class="btn-view-collection">View Collection &rarr;</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Watches Section -->
+    <section>
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Featured Masterpieces</h2>
+            </div>
+
+            <div class="product-grid" id="featured-products-grid">
+                <!-- Loaded Dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Watches Section -->
+    <section class="bg-dark">
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Trending Series</h2>
+            </div>
+
+            <div class="product-grid" id="trending-products-grid">
+                <!-- Loaded Dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Sellers Section -->
+    <section>
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Best Sellers</h2>
+            </div>
+
+            <div class="product-grid" id="bestsellers-products-grid">
+                <!-- Loaded Dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section class="bg-dark">
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>New Arrivals</h2>
+            </div>
+
+            <div class="product-grid" id="newarrivals-products-grid">
+                <!-- Loaded Dynamically -->
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="./products.html" class="btn-luxury">View Entire Showroom</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customer Testimonials Section -->
+    <section>
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Collector Testimonials</h2>
+            </div>
+            <div class="product-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div class="glass-card" style="padding: 40px; text-align: center;">
+                    <p style="font-style: italic; color: var(--light-gray); margin-bottom: 25px; font-size: 1.05rem;">
+                        "TimeVerse has completely changed the way I source mechanical watches. The verification
+                        concierge and transparency are unparalleled."</p>
+                    <h4 class="luxury-text" style="color: var(--gold); font-size: 1rem; letter-spacing: 1px;">- Lord
+                        Alistair, Geneva</h4>
+                </div>
+                <div class="glass-card" style="padding: 40px; text-align: center;">
+                    <p style="font-style: italic; color: var(--light-gray); margin-bottom: 25px; font-size: 1.05rem;">
+                        "The detail view and quick-buying flow are extremely fast. My GMT Master arrived fully
+                        authenticated. Simply the best boutique online."</p>
+                    <h4 class="luxury-text" style="color: var(--gold); font-size: 1rem; letter-spacing: 1px;">- Dr.
+                        Sophia V., London</h4>
+                </div>
+                <div class="glass-card" style="padding: 40px; text-align: center;">
+                    <p style="font-style: italic; color: var(--light-gray); margin-bottom: 25px; font-size: 1.05rem;">
+                        "Exceptional customer service and curation of analog and luxury mechanical timepieces. Highly
+                        recommended for any serious collector."</p>
+                    <h4 class="luxury-text" style="color: var(--gold); font-size: 1rem; letter-spacing: 1px;">-
+                        Marc-Antoine, Paris</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about-section" class="bg-dark" style="border-top: var(--border); padding: 80px 0;">
+        <div class="container" style="max-width: 800px; text-align: center;">
+            <div class="section-title text-center" style="margin-bottom: 30px;">
+                <h2>About TimeVerse</h2>
+            </div>
+            <p
+                style="font-size: 1.05rem; line-height: 1.8; color: var(--light); margin-bottom: 20px; font-family: var(--font-body);">
+                Founded in Geneva, TimeVerse is an exclusive boutique horology platform serving collectors worldwide. We
+                specialize in curating and authenticating elite timepieces from the world's most distinguished
+                manufactures.
+            </p>
+            <p style="font-size: 1.05rem; line-height: 1.8; color: var(--light-gray); font-family: var(--font-body);">
+                Every watch in our collection undergoes rigorous mechanical testing and certification by our
+                Swiss-trained master watchmakers. We stand for peerless craftsmanship, luxury aesthetics, and
+                horological perfection.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact-section" style="border-top: var(--border); padding: 80px 0;">
+        <div class="container" style="max-width: 800px; text-align: center;">
+            <div class="section-title text-center" style="margin-bottom: 35px;">
+                <h2>Contact & Support</h2>
+            </div>
+            <div class="product-grid"
+                style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-top: 20px;">
+                <div class="glass-card"
+                    style="padding: 30px; text-align: center; background: var(--dark-gray); border: var(--border); border-radius: 12px; box-shadow: var(--border-glow);">
+                    <div style="font-size: 1.8rem; margin-bottom: 15px; color: var(--gold);">📍</div>
+                    <h4 class="luxury-text"
+                        style="color: var(--gold); font-size: 1rem; margin-bottom: 10px; letter-spacing: 1px;">Boutique
+                        HQ</h4>
+                    <p style="color: var(--light-gray); font-size: 0.9rem; line-height: 1.6;">100 Elite
+                        Boulevard,<br>Geneva, Switzerland</p>
+                </div>
+                <div class="glass-card"
+                    style="padding: 30px; text-align: center; background: var(--dark-gray); border: var(--border); border-radius: 12px; box-shadow: var(--border-glow);">
+                    <div style="font-size: 1.8rem; margin-bottom: 15px; color: var(--gold);">📞</div>
+                    <h4 class="luxury-text"
+                        style="color: var(--gold); font-size: 1rem; margin-bottom: 10px; letter-spacing: 1px;">Concierge
+                        Line</h4>
+                    <p style="color: var(--light-gray); font-size: 0.9rem; line-height: 1.6;">+41 22 555
+                        0199<br>Mon-Fri, 9am-6pm CET</p>
+                </div>
+                <div class="glass-card"
+                    style="padding: 30px; text-align: center; background: var(--dark-gray); border: var(--border); border-radius: 12px; box-shadow: var(--border-glow);">
+                    <div style="font-size: 1.8rem; margin-bottom: 15px; color: var(--gold);">✉️</div>
+                    <h4 class="luxury-text"
+                        style="color: var(--gold); font-size: 1rem; margin-bottom: 10px; letter-spacing: 1px;">Email
+                        Support</h4>
+                    <p style="color: var(--light-gray); font-size: 0.9rem; line-height: 1.6;">
+                        concierge@timeverse.com<br>Response within 24h</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="bg-dark" style="padding: 100px 0; border-top: var(--border); border-bottom: var(--border);">
+        <div class="container" style="max-width: 600px; text-align: center;">
+            <div class="section-title text-center" style="margin-bottom: 20px;">
+                <h2 style="font-size: 2rem;">Join the Collectors Club</h2>
+            </div>
+            <p style="color: var(--light-gray); margin-bottom: 35px; font-size: 0.95rem; letter-spacing: 0.5px;">
+                Subscribe to receive exclusive access to vintage timepiece alerts, VIP events, and horological news.</p>
+            <form
+                onsubmit="event.preventDefault(); showAlert('Welcome to the elite club! Check your inbox for your invitation.', 'success');"
+                style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                <input type="email" placeholder="Enter your email address" required
+                    style="flex-grow: 1; min-width: 250px; background: rgba(255, 255, 255, 0.03); border: var(--border); color: #FFFFFF; padding: 15px 20px; font-family: var(--font-body); font-size: 0.95rem; outline: none; border-radius: 0;"
+                    class="form-control">
+                <button type="submit" class="btn-luxury btn-luxury-solid"
+                    style="padding: 15px 35px; font-size: 0.85rem;">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <!-- Page Specific Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Apply custom homepage banner if set
+            const targetBanner = 'https://images.unsplash.com/photo-1526045431048-f857369baa09?q=80&w=1920&cb=2';
+            let savedHomepageBanner = localStorage.getItem('timeverse_homepage_banner');
+            if (savedHomepageBanner !== targetBanner) {
+                localStorage.setItem('timeverse_homepage_banner', targetBanner);
+                savedHomepageBanner = targetBanner;
+            }
+            const heroElement = document.querySelector('.hero');
+            if (heroElement) {
+                heroElement.style.backgroundImage = `linear-gradient(rgba(250, 249, 246, 0.7), rgba(250, 249, 246, 0.95)), url('${savedHomepageBanner}')`;
+            }
+
+            // Sync correct category images to localStorage to bypass caching
+            localStorage.setItem('timeverse_category_img_4', 'https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2');
+            localStorage.setItem('timeverse_category_img_Sports_Watches', 'https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2');
+
+            if (typeof window.loadHomepageCategories === 'function') {
+                await window.loadHomepageCategories();
+            }
+
+            // Post-load DOM check to guarantee the image is updated
+            const sportsImg = document.querySelector('img[alt="Sports Watches"]');
+            if (sportsImg) {
+                sportsImg.src = '../sports-watch.jpg';
+            }
+            const featuredGrid = document.getElementById('featured-products-grid');
+            const trendingGrid = document.getElementById('trending-products-grid');
+            const bestsellersGrid = document.getElementById('bestsellers-products-grid');
+            const newarrivalsGrid = document.getElementById('newarrivals-products-grid');
+
+            if (featuredGrid) featuredGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading featured masterpieces...</p>';
+            if (trendingGrid) trendingGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading trending timepieces...</p>';
+            if (bestsellersGrid) bestsellersGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading best sellers...</p>';
+            if (newarrivalsGrid) newarrivalsGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading new arrivals...</p>';
+
+            try {
+                // Prefetch wishlist if logged in and not admin
+                const token = localStorage.getItem('token');
+                const role = localStorage.getItem('role') || 'CUSTOMER';
+                if (token && role !== 'ADMIN' && !window.wishlistProductIds) {
+                    try {
+                        const wishlist = await api.getWishlist();
+                        window.wishlistProductIds = new Set(wishlist.map(item => item.productId));
+                    } catch (e) {
+                        console.warn("Failed to load wishlist for homepage:", e);
+                    }
+                }
+
+                const products = await api.getAllProducts();
+                console.log("Products received:", products);
+
+                if (products && products.length > 0) {
+                    const selectedIds = new Set();
+                    const getUnique = (list, count, reverse = false) => {
+                        const candidates = reverse ? [...list].reverse() : list;
+                        const result = [];
+                        for (const p of candidates) {
+                            if (result.length >= count) break;
+                            if (!selectedIds.has(p.productId)) {
+                                result.push(p);
+                                selectedIds.add(p.productId);
+                            }
+                        }
+                        if (result.length < count) {
+                            for (const p of candidates) {
+                                if (result.length >= count) break;
+                                if (!result.some(x => x.productId === p.productId)) {
+                                    result.push(p);
+                                }
+                            }
+                        }
+                        return result;
+                    };
+
+                    // 1. Featured Masterpieces (first 4)
+                    const featured = getUnique(products, 4);
+                    let featuredHTML = "";
+                    featured.forEach(prod => {
+                        featuredHTML += createProductCardHtml(prod);
+                    });
+                    if (featuredGrid) featuredGrid.innerHTML = featuredHTML;
+
+                    // 2. Trending Series (next 4 different products)
+                    const trending = getUnique(products, 4);
+                    let trendingHTML = "";
+                    if (trending.length > 0) {
+                        trending.forEach(prod => {
+                            trendingHTML += createProductCardHtml(prod);
+                        });
+                        if (trendingGrid) trendingGrid.innerHTML = trendingHTML;
+                    } else {
+                        if (trendingGrid) trendingGrid.innerHTML = featuredHTML;
+                    }
+
+                    // 3. Best Sellers (next 4 different products)
+                    const bestsellers = getUnique(products, 4);
+                    let bestsellersHTML = "";
+                    if (bestsellers.length > 0) {
+                        bestsellers.forEach(prod => {
+                            bestsellersHTML += createProductCardHtml(prod);
+                        });
+                        if (bestsellersGrid) bestsellersGrid.innerHTML = bestsellersHTML;
+                    } else {
+                        if (bestsellersGrid) bestsellersGrid.innerHTML = featuredHTML;
+                    }
+
+                    // 4. New Arrivals (newest items reverse-sorted and non-overlapping)
+                    const newarrivals = getUnique(products, 4, true);
+                    let newarrivalsHTML = "";
+                    if (newarrivals.length > 0) {
+                        newarrivals.forEach(prod => {
+                            newarrivalsHTML += createProductCardHtml(prod);
+                        });
+                        if (newarrivalsGrid) newarrivalsGrid.innerHTML = newarrivalsHTML;
+                    } else {
+                        if (newarrivalsGrid) newarrivalsGrid.innerHTML = featuredHTML;
+                    }
+                } else {
+                    const fallbackMsg = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">No timepieces currently available in showroom.</p>';
+                    if (featuredGrid) featuredGrid.innerHTML = fallbackMsg;
+                    if (trendingGrid) trendingGrid.innerHTML = fallbackMsg;
+                    if (bestsellersGrid) bestsellersGrid.innerHTML = fallbackMsg;
+                    if (newarrivalsGrid) newarrivalsGrid.innerHTML = fallbackMsg;
+                }
+            } catch (error) {
+                console.error("Product loading error:", error);
+                const errorMsg = '<p style="grid-column:1/-1;text-align:center;color:red;">Unable to load showroom products.</p>';
+                if (featuredGrid) featuredGrid.innerHTML = errorMsg;
+                if (trendingGrid) trendingGrid.innerHTML = errorMsg;
+                if (bestsellersGrid) bestsellersGrid.innerHTML = errorMsg;
+                if (newarrivalsGrid) newarrivalsGrid.innerHTML = errorMsg;
+            }
+
+            // Scroll to hash on load if present
+            const hash = window.location.hash;
+            if (hash) {
+                setTimeout(() => {
+                    const element = document.querySelector(hash);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 300);
+            }
+
+            // Premium Hero Carousel Controller
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dot');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            let currentSlideIndex = 0;
+            let slideInterval;
+            const intervalTime = 4500; // Move every 4.5 seconds
+
+            function showSlide(index) {
+                if (index >= slides.length) {
+                    currentSlideIndex = 0;
+                } else if (index < 0) {
+                    currentSlideIndex = slides.length - 1;
+                } else {
+                    currentSlideIndex = index;
+                }
+
+                slides.forEach((slide, i) => {
+                    if (i === currentSlideIndex) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+
+                dots.forEach((dot, i) => {
+                    if (i === currentSlideIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            function nextSlide() {
+                showSlide(currentSlideIndex + 1);
+            }
+
+            function prevSlide() {
+                showSlide(currentSlideIndex - 1);
+            }
+
+            function startSlideTimer() {
+                clearInterval(slideInterval);
+                slideInterval = setInterval(nextSlide, intervalTime);
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    prevSlide();
+                    startSlideTimer();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    nextSlide();
+                    startSlideTimer();
+                });
+            }
+
+            dots.forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    const targetIndex = parseInt(e.target.getAttribute('data-index'));
+                    showSlide(targetIndex);
+                    startSlideTimer();
+                });
+            });
+
+            // Start automation loop
+            startSlideTimer();
+        });
+    </script>
+
+    <!-- Chatbot Widget -->
+    <div id="timeverse-chat-widget" class="chat-widget">
+        <button id="chat-toggle-btn" class="chat-toggle-btn" title="Chat with TimeVerse AI">
+            <span class="chat-icon">💬</span>
+        </button>
+        <div id="chat-window" class="chat-window">
+            <div class="chat-header">
+                <div class="chat-header-title">
+                    <span class="chat-status-dot"></span>
+                    TimeVerse Assistant
+                </div>
+                <button id="chat-close-btn" class="chat-close-btn">&times;</button>
+            </div>
+            <div id="chat-messages" class="chat-messages">
+                <div class="chat-message bot">
+                    Hello! I am your TimeVerse Assistant. How can I help you discover our premium watches today?
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
+                <button id="chat-send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Logic Script -->
+    <script src="../js/chatbot.js?v=1"></script>
+</body>
+
+</html>

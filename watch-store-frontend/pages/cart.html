@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Shopping Bag</title>
+    
+    <!-- Link Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/product.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    
+    <style>
+        /* Cart Page Specific Styles */
+        .cart-wrapper {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .cart-main {
+            flex-grow: 1;
+            background-color: var(--dark-gray);
+            border: var(--border);
+            padding: 30px;
+        }
+
+        .cart-summary {
+            width: 380px;
+            flex-shrink: 0;
+            background-color: var(--dark-gray);
+            border: var(--border);
+            padding: 30px;
+            height: fit-content;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .cart-table th, .cart-table td {
+            padding: 15px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cart-table th {
+            font-family: var(--font-title);
+            font-size: 0.8rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            color: var(--light-gray);
+        }
+
+        .summary-total {
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            margin-top: 20px;
+            padding-top: 20px;
+            font-size: 1.25rem;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        @media (max-width: 992px) {
+            .cart-wrapper {
+                flex-direction: column;
+            }
+            
+            .cart-summary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Holder -->
+    <header></header>
+
+    <!-- Page Header Hero -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Shopping Bag</h1>
+            <div class="breadcrumbs">
+                <a href="./index.html">Home</a> &nbsp;/&nbsp; <span>Cart</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Layout -->
+    <div class="container">
+        <div class="cart-wrapper" id="cart-page-container">
+            
+            <!-- Left: Items list -->
+            <main class="cart-main">
+                <div class="cart-table-container">
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th>Watch details</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cart-items-tbody">
+                            <!-- Injected dynamically by cart.js -->
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: var(--light-gray);">Loading shopping bag details...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+
+            <!-- Right: Totals summary -->
+            <aside class="cart-summary" style="border-radius: 12px; box-shadow: var(--border-glow);">
+                <h3 class="luxury-text" style="font-size: 1.15rem; margin-bottom: 25px; color: var(--gold); text-transform: uppercase;">Order Summary</h3>
+                
+                <div class="summary-row">
+                    <span>Bag Subtotal</span>
+                    <span id="summary-subtotal">₹0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>GST Tax (18%)</span>
+                    <span id="summary-gst">₹0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping Charges</span>
+                    <span id="summary-shipping">₹0.00</span>
+                </div>
+                <div class="summary-row" id="coupon-row" style="display: none; color: var(--success); font-weight: 500;">
+                    <span>Promo Discount (10%)</span>
+                    <span id="summary-discount">-₹0.00</span>
+                </div>
+                
+                <div class="summary-row summary-total">
+                    <span>Grand Total</span>
+                    <span id="summary-grandtotal" style="color: var(--gold-light);">₹0.00</span>
+                </div>
+
+                <!-- Promo Coupon Code Area -->
+                <div style="margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 20px;">
+                    <label class="form-label" style="font-size: 0.75rem; color: var(--gold-light);">Collector Privilege Promo Code</label>
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <input type="text" id="coupon-code-input" class="form-control" placeholder="e.g. TIMEVERSE10" style="padding: 10px; font-size: 0.85rem; border-radius: 0; text-transform: uppercase;">
+                        <button id="apply-coupon-btn" class="btn-luxury" style="padding: 10px 15px; font-size: 0.75rem; white-space: nowrap;">Apply</button>
+                    </div>
+                    <span id="coupon-message" style="font-size: 0.75rem; margin-top: 8px; display: block;"></span>
+                </div>
+
+                <a href="./checkout.html" class="btn-luxury btn-luxury-solid" style="width: 100%; text-align: center; display: block; margin-top: 25px;">Proceed to Checkout</a>
+                
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="./products.html" style="font-size: 0.85rem; color: var(--light-gray); text-decoration: underline;">Or continue shopping</a>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/cart.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+</body>
+</html>

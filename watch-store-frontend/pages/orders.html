@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Order History</title>
+
+    <!-- Link Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+
+<body>
+
+    <!-- Header Holder -->
+    <header></header>
+
+    <!-- Page Header Hero -->
+    <section class="page-header">
+        <div class="container">
+            <h1>My Order History</h1>
+            <div class="customer-info-banner" id="order-customer-banner"
+                style="margin-top: 15px; font-family: var(--font-title); font-size: 1.1rem; color: var(--gold-light);">
+                <!-- Dynamic Customer Details -->
+            </div>
+            <div class="breadcrumbs" style="margin-top: 10px;">
+                <a href="./index.html">Home</a> &nbsp;/&nbsp; <span>Orders</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Orders Log List -->
+    <div class="container" style="margin-top: 40px; min-height: 50vh;">
+        <div style="max-width: 800px; margin: 0 auto; display: flex; justify-content: flex-end; margin-bottom: 20px;">
+            <button class="btn-luxury" id="open-change-pw-btn" style="font-size: 0.8rem; padding: 8px 20px;">Change
+                Password</button>
+        </div>
+        <div id="orders-list-container" style="max-width: 800px; margin: 0 auto;">
+            <!-- Loaded dynamically from User Orders API -->
+            <p style="text-align: center; color: var(--light-gray); padding: 40px 0;">Loading your order logs...</p>
+        </div>
+    </div>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <!-- Page Specific Script -->
+    <script src="../js/orders.js"></script>
+
+    <!-- Modal Driver Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const openBtn = document.getElementById('open-change-pw-btn');
+            if (openBtn) {
+                openBtn.addEventListener('click', () => {
+                    const modal = document.getElementById('change-pw-modal');
+                    if (modal) modal.style.display = 'flex';
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

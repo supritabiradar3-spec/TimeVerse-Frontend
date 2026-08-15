@@ -1,0 +1,88 @@
+/* Additional Responsive Enhancements */
+
+@media (max-width: 992px) {
+    section {
+        padding: 50px 0;
+    }
+    
+    .section-title h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Base typography adjustments */
+    body {
+        font-size: 14px;
+    }
+
+    .page-header {
+        padding: 80px 0 40px 0;
+    }
+
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+
+    /* Form grid collapsing */
+    .grid-cols-2, .grid-cols-3, .grid-cols-4 {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+
+    /* Cart layout collapsing */
+    .cart-table-container {
+        overflow-x: auto;
+    }
+
+    .cart-table {
+        min-width: 600px;
+    }
+
+    .cart-summary-wrapper {
+        margin-top: 30px;
+    }
+
+    /* Admin dashboard layout */
+    .admin-nav-tabs {
+        flex-direction: column;
+        border-bottom: none;
+        border-left: 2px solid rgba(212, 175, 55, 0.2);
+        padding-left: 10px;
+        margin-bottom: 25px;
+    }
+
+    .admin-nav-tab {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+    /* Hero section font sizing */
+    .hero-title {
+        font-size: 2.5rem !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .hero-title {
+        font-size: 2rem !important;
+    }
+
+    .btn-luxury {
+        padding: 10px 20px;
+        font-size: 0.8rem;
+    }
+
+    .details-main-img-wrap {
+        height: 350px;
+    }
+}

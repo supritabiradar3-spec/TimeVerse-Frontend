@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Watch Details</title>
+    
+    <!-- Link Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/product.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <!-- Header Holder -->
+    <header></header>
+
+    <!-- Details Main Section -->
+    <section style="padding-top: 140px;">
+        <div class="container">
+            <div class="details-container" id="product-details-wrapper">
+                
+                <!-- Left: Galleries Images -->
+                <div class="details-gallery">
+                    <div class="details-main-img-wrap">
+                        <img id="detail-main-img" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600" alt="Watch Main Image" class="details-main-img" onerror="this.src='https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=600'">
+                    </div>
+                    <div class="details-thumbs" id="detail-thumbs-container">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Right: Details Info -->
+                <div class="details-info">
+                    <span class="details-category" id="detail-category-label">Luxury Collection</span>
+                    <h1 class="details-name" id="detail-watch-name">Premium Watch Name</h1>
+                    
+                    <div class="product-card-rating" id="detail-rating-container" style="margin-bottom: 20px;">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                    <div class="details-price" id="detail-watch-price">₹0.00</div>
+                    
+                    <p class="details-desc" id="detail-watch-desc">Detailed horological features, Swiss movements, sapphire crystals, and high-quality premium mechanical finish specifications.</p>
+                    
+                    <div class="details-meta">
+                        <div class="details-meta-item"><strong>Reference:</strong> <span id="detail-ref-id">#TV-000</span></div>
+                        <div class="details-meta-item"><strong>Availability:</strong> <span id="detail-availability-badge" class="badge">Checking Stock...</span></div>
+                    </div>
+
+                    <!-- Quantity Selection -->
+                    <div style="margin-bottom: 10px; font-family: var(--font-title); font-size: 0.8rem; letter-spacing: 1px; color: var(--gold-light);">Quantity</div>
+                    <div class="qty-adjuster">
+                        <button class="qty-btn" id="qty-minus">-</button>
+                        <input type="number" id="detail-qty-input" class="qty-input" value="1" min="1" max="10" readonly>
+                        <button class="qty-btn" id="qty-plus">+</button>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-top: 15px; max-width: 350px;">
+                        <button class="btn-luxury btn-luxury-solid" id="add-to-cart-btn" style="flex: 1; padding: 15px;">Add to Bag</button>
+                        <button class="btn-luxury" id="buy-now-btn" style="flex: 1; padding: 15px;">Buy Now</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tabs for Specifications & Reviews -->
+            <div style="margin-top: 80px; border-top: 1px solid rgba(197, 160, 89, 0.1); padding-top: 50px;">
+                <div style="display: flex; gap: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 15px; margin-bottom: 30px; justify-content: center;">
+                    <button id="tab-specs-btn" class="admin-nav-tab btn-luxury-solid" style="background: transparent; border: none; color: var(--gold); border-bottom: 2px solid var(--gold); padding: 10px 20px; font-family: var(--font-title); font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Specifications</button>
+                    <button id="tab-reviews-btn" class="admin-nav-tab" style="background: transparent; border: none; color: var(--light-gray); padding: 10px 20px; font-family: var(--font-title); font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Customer Reviews</button>
+                </div>
+
+                <!-- Tab content: Specifications -->
+                <div id="tab-specs-content" style="display: block;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div class="glass-card" style="padding: 20px;">
+                            <h4 class="luxury-text" style="color: var(--gold); font-size: 0.95rem; margin-bottom: 15px;">Movement & Calibre</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);"><td style="padding: 8px 0; color: var(--light-gray);">Calibre Type</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">Automatic, Self-Winding</td></tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);"><td style="padding: 8px 0; color: var(--light-gray);">Power Reserve</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">Approximately 70 Hours</td></tr>
+                                <tr><td style="padding: 8px 0; color: var(--light-gray);">Precision</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">-2/+2 sec/day, after casing</td></tr>
+                            </table>
+                        </div>
+                        <div class="glass-card" style="padding: 20px;">
+                            <h4 class="luxury-text" style="color: var(--gold); font-size: 0.95rem; margin-bottom: 15px;">Case & Dial</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);"><td style="padding: 8px 0; color: var(--light-gray);">Case Material</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">Oystersteel / Gold Caliber</td></tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);"><td style="padding: 8px 0; color: var(--light-gray);">Case Diameter</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">40 mm - 42 mm</td></tr>
+                                <tr><td style="padding: 8px 0; color: var(--light-gray);">Crystal</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">Scratch-resistant Sapphire</td></tr>
+                            </table>
+                        </div>
+                        <div class="glass-card" style="padding: 20px;">
+                            <h4 class="luxury-text" style="color: var(--gold); font-size: 0.95rem; margin-bottom: 15px;">Features</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);"><td style="padding: 8px 0; color: var(--light-gray);">Water Resistance</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">100 metres / 330 feet</td></tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);"><td style="padding: 8px 0; color: var(--light-gray);">Clasp Type</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">Folding Oysterclasp</td></tr>
+                                <tr><td style="padding: 8px 0; color: var(--light-gray);">Certification</td><td style="padding: 8px 0; font-weight: 500; text-align: right;">Superlative Chronometer</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab content: Reviews -->
+                <div id="tab-reviews-content" style="display: none;">
+                    <div id="detail-reviews-list" style="display: flex; flex-direction: column; gap: 20px; text-align: left;">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Similar Products Section -->
+            <div style="margin-top: 80px;">
+                <h3 class="luxury-text" style="font-size: 1.8rem; margin-bottom: 40px; border-bottom: 1px solid rgba(197, 160, 89, 0.1); padding-bottom: 15px; text-align: center;">Similar Masterpieces</h3>
+                <div class="product-grid" id="similar-products-grid">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <!-- Page Logic Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role') || 'CUSTOMER';
+            const isAdmin = token && role === 'ADMIN';
+
+            if (isAdmin) {
+                const qtyTitle = document.querySelector('div[style*="Quantity"]');
+                const qtyDiv = document.querySelector('.qty-adjuster');
+                const actionsDiv = document.getElementById('add-to-cart-btn')?.parentElement;
+                if (qtyTitle) qtyTitle.style.display = 'none';
+                if (qtyDiv) qtyDiv.style.display = 'none';
+                if (actionsDiv) actionsDiv.style.display = 'none';
+            }
+
+            const CATEGORY_MAP = {
+                1: 'Analog Watches',
+                2: 'Digital Watches',
+                3: 'Luxury Watches',
+                4: 'Sports Watches'
+            };
+
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get('id');
+
+            if (!productId) {
+                showAlert('Timepiece reference missing.', 'error');
+                setTimeout(() => window.location.href = './products.html', 1500);
+                return;
+            }
+
+            const mainImg = document.getElementById('detail-main-img');
+            const thumbsContainer = document.getElementById('detail-thumbs-container');
+            const categoryLabel = document.getElementById('detail-category-label');
+            const watchName = document.getElementById('detail-watch-name');
+            const watchPrice = document.getElementById('detail-watch-price');
+            const watchDesc = document.getElementById('detail-watch-desc');
+            const refId = document.getElementById('detail-ref-id');
+            const stockBadge = document.getElementById('detail-availability-badge');
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+
+            // Quantity adjusters
+            const qtyInput = document.getElementById('detail-qty-input');
+            const qtyMinus = document.getElementById('qty-minus');
+            const qtyPlus = document.getElementById('qty-plus');
+
+            qtyMinus.addEventListener('click', () => {
+                let val = parseInt(qtyInput.value);
+                if (val > 1) qtyInput.value = val - 1;
+            });
+
+            qtyPlus.addEventListener('click', () => {
+                let val = parseInt(qtyInput.value);
+                if (val < 10) qtyInput.value = val + 1;
+            });
+
+            try {
+                // Prefetch wishlist if logged in and not admin
+                const token = localStorage.getItem('token');
+                const role = localStorage.getItem('role') || 'CUSTOMER';
+                if (token && role !== 'ADMIN' && !window.wishlistProductIds) {
+                    try {
+                        const wishlist = await api.getWishlist();
+                        window.wishlistProductIds = new Set(wishlist.map(item => item.productId));
+                    } catch (e) {
+                        console.warn("Failed to load wishlist for details page:", e);
+                    }
+                }
+
+                // Fetch product details
+                const product = await api.getProductById(productId);
+                
+                // Renders details
+                watchName.textContent = product.name;
+                refId.textContent = `#TV-PROD-${product.productId}`;
+                categoryLabel.textContent = CATEGORY_MAP[product.categoryId] || 'Curated Timepiece';
+                watchDesc.textContent = product.description || 'No description available for this timepiece.';
+                
+                watchPrice.textContent = new Intl.NumberFormat('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                    maximumFractionDigits: 0
+                }).format(product.price);
+
+                // Render rating stars
+                const rating = window.getProductRating ? window.getProductRating(product.productId) : { score: "4.8", count: 126 };
+                const starsHtml = window.getStarsHtml ? window.getStarsHtml(rating.score) : "★★★★★";
+                const ratingContainer = document.getElementById('detail-rating-container');
+                if (ratingContainer) {
+                    ratingContainer.innerHTML = `
+                        ${starsHtml}
+                        <span class="rating-score">${rating.score}</span>
+                        <span class="rating-count">(${rating.count} reviews)</span>
+                    `;
+                }
+
+                // Render mock reviews list
+                const reviewsContainer = document.getElementById('detail-reviews-list');
+                if (reviewsContainer) {
+                    const mockReviews = [
+                        { name: "Johnathan D.", date: "July 22, 2026", rating: 5, text: "Absolutely stunning watch. The self-winding calibre is incredibly precise, and the dial has a beautiful satin gold luster." },
+                        { name: "Vikram R.", date: "June 15, 2026", rating: 4, text: "Excellent craftsmanship. The sapphire glass is clean and completely scratch-resistant. Very happy with the concierge service." },
+                        { name: "Clara M.", date: "May 08, 2026", rating: 5, text: "A masterpiece. It feels heavy and solid on the wrist, which indicates genuine metal quality. The power reserve easily lasts the entire weekend." }
+                    ];
+                    let revHtml = '';
+                    mockReviews.forEach(rev => {
+                        let stars = '';
+                        for(let i=1; i<=5; i++) stars += i<=rev.rating ? '★' : '☆';
+                        revHtml += `
+                            <div class="glass-card" style="padding: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <strong>${rev.name}</strong>
+                                    <span style="color: var(--light-gray); font-size: 0.8rem;">${rev.date}</span>
+                                </div>
+                                <div class="product-card-rating" style="margin-bottom: 10px;">
+                                    <span class="stars-gold">${stars}</span>
+                                </div>
+                                <p style="color: var(--light-gray); font-size: 0.9rem; line-height: 1.5;">${rev.text}</p>
+                            </div>
+                        `;
+                    });
+                    reviewsContainer.innerHTML = revHtml;
+                }
+
+                // Specs & Reviews tab toggle click events
+                const specsBtn = document.getElementById('tab-specs-btn');
+                const reviewsBtn = document.getElementById('tab-reviews-btn');
+                const specsContent = document.getElementById('tab-specs-content');
+                const reviewsContent = document.getElementById('tab-reviews-content');
+
+                if (specsBtn && reviewsBtn && specsContent && reviewsContent) {
+                    specsBtn.addEventListener('click', () => {
+                        specsBtn.classList.add('btn-luxury-solid');
+                        specsBtn.style.color = 'var(--gold)';
+                        specsBtn.style.borderBottom = '2px solid var(--gold)';
+                        
+                        reviewsBtn.classList.remove('btn-luxury-solid');
+                        reviewsBtn.style.color = 'var(--light-gray)';
+                        reviewsBtn.style.borderBottom = 'none';
+                        
+                        specsContent.style.display = 'block';
+                        reviewsContent.style.display = 'none';
+                    });
+                    reviewsBtn.addEventListener('click', () => {
+                        reviewsBtn.classList.add('btn-luxury-solid');
+                        reviewsBtn.style.color = 'var(--gold)';
+                        reviewsBtn.style.borderBottom = '2px solid var(--gold)';
+                        
+                        specsBtn.classList.remove('btn-luxury-solid');
+                        specsBtn.style.color = 'var(--light-gray)';
+                        specsBtn.style.borderBottom = 'none';
+                        
+                        specsContent.style.display = 'none';
+                        reviewsContent.style.display = 'block';
+                    });
+                }
+
+                // Similar timepieces query
+                const similarGrid = document.getElementById('similar-products-grid');
+                if (similarGrid && product.categoryId) {
+                    try {
+                        const allProducts = await api.getAllProducts();
+                        const similar = allProducts.filter(p => p.categoryId === product.categoryId && p.productId !== product.productId).slice(0, 3);
+                        let simHtml = '';
+                        if (similar.length > 0) {
+                            similar.forEach(p => {
+                                simHtml += createProductCardHtml(p);
+                            });
+                            similarGrid.innerHTML = simHtml;
+                        } else {
+                            similarGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">No similar timepieces found.</p>';
+                        }
+                    } catch (err) {
+                        console.error('Failed to load similar products:', err);
+                        similarGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--error);">Failed to load similar products.</p>';
+                    }
+                }
+
+                // Stock badges
+                const isOutOfStock = product.stock <= 0;
+                if (isOutOfStock) {
+                    stockBadge.textContent = 'Out of Stock';
+                    stockBadge.className = 'badge badge-danger';
+                    addToCartBtn.disabled = true;
+                    addToCartBtn.textContent = 'Sold Out';
+                } else {
+                    stockBadge.textContent = `In Stock (${product.stock} available)`;
+                    stockBadge.className = 'badge badge-success';
+                }
+
+                // Image handling: resolve array of images
+                let imageUrls = [];
+                const resolver = window.resolveImageUrl || (u => u);
+                if (product.images && product.images.length > 0) {
+                    imageUrls = product.images.map(img => resolver(img.imageUrl));
+                } else if (product.imageUrls && product.imageUrls.length > 0) {
+                    imageUrls = product.imageUrls.map(url => resolver(url));
+                }
+
+                const fallbackImg = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600';
+                
+                if (imageUrls.length > 0) {
+                    // Set primary image
+                    mainImg.src = imageUrls[0];
+                    
+                    // Create thumbnails
+                    let thumbsHTML = '';
+                    imageUrls.forEach((url, index) => {
+                        thumbsHTML += `
+                            <div class="details-thumb ${index === 0 ? 'active' : ''}" data-url="${url}">
+                                <img src="${url}" alt="Watch view ${index + 1}" onerror="this.src='${fallbackImg}'">
+                            </div>
+                        `;
+                    });
+                    thumbsContainer.innerHTML = thumbsHTML;
+
+                    // Bind thumb click events
+                    const thumbs = thumbsContainer.querySelectorAll('.details-thumb');
+                    thumbs.forEach(thumb => {
+                        thumb.addEventListener('click', function () {
+                            thumbs.forEach(t => t.classList.remove('active'));
+                            this.classList.add('active');
+                            mainImg.src = this.getAttribute('data-url');
+                        });
+                    });
+                } else {
+                    mainImg.src = fallbackImg;
+                    thumbsContainer.innerHTML = '';
+                }
+
+                // Add to Cart Submit
+                addToCartBtn.addEventListener('click', async () => {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                        showAlert('Please log in to add items to your shopping bag.', 'error');
+                        setTimeout(() => window.location.href = './login.html', 1500);
+                        return;
+                    }
+
+                    const quantity = parseInt(qtyInput.value);
+
+                    try {
+                        addToCartBtn.disabled = true;
+                        addToCartBtn.textContent = 'Adding to Bag...';
+
+                        await api.addToCart(productId, quantity);
+                        showAlert(`${quantity} x timepiece added to shopping bag!`, 'success');
+                        
+                        // Refresh navbar badge count
+                        if (typeof window.updateNavbarCartCount === 'function') {
+                            await window.updateNavbarCartCount();
+                        }
+                    } catch (err) {
+                        showAlert(err.message || 'Failed to add item to bag.', 'error');
+                    } finally {
+                        addToCartBtn.disabled = false;
+                        addToCartBtn.textContent = 'Add to Bag';
+                    }
+                });
+
+                // Buy Now Click Event Listener
+                const buyNowBtn = document.getElementById('buy-now-btn');
+                if (buyNowBtn) {
+                    buyNowBtn.addEventListener('click', async () => {
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                            showAlert('Please log in to purchase this timepiece.', 'error');
+                            setTimeout(() => window.location.href = './login.html', 1500);
+                            return;
+                        }
+
+                        const quantity = parseInt(qtyInput.value);
+
+                        try {
+                            buyNowBtn.disabled = true;
+                            buyNowBtn.textContent = 'Processing...';
+
+                            await api.addToCart(productId, quantity);
+                            
+                            // Refresh navbar badge count
+                            if (typeof window.updateNavbarCartCount === 'function') {
+                                await window.updateNavbarCartCount();
+                            }
+                            
+                            // Redirect to checkout
+                            window.location.href = './checkout.html';
+                        } catch (err) {
+                            showAlert(err.message || 'Failed to process checkout.', 'error');
+                        } finally {
+                            buyNowBtn.disabled = false;
+                            buyNowBtn.textContent = 'Buy Now';
+                        }
+                    });
+                }
+
+            } catch (err) {
+                console.error('Failed to load watch details:', err);
+                document.getElementById('product-details-wrapper').innerHTML = `
+                    <div style="width: 100%; text-align: center; padding: 60px 0;">
+                        <h3 class="luxury-text" style="color: var(--error);">Error Fetching Product</h3>
+                        <p style="color: var(--light-gray); margin-top: 10px;">The timepiece reference #TV-${productId} could not be retrieved from the database.</p>
+                        <a href="./products.html" class="btn-luxury" style="margin-top: 25px;">Back to Showroom</a>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

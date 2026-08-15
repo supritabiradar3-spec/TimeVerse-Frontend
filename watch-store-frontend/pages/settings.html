@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - TimeVerse</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Style Sheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <style>
+        .settings-container {
+            max-width: 700px;
+            margin: 120px auto 60px auto;
+            padding: 40px 30px;
+            background: rgba(13, 13, 14, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: var(--border);
+            box-shadow: var(--border-glow);
+            border-radius: 8px;
+        }
+
+        .settings-header {
+            border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .settings-header h2 {
+            font-family: var(--font-title);
+            font-size: 1.6rem;
+            color: var(--gold-light);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .settings-section {
+            margin-bottom: 35px;
+        }
+
+        .settings-section h3 {
+            font-family: var(--font-title);
+            font-size: 1.05rem;
+            color: var(--gold);
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(197, 160, 89, 0.1);
+            border-radius: 6px;
+            padding: 25px;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .setting-row:first-child {
+            padding-top: 0;
+        }
+
+        .setting-info {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .setting-info h4 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--light);
+            margin-bottom: 4px;
+        }
+
+        .setting-info p {
+            font-size: 0.8rem;
+            color: var(--light-gray);
+        }
+
+        /* Toggles and inputs */
+        .setting-control select {
+            background: var(--medium-gray);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            color: var(--light);
+            padding: 8px 16px;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .setting-control select:focus {
+            border-color: var(--gold);
+        }
+
+        /* Checkbox Customization */
+        .checkbox-container {
+            display: block;
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 2px;
+            left: 0;
+            height: 18px;
+            width: 18px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .checkbox-container:hover input ~ .checkmark {
+            border-color: var(--gold);
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--gold-dark);
+            border-color: var(--gold);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid var(--white);
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .btn-delete-act {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #ef4444;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-title);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            text-transform: uppercase;
+        }
+
+        .btn-delete-act:hover {
+            background: #ef4444;
+            color: var(--white);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Container -->
+    <header></header>
+
+    <!-- Main Content Container -->
+    <main class="container">
+        <div class="settings-container">
+            <div class="settings-header">
+                <h2>⚙️ Account Settings</h2>
+            </div>
+
+            <!-- Theme Preference -->
+            <div class="settings-section">
+                <h3>🎨 Personalization</h3>
+                <div class="settings-card">
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Visual Theme</h4>
+                            <p>Select your preferred browsing aesthetic (Dark Luxury mode is highly recommended).</p>
+                        </div>
+                        <div class="setting-control">
+                            <select id="theme-selector">
+                                <option value="dark">Obsidian Dark</option>
+                                <option value="light">Platinum Light</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Boutique Language</h4>
+                            <p>Configure the default catalog display language.</p>
+                        </div>
+                        <div class="setting-control">
+                            <select id="language-selector">
+                                <option value="en">English (UK)</option>
+                                <option value="ch">Schweizerdeutsch (CH)</option>
+                                <option value="it">Italiano (IT)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Preferences -->
+            <div class="settings-section">
+                <h3>🔔 Notifications</h3>
+                <div class="settings-card">
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Order Dispatch Notices</h4>
+                            <p>Receive immediate alerts via SMS/Email when watch statuses advance.</p>
+                        </div>
+                        <div class="setting-control">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="notify-orders" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Exclusive Boutique Invitations</h4>
+                            <p>Receive newsletters detailing bespoke launches and private auctions.</p>
+                        </div>
+                        <div class="setting-control">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="notify-newsletter">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Preferences -->
+            <div class="settings-section">
+                <h3>🔒 Privacy & Security</h3>
+                <div class="settings-card">
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Boutique Profiling</h4>
+                            <p>Allow us to suggest timepieces based on your historic collection reviews.</p>
+                        </div>
+                        <div class="setting-control">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="privacy-profiling" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-section" style="margin-top: 40px;">
+                <h3 style="color: #ef4444;">⚠️ Danger Zone</h3>
+                <div class="settings-card" style="border-color: rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.01);">
+                    <div class="setting-row" style="border: none;">
+                        <div class="setting-info">
+                            <h4 style="color: #ef4444;">Delete TimeVerse Account</h4>
+                            <p>Permanently remove your collector profile, wishlist, and shipping credentials. This action is irreversible.</p>
+                        </div>
+                        <div class="setting-control">
+                            <button type="button" class="btn-delete-act" id="btn-delete-account">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-top: 25px;">
+                <button type="button" class="btn-luxury btn-luxury-solid" id="btn-save-settings" style="padding: 12px 30px;">💾 Save Preferences</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Secure Delete Confirmation Modal -->
+    <div class="modal-overlay" id="delete-confirm-modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <button class="close-btn" id="close-delete-modal-btn">&times;</button>
+            <h3 class="luxury-text" style="font-size: 1.25rem; margin-bottom: 15px; color: #ef4444; text-transform: uppercase;">Are you absolutely sure?</h3>
+            <p style="font-size: 0.9rem; color: var(--light-gray); margin-bottom: 25px; line-height: 1.5;">This will completely delete your account from our database. You will lose access to all your order histories immediately.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="button" class="btn-luxury" id="btn-cancel-delete" style="flex: 1;">Cancel</button>
+                <button type="button" class="btn-luxury btn-luxury-solid" id="btn-confirm-delete" style="flex: 1; background: #ef4444; border-color: #ef4444; color: white;">Confirm Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <!-- Settings integration script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = './login.html';
+                return;
+            }
+
+            const userId = auth.getUserId();
+            const themeSelect = document.getElementById('theme-selector');
+            const langSelect = document.getElementById('language-selector');
+            const orderNotify = document.getElementById('notify-orders');
+            const newsNotify = document.getElementById('notify-newsletter');
+            const privacyProfiling = document.getElementById('privacy-profiling');
+
+            const saveBtn = document.getElementById('btn-save-settings');
+            const deleteBtn = document.getElementById('btn-delete-account');
+
+            const deleteModal = document.getElementById('delete-confirm-modal');
+            const cancelDeleteBtn = document.getElementById('btn-cancel-delete');
+            const closeDeleteBtn = document.getElementById('close-delete-modal-btn');
+            const confirmDeleteBtn = document.getElementById('btn-confirm-delete');
+
+            // Load saved settings from localStorage
+            themeSelect.value = localStorage.getItem('themePreference') || 'light';
+            langSelect.value = localStorage.getItem('langPreference') || 'en';
+            orderNotify.checked = localStorage.getItem('notifyOrders') !== 'false';
+            newsNotify.checked = localStorage.getItem('notifyNewsletter') === 'true';
+            privacyProfiling.checked = localStorage.getItem('privacyProfiling') !== 'false';
+
+            // Apply theme dynamically to verify changes
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    document.body.classList.add('light-theme');
+                    document.documentElement.classList.add('light-theme');
+                } else {
+                    document.body.classList.remove('light-theme');
+                    document.documentElement.classList.remove('light-theme');
+                }
+            }
+
+            // Preview theme changes instantly
+            themeSelect.addEventListener('change', () => {
+                applyTheme(themeSelect.value);
+            });
+
+            // Save Preferences
+            saveBtn.addEventListener('click', () => {
+                localStorage.setItem('themePreference', themeSelect.value);
+                localStorage.setItem('langPreference', langSelect.value);
+                localStorage.setItem('notifyOrders', orderNotify.checked);
+                localStorage.setItem('notifyNewsletter', newsNotify.checked);
+                localStorage.setItem('privacyProfiling', privacyProfiling.checked);
+
+                showAlert('Settings saved and synchronized successfully!', 'success');
+            });
+
+            // Delete Account Flow
+            deleteBtn.addEventListener('click', () => {
+                deleteModal.style.display = 'flex';
+            });
+
+            const hideDeleteModal = () => {
+                deleteModal.style.display = 'none';
+            };
+
+            cancelDeleteBtn.addEventListener('click', hideDeleteModal);
+            closeDeleteBtn.addEventListener('click', hideDeleteModal);
+            deleteModal.addEventListener('click', (e) => {
+                if (e.target === deleteModal) hideDeleteModal();
+            });
+
+            confirmDeleteBtn.addEventListener('click', async () => {
+                try {
+                    const response = await api.deleteAccount(userId);
+                    if (response.success) {
+                        showAlert('Your account was successfully deleted. Redirecting...', 'success');
+                        
+                        // Clear session details
+                        localStorage.clear();
+                        setTimeout(() => {
+                            window.location.href = './login.html';
+                        }, 2000);
+                    } else {
+                        showAlert(response.message || 'Failed to delete account.', 'error');
+                        hideDeleteModal();
+                    }
+                } catch (error) {
+                    console.error('Account delete failure:', error);
+                    showAlert('Account delete request failed.', 'error');
+                    hideDeleteModal();
+                }
+            });
+
+            // Run initial theme application
+            applyTheme(themeSelect.value);
+        });
+    </script>
+</body>
+</html>

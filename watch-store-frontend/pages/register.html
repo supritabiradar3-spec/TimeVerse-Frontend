@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Create Collector Account</title>
+
+    <!-- Link Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+            padding: 100px 20px 40px 20px;
+        }
+
+        .auth-card {
+            background-color: var(--dark-gray);
+            border: var(--border);
+            padding: 50px 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--border-glow);
+        }
+
+        .auth-card h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .auth-subtitle {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 35px;
+        }
+
+        .auth-redirect {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+
+        .auth-redirect a {
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .auth-redirect a:hover {
+            color: var(--gold-light);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Holder -->
+    <header></header>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Create Account</h2>
+            <p class="auth-subtitle">Register to begin your luxury watch curation journey.</p>
+
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Choose a username" required
+                        autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required
+                        autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" class="form-control"
+                            placeholder="Create password (min 6 characters)" required minlength="6"
+                            autocomplete="new-password" style="padding-right: 45px;">
+                        <span id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;">👁️</span>
+                    </div>
+                    <!-- Strength meter -->
+                    <div class="password-strength-container">
+                        <div class="password-strength-bar" id="strength-bar"></div>
+                        <span class="password-strength-text" id="strength-text">Strength: Weak</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="confirm-password" class="form-control"
+                            placeholder="Confirm your password" required minlength="6"
+                            autocomplete="new-password" style="padding-right: 45px;">
+                        <span id="toggleConfirmPassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;">👁️</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-luxury btn-luxury-solid"
+                    style="width: 100%; margin-top: 15px;">Register Account</button>
+            </form>
+
+            <p class="auth-redirect">Existing collector? <a href="./login.html">Sign In Here</a></p>
+
+            <div id="registration-otp-section" style="display:none;">
+                <h2>Verify Your Email</h2>
+                <p class="auth-subtitle">Enter the 6-digit OTP sent to your email to activate your TimeVerse account.</p>
+                <form id="registration-otp-form">
+                    <div class="form-group">
+                        <label for="registration-otp" class="form-label">6-Digit OTP Code</label>
+                        <input type="text" id="registration-otp" class="form-control"
+                               maxlength="6" pattern="\d{6}" inputmode="numeric"
+                               placeholder="Enter OTP" required
+                               style="text-align:center; font-size:1.5rem; letter-spacing:5px;">
+                    </div>
+                    <button type="submit" class="btn-luxury btn-luxury-solid"
+                            style="width:100%; margin-top:15px;">Verify & Activate Account</button>
+                </form>
+                <p class="auth-redirect"><a href="./register.html">Start Again</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <!-- Page Specific Script for Toggle Password & Validation -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const togglePassword = document.getElementById("togglePassword");
+            const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+            const password = document.getElementById("password");
+            const confirmPassword = document.getElementById("confirm-password");
+            const form = document.getElementById("register-form");
+            const strengthBar = document.getElementById("strength-bar");
+            const strengthText = document.getElementById("strength-text");
+
+            if (togglePassword && password) {
+                togglePassword.addEventListener("click", function () {
+                    if (password.type === "password") {
+                        password.type = "text";
+                        this.textContent = "🚫";
+                    } else {
+                        password.type = "password";
+                        this.textContent = "👁️";
+                    }
+                });
+            }
+
+            if (toggleConfirmPassword && confirmPassword) {
+                toggleConfirmPassword.addEventListener("click", function () {
+                    if (confirmPassword.type === "password") {
+                        confirmPassword.type = "text";
+                        this.textContent = "🚫";
+                    } else {
+                        confirmPassword.type = "password";
+                        this.textContent = "👁️";
+                    }
+                });
+            }
+
+            // Strength bar typing indicator
+            password.addEventListener("input", function () {
+                const val = password.value;
+                let score = 0;
+                if (val.length >= 6) score += 25;
+                if (val.length >= 10) score += 25;
+                if (/[A-Z]/.test(val)) score += 25;
+                if (/[0-9\W]/.test(val)) score += 25;
+
+                strengthBar.style.width = score + "%";
+                if (score === 0) {
+                    strengthBar.style.width = "0%";
+                    strengthText.textContent = "Strength: Empty";
+                } else if (score <= 50) {
+                    strengthBar.style.backgroundColor = "var(--error)";
+                    strengthText.textContent = "Strength: Weak";
+                } else if (score <= 75) {
+                    strengthBar.style.backgroundColor = "var(--gold)";
+                    strengthText.textContent = "Strength: Moderate (Good)";
+                } else {
+                    strengthBar.style.backgroundColor = "var(--success)";
+                    strengthText.textContent = "Strength: Strong (Excellent)";
+                }
+
+                // Inline validation border triggers
+                if (val.length >= 6) {
+                    password.classList.remove("is-invalid");
+                    password.classList.add("is-valid");
+                } else {
+                    password.classList.remove("is-valid");
+                    password.classList.add("is-invalid");
+                }
+            });
+
+            // Confirm password inline match check
+            confirmPassword.addEventListener("input", function () {
+                if (confirmPassword.value === password.value && confirmPassword.value.length >= 6) {
+                    confirmPassword.classList.remove("is-invalid");
+                    confirmPassword.classList.add("is-valid");
+                } else {
+                    confirmPassword.classList.remove("is-valid");
+                    confirmPassword.classList.add("is-invalid");
+                }
+            });
+
+            // Intercept form submit and check matching
+            form.addEventListener("submit", function (e) {
+                if (password.value !== confirmPassword.value) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    showAlert("Passwords do not match. Please verify your password entry.", "error");
+                }
+            }, true); // useCapture = true to execute BEFORE auth.js submit listener
+        });
+    </script>
+</body>
+</html>

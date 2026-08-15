@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Customer Login</title>
+
+    <!-- Link Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+            padding: 100px 20px 40px 20px;
+        }
+
+        .auth-card {
+            background-color: var(--dark-gray);
+            border: var(--border);
+            padding: 50px 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--border-glow);
+        }
+
+        .auth-card h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .auth-subtitle {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 35px;
+        }
+
+        .auth-redirect {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+
+        .auth-redirect a {
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .auth-redirect a:hover {
+            color: var(--gold-light);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Holder -->
+    <header></header>
+
+    <div class="auth-container">
+        <div class="auth-card">
+
+            <!-- STEP 1: Enter Credentials -->
+            <div id="credentials-section">
+                <h2>Boutique Login</h2>
+                <p class="auth-subtitle">Verify credentials to secure your timepiece concierge.</p>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="enter your email" required
+                            autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Password</span>
+                            <a href="./forgot-password.html"
+                                style="color: var(--gold); font-size: 0.8rem; text-transform: none; letter-spacing: 0.5px;">
+                                Forgot Password?
+                            </a>
+                        </label>
+
+                        <div style="position: relative;">
+                            <input type="password" id="password" class="form-control" placeholder="Enter your password"
+                                required autocomplete="current-password" style="padding-right: 45px;">
+
+                            <span id="togglePassword" style="
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                font-size: 18px;
+                user-select: none;">
+                                👁️
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px; margin-bottom: 20px;">
+                        <input type="checkbox" id="remember-me" style="accent-color: var(--gold); width: 16px; height: 16px; cursor: pointer;">
+                        <label for="remember-me" style="color: var(--light-gray); font-size: 0.85rem; cursor: pointer; user-select: none; text-transform: none;">Remember Me</label>
+                    </div>
+
+                    <button type="submit" class="btn-luxury btn-luxury-solid"
+                        style="width: 100%; margin-top: 5px;">Login</button>
+                </form>
+
+                <p class="auth-redirect">New collector? <a href="./register.html">Create an Account</a></p>
+            </div>
+            <div style="margin-top:15px; text-align:center;">
+                <a href="./admin-login.html" style="color: var(--gold); font-weight:600;">
+                    Login as Admin
+                </a>
+            </div>
+
+            <!-- STEP 2: Enter OTP Code -->
+            <div id="otp-section" style="display: none;">
+                <h2>Verify Identity</h2>
+                <p class="auth-subtitle">A verification code has been dispatched. Enter the 6-digit OTP to authenticate.
+                </p>
+
+                <!-- Testing helper indicator -->
+                <div id="dev-otp-indicator"
+                    style="display: none; border: 1px dashed var(--gold); padding: 12px; margin-bottom: 25px; background-color: rgba(212, 175, 55, 0.05); font-size: 0.85rem; color: var(--gold-light); text-align: left;">
+                    🔧 Developer Mode: The OTP code is <strong>######</strong>
+                </div>
+
+                <form id="otp-form">
+                    <div class="form-group">
+                        <label for="otp" class="form-label">6-Digit OTP Code</label>
+                        <input type="text" id="otp" class="form-control" placeholder="xxxxxx" maxlength="6"
+                            pattern="\d{6}" required
+                            style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
+                    </div>
+
+                    <button type="submit" class="btn-luxury btn-luxury-solid"
+                        style="width: 100%; margin-top: 15px;">Verify & Login</button>
+                </form>
+
+                <p class="auth-redirect"><a href="./login.html">Back to Credentials</a></p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const togglePassword = document.getElementById("togglePassword");
+            const password = document.getElementById("password");
+
+            if (togglePassword && password) {
+                togglePassword.addEventListener("click", function () {
+                    if (password.type === "password") {
+                        password.type = "text";
+                        this.textContent = "🚫";
+                    } else {
+                        password.type = "password";
+                        this.textContent = "👁️";
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

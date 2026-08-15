@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Boutique Watch Collection</title>
+    
+    <!-- Link Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/product.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <!-- Header Holder -->
+    <header></header>
+
+    <!-- Page Header Hero -->
+    <section class="page-header">
+        <div class="container">
+            <h1>The Showroom</h1>
+            <div class="breadcrumbs">
+                <a href="./index.html">Home</a> &nbsp;/&nbsp; <span>Collection</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters and Grid Layout -->
+    <div class="container">
+        <div class="filter-layout">
+            
+            <!-- Sidebar Filters -->
+            <aside class="filter-sidebar glass-panel" style="border-radius: 12px; padding: 25px; box-shadow: var(--border-glow);">
+                <!-- Search widget inside sidebar for mobile cohesion -->
+                <div class="filter-widget">
+                    <h4 class="filter-widget-title">Search Showroom</h4>
+                    <div style="position: relative;">
+                        <input type="text" id="catalog-search" class="form-control" placeholder="Search timepieces...">
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="filter-widget">
+                    <h4 class="filter-widget-title">Categories</h4>
+                    <ul class="filter-categories-list" id="categories-list">
+                        <!-- Loaded dynamically from Category API -->
+                        <li class="filter-category-item"><span class="filter-category-link active">Loading...</span></li>
+                    </ul>
+                </div>
+
+                <!-- Price Filter -->
+                <div class="filter-widget">
+                    <h4 class="filter-widget-title">Filter by Price</h4>
+                    <div class="price-range-inputs">
+                        <input type="number" id="price-min" class="form-control" placeholder="Min (₹)" min="0">
+                        <input type="number" id="price-max" class="form-control" placeholder="Max (₹)" min="0">
+                    </div>
+                    <button class="btn-luxury btn-luxury-solid" id="apply-price-btn" style="width: 100%; margin-top: 15px; padding: 8px; font-size: 0.8rem;">Apply Price</button>
+                </div>
+
+                <!-- Stock Filter -->
+                <div class="filter-widget">
+                    <h4 class="filter-widget-title">Availability</h4>
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--light-gray);">
+                        <input type="checkbox" id="filter-instock" style="accent-color: var(--gold); width: 18px; height: 18px;">
+                        In Stock Only
+                    </label>
+                </div>
+            </aside>
+
+            <!-- Main catalog view -->
+            <main class="filter-main">
+                <div class="catalog-controls">
+                    <div>
+                        <!-- Counter or detail indicator can go here -->
+                        <span style="color: var(--light-gray);">Exquisite mechanical watches, handpicked for you.</span>
+                    </div>
+                    <div>
+                        <select id="catalog-sort" class="form-control" style="width: 220px; padding: 8px 15px; font-size: 0.85rem;">
+                            <option value="">Sort: Default</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name-asc">Alphabetical: A-Z</option>
+                            <option value="productId-desc">Newest First</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Products Display Grid -->
+                <div class="product-grid" id="catalog-products-grid">
+                    <!-- Cards injected dynamically by products.js -->
+                </div>
+
+                <!-- Pagination Container -->
+                <div class="pagination-container flex-between" id="catalog-pagination" style="margin-top: 50px; justify-content: center; gap: 8px;">
+                    <!-- Controls injected dynamically -->
+                </div>
+            </main>
+
+        </div>
+    </div>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Component Logic Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+    
+    <!-- Page Specific Script -->
+    <script src="../js/products.js"></script>
+</body>
+</html>
