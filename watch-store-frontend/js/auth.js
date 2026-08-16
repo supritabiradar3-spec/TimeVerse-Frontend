@@ -199,6 +199,28 @@
                         return;
                     }
 
+                    if (role === 'ADMIN') {
+                        console.log("LOGIN SUCCESS - admin flow, token exists:", !!response.data.token);
+
+                        if (response.data.role !== 'ADMIN' || !response.data.token) {
+                            showAlert('Admin login could not be completed.', 'error');
+                            return;
+                        }
+
+                        localStorage.setItem('token', response.data.token);
+                        localStorage.setItem('username', response.data.username);
+                        localStorage.setItem('email', response.data.email);
+                        localStorage.setItem('role', response.data.role);
+
+                        showAlert('Admin login successful!', 'success');
+
+                        setTimeout(() => {
+                            window.location.href = './admin.html';
+                        }, 700);
+
+                        return;
+                    }
+
 
 
                     console.log("LOGIN FALLBACK - showing OTP section");

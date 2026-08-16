@@ -750,12 +750,21 @@
 
             let html = '';
             customers.forEach(u => {
-                const userOrders = allCachedOrders.filter(o => o.userId === u.userId);
+                const seenOrderIds = new Set();
+                const userOrders = (allCachedOrders || []).filter(o => {
+                    if (!o || o.userId !== u.userId) return false;
+                    if (o.status && o.status.toUpperCase() === 'CANCELLED') return false;
+                    if (o.orderId) {
+                        if (seenOrderIds.has(o.orderId)) return false;
+                        seenOrderIds.add(o.orderId);
+                    }
+                    return true;
+                });
                 const orderCount = userOrders.length;
                 let spendingSum = 0;
                 let lastActive = 'N/A';
                 if (orderCount > 0) {
-                    userOrders.forEach(o => spendingSum += o.totalAmount);
+                    userOrders.forEach(o => spendingSum += Number(o.totalAmount || 0));
                     const dates = userOrders.map(o => new Date(o.createdAt));
                     const maxDate = new Date(Math.max(...dates));
                     lastActive = maxDate.toLocaleDateString('en-IN');
@@ -779,7 +788,7 @@
                         <td>
                             <div style="display:flex; gap: 8px;">
                                 <button class="btn-luxury view-customer-details-btn" data-id="${u.userId}" style="padding: 4px 8px; font-size: 0.75rem;">
-                                    Profile
+                                     Profile
                                 </button>
                                 <button class="btn-luxury" onclick="editUser(${u.userId}, '${u.username}', '${u.email}', '${u.role}')" style="padding: 4px 8px; font-size: 0.75rem; color: var(--gold);">
                                     Edit
@@ -813,7 +822,16 @@
         const body = document.getElementById('customer-modal-body');
         if (!modal || !body) return;
 
-        const userOrders = allCachedOrders.filter(o => o.userId === customer.userId);
+        const seenOrderIds = new Set();
+        const userOrders = (allCachedOrders || []).filter(o => {
+            if (!o || o.userId !== customer.userId) return false;
+            if (o.status && o.status.toUpperCase() === 'CANCELLED') return false;
+            if (o.orderId) {
+                if (seenOrderIds.has(o.orderId)) return false;
+                seenOrderIds.add(o.orderId);
+            }
+            return true;
+        });
         const orderCount = userOrders.length;
         let spendingSum = 0;
         let lastPurchaseDate = 'N/A';
@@ -824,7 +842,7 @@
 
         if (orderCount > 0) {
             userOrders.forEach(o => {
-                spendingSum += o.totalAmount;
+                spendingSum += Number(o.totalAmount || 0);
                 if (o.items) {
                     o.items.forEach(it => {
                         purchasedItems.push(`${it.productName} (x${it.quantity})`);
