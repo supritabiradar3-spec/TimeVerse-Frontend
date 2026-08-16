@@ -12,17 +12,107 @@
     <link rel="stylesheet" href="../css/responsive.css">
     
     <style>
+        /* Compact Premium Luxury Breadcrumb Banner for Cart Page */
+        .cart-page-header {
+            margin-top: 80px;
+            height: 200px;
+            min-height: 180px;
+            max-height: 230px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FBF9F5 0%, #F5F1E8 50%, #FAF8F5 100%);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.25);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        body:not(.light-theme) .cart-page-header {
+            background: linear-gradient(135deg, #0d0d0f 0%, #151518 50%, #0d0d0f 100%);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+        }
+
+        .cart-page-header .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cart-page-header h1 {
+            font-family: 'Cinzel', serif !important;
+            font-size: 2.3rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 3px !important;
+            text-transform: uppercase !important;
+            color: #121212 !important;
+            margin: 0 0 10px 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        body:not(.light-theme) .cart-page-header h1 {
+            color: #FFFFFF !important;
+        }
+
+        .cart-page-header .breadcrumbs {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 1.5px !important;
+            color: #6B6862 !important;
+            margin-top: 0 !important;
+            text-transform: uppercase !important;
+            font-weight: 500 !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body:not(.light-theme) .cart-page-header .breadcrumbs {
+            color: #94A3B8 !important;
+        }
+
+        .cart-page-header .breadcrumbs a {
+            color: #1F3A5F !important;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .cart-page-header .breadcrumbs a:hover {
+            color: #C5A059 !important;
+        }
+
+        body:not(.light-theme) .cart-page-header .breadcrumbs a {
+            color: #E8D7B3 !important;
+        }
+
+        .cart-page-header .breadcrumbs span.sep {
+            color: #C5A059 !important;
+            font-weight: 600;
+        }
+
+        .cart-page-header .breadcrumbs span.current {
+            color: #C5A059 !important;
+            font-weight: 600;
+        }
+
         /* Cart Page Specific Styles */
         .cart-wrapper {
             display: flex;
             gap: 40px;
             margin-top: 40px;
+            margin-bottom: 60px;
         }
 
         .cart-main {
             flex-grow: 1;
             background-color: var(--dark-gray);
             border: var(--border);
+            border-radius: 12px;
+            box-shadow: var(--border-glow);
             padding: 30px;
         }
 
@@ -31,8 +121,17 @@
             flex-shrink: 0;
             background-color: var(--dark-gray);
             border: var(--border);
+            border-radius: 12px;
+            box-shadow: var(--border-glow);
             padding: 30px;
             height: fit-content;
+        }
+
+        body.light-theme .cart-main,
+        body.light-theme .cart-summary {
+            background-color: #FFFFFF !important;
+            border: 1px solid #EAEAEA !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
         }
 
         .cart-table {
@@ -44,6 +143,11 @@
         .cart-table th, .cart-table td {
             padding: 15px 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        body.light-theme .cart-table td {
+            border-bottom: 1px solid #EAEAEA !important;
+            color: #1C1A17 !important;
         }
 
         .cart-table th {
@@ -63,6 +167,10 @@
             color: var(--light-gray);
         }
 
+        body.light-theme .summary-row {
+            color: #555555 !important;
+        }
+
         .summary-total {
             border-top: 1px solid rgba(212, 175, 55, 0.3);
             margin-top: 20px;
@@ -70,6 +178,10 @@
             font-size: 1.25rem;
             color: var(--white);
             font-weight: 600;
+        }
+
+        body.light-theme .summary-total {
+            color: #1C1A17 !important;
         }
 
         @media (max-width: 992px) {
@@ -81,6 +193,19 @@
                 width: 100%;
             }
         }
+
+        @media (max-width: 768px) {
+            .cart-page-header {
+                height: 170px;
+                min-height: 160px;
+            }
+            .cart-page-header h1 {
+                font-size: 1.75rem !important;
+            }
+            .cart-page-header .breadcrumbs {
+                font-size: 0.78rem !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -88,12 +213,12 @@
     <!-- Header Holder -->
     <header></header>
 
-    <!-- Page Header Hero -->
-    <section class="page-header">
+    <!-- Page Header Hero (Compact Luxury Breadcrumb Banner) -->
+    <section class="cart-page-header">
         <div class="container">
-            <h1>Shopping Bag</h1>
+            <h1>SHOPPING BAG</h1>
             <div class="breadcrumbs">
-                <a href="./index.html">Home</a> &nbsp;/&nbsp; <span>Cart</span>
+                <a href="./index.html">Home</a> <span class="sep">/</span> <span class="current">Cart</span>
             </div>
         </div>
     </section>
@@ -133,14 +258,6 @@
                     <span>Bag Subtotal</span>
                     <span id="summary-subtotal">₹0.00</span>
                 </div>
-                <div class="summary-row">
-                    <span>GST Tax (18%)</span>
-                    <span id="summary-gst">₹0.00</span>
-                </div>
-                <div class="summary-row">
-                    <span>Shipping Charges</span>
-                    <span id="summary-shipping">₹0.00</span>
-                </div>
                 <div class="summary-row" id="coupon-row" style="display: none; color: var(--success); font-weight: 500;">
                     <span>Promo Discount (10%)</span>
                     <span id="summary-discount">-₹0.00</span>
@@ -158,7 +275,7 @@
                         <input type="text" id="coupon-code-input" class="form-control" placeholder="e.g. TIMEVERSE10" style="padding: 10px; font-size: 0.85rem; border-radius: 0; text-transform: uppercase;">
                         <button id="apply-coupon-btn" class="btn-luxury" style="padding: 10px 15px; font-size: 0.75rem; white-space: nowrap;">Apply</button>
                     </div>
-                    <span id="coupon-message" style="font-size: 0.75rem; margin-top: 8px; display: block;"></span>
+                    <span id="coupon-message" style="font-size: 0.75rem; margin-top: 8px; display: none;"></span>
                 </div>
 
                 <a href="./checkout.html" class="btn-luxury btn-luxury-solid" style="width: 100%; text-align: center; display: block; margin-top: 25px;">Proceed to Checkout</a>

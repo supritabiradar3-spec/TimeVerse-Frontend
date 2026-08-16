@@ -203,7 +203,7 @@
                       <circle cx="12" cy="12" r="0.8" fill="currentColor" />
                       <path d="M19.5 11h1v2h-1z" fill="currentColor" />
                     </svg>
-                    <span>Time</span> Verse
+                    <span>TimeVerse</span>
                 </a>
                 
                 <button class="mobile-nav-toggle" id="mobile-toggle" aria-label="Toggle Menu">

@@ -14,6 +14,7 @@
             const cartItems = await api.getCart();
 
             if (!cartItems || cartItems.length === 0) {
+                localStorage.removeItem('cart_coupon_applied');
                 renderEmptyCart(cartContainer);
                 return;
             }
@@ -27,7 +28,7 @@
 
                 const formattedPrice = formatCurrency(item.price);
                 const formattedSubtotal = formatCurrency(itemSubtotal);
-                const fallbackImg = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=150';
+                const fallbackImg = 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=150';
                 const imageSrc = item.imageUrl || fallbackImg;
 
                 tbodyHTML += `
@@ -37,7 +38,7 @@
                                 <img src="${imageSrc}" alt="${item.productName}" style="width: 72px; height: 72px; max-width: 72px; max-height: 72px; object-fit: contain; background: #151515; border: var(--border); padding: 5px;" onerror="this.src='${fallbackImg}'">
                                 <div>
                                     <h4 class="luxury-text" style="font-size: 0.95rem; margin-bottom: 5px;">
-                                        <a href="./product-details.html?id=${item.productId}">${item.productName}</a>
+                                        <a href="./product-details.html?id=${item.productId}">${window.resolveProductName ? window.resolveProductName(item.productName, item.productId) : item.productName}</a>
                                     </h4>
                                     <span style="font-size: 0.8rem; color: var(--light-gray);">ID: ${item.productId}</span>
                                 </div>
@@ -81,6 +82,20 @@
 
     // Render empty cart layout
     function renderEmptyCart(container) {
+        localStorage.removeItem('cart_coupon_applied');
+        const applyBtn = document.getElementById('apply-coupon-btn');
+        const couponMsg = document.getElementById('coupon-message');
+        const couponInput = document.getElementById('coupon-code-input');
+        if (applyBtn) {
+            applyBtn.textContent = 'Apply';
+            applyBtn.disabled = false;
+        }
+        if (couponMsg) {
+            couponMsg.textContent = '';
+            couponMsg.style.display = 'none';
+        }
+        if (couponInput) couponInput.value = '';
+
         container.innerHTML = `
             <div style="text-align: center; padding: 80px 20px; border: var(--border); background-color: var(--dark-gray);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="var(--gold)" class="bi bi-bag-x" viewBox="0 0 16 16" style="margin-bottom: 20px;">
@@ -96,22 +111,17 @@
 
     // Calculate totals
     function calculateAndRenderTotals(subtotal) {
-        const gst = subtotal * 0.18;
-        const shipping = subtotal > 100000 ? 0 : (subtotal > 0 ? 500 : 0);
-        
         // Compute coupon discount
         const applied = localStorage.getItem('cart_coupon_applied') === 'true';
-        const discount = applied ? subtotal * 0.10 : 0;
-        const grandTotal = subtotal + gst + shipping - discount;
+        const discount = applied ? (subtotal * 0.10) : 0;
+        const grandTotal = Math.max(0, subtotal - discount);
 
         document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
-        document.getElementById('summary-gst').textContent = formatCurrency(gst);
-        document.getElementById('summary-shipping').textContent = shipping === 0 ? 'Free' : formatCurrency(shipping);
         
         const couponRow = document.getElementById('coupon-row');
         const discountVal = document.getElementById('summary-discount');
         if (couponRow && discountVal) {
-            if (applied) {
+            if (applied && discount > 0) {
                 discountVal.textContent = '-' + formatCurrency(discount);
                 couponRow.style.display = 'flex';
             } else {
@@ -122,16 +132,18 @@
         document.getElementById('summary-grandtotal').textContent = formatCurrency(grandTotal);
 
         // Store grand total in local storage for checkout
-        localStorage.setItem('checkout_grand_total', grandTotal.toString());
+        localStorage.setItem('checkout_grand_total', grandTotal.toFixed(2));
     }
 
     // Helper: format currency
     function formatCurrency(amount) {
+        const num = Number(amount) || 0;
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
             currency: 'INR',
-            maximumFractionDigits: 0
-        }).format(amount);
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(num);
     }
 
     // Attach actions on DOM buttons
@@ -233,23 +245,62 @@
             const couponMsg = document.getElementById('coupon-message');
             
             if (applyBtn && couponInput) {
+                // Ensure initial hidden state
+                if (couponMsg) {
+                    couponMsg.textContent = '';
+                    couponMsg.style.display = 'none';
+                }
+
                 applyBtn.addEventListener('click', () => {
                     const code = couponInput.value.trim().toUpperCase();
                     if (code === 'TIMEVERSE10') {
                         localStorage.setItem('cart_coupon_applied', 'true');
+                        applyBtn.textContent = 'Applied ✓';
+                        applyBtn.disabled = true;
                         if (couponMsg) {
-                            couponMsg.style.color = 'var(--success)';
-                            couponMsg.textContent = 'Promo Code applied! 10% discount subtracted.';
+                            couponMsg.style.display = 'block';
+                            couponMsg.style.setProperty('color', '#39FF14', 'important');
+                            couponMsg.textContent = 'Coupon applied! You got 10% OFF.';
                         }
                         loadCart();
                     } else if (code === '') {
                         localStorage.removeItem('cart_coupon_applied');
-                        if (couponMsg) couponMsg.textContent = '';
+                        applyBtn.textContent = 'Apply';
+                        applyBtn.disabled = false;
+                        if (couponMsg) {
+                            couponMsg.textContent = '';
+                            couponMsg.style.display = 'none';
+                        }
                         loadCart();
                     } else {
+                        localStorage.removeItem('cart_coupon_applied');
+                        applyBtn.textContent = 'Apply';
+                        applyBtn.disabled = false;
                         if (couponMsg) {
-                            couponMsg.style.color = 'var(--error)';
-                            couponMsg.textContent = 'Invalid privilege code.';
+                            couponMsg.style.display = 'block';
+                            couponMsg.style.setProperty('color', '#EF4444', 'important');
+                            couponMsg.textContent = 'Invalid coupon code.';
+                        }
+                        loadCart();
+                    }
+                });
+
+                couponInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (!applyBtn.disabled) {
+                            applyBtn.click();
+                        }
+                    }
+                });
+
+                couponInput.addEventListener('input', () => {
+                    if (applyBtn.disabled && couponInput.value.trim().toUpperCase() !== 'TIMEVERSE10') {
+                        applyBtn.textContent = 'Apply';
+                        applyBtn.disabled = false;
+                        if (couponMsg) {
+                            couponMsg.textContent = '';
+                            couponMsg.style.display = 'none';
                         }
                     }
                 });
@@ -257,10 +308,8 @@
                 // Show status on load
                 if (localStorage.getItem('cart_coupon_applied') === 'true') {
                     couponInput.value = 'TIMEVERSE10';
-                    if (couponMsg) {
-                        couponMsg.style.color = 'var(--success)';
-                        couponMsg.textContent = 'Promo Code applied! 10% discount subtracted.';
-                    }
+                    applyBtn.textContent = 'Applied ✓';
+                    applyBtn.disabled = true;
                 }
             }
         }

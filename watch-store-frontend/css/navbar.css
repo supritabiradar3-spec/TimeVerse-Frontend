@@ -37,14 +37,13 @@ header.scrolled .container {
     font-family: var(--font-title);
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--white);
-    letter-spacing: 3px;
+    color: #1F3A5F;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
 }
 
 .logo span {
-    color: var(--gold);
-    margin-right: 5px;
+    color: #1F3A5F;
 }
 
 /* Nav Menu */

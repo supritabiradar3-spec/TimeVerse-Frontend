@@ -208,7 +208,9 @@
                 const product = await api.getProductById(productId);
                 
                 // Renders details
-                watchName.textContent = product.name;
+                const displayName = window.resolveProductName ? window.resolveProductName(product.name, product.productId) : (product.name && product.name.trim().toLowerCase() === 'titan neo updated' ? 'Titan Neo' : product.name);
+                watchName.textContent = displayName;
+                document.title = `TimeVerse | ${displayName}`;
                 refId.textContent = `#TV-PROD-${product.productId}`;
                 categoryLabel.textContent = CATEGORY_MAP[product.categoryId] || 'Curated Timepiece';
                 watchDesc.textContent = product.description || 'No description available for this timepiece.';
@@ -296,7 +298,8 @@
                 const similarGrid = document.getElementById('similar-products-grid');
                 if (similarGrid && product.categoryId) {
                     try {
-                        const allProducts = await api.getAllProducts();
+                        const response = await api.getAllProducts();
+                        const allProducts = Array.isArray(response) ? response : (response && (response.content || response.data) ? (response.content || response.data) : []);
                         const similar = allProducts.filter(p => p.categoryId === product.categoryId && p.productId !== product.productId).slice(0, 3);
                         let simHtml = '';
                         if (similar.length > 0) {
@@ -334,7 +337,7 @@
                     imageUrls = product.imageUrls.map(url => resolver(url));
                 }
 
-                const fallbackImg = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600';
+                const fallbackImg = 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=600';
                 
                 if (imageUrls.length > 0) {
                     // Set primary image

@@ -9,10 +9,11 @@
         return;
     }
 
+    let userRole = "ADMIN";
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        const role = (payload.role || '').toUpperCase().replace(/^ROLE_/, '');
-        if (role !== "ADMIN") {
+        userRole = (payload.role || '').toUpperCase().replace(/^ROLE_/, '');
+        if (userRole !== "ADMIN" && userRole !== "SUPER_ADMIN") {
             window.location.href = "../index.html";
             return;
         }
@@ -228,8 +229,8 @@
     function renderDashboardCharts(products, orders, categories) {
         const categoryMap = buildCategoryNameMap(categories);
         
-        // Filter out cancelled orders from all dashboard charts and graphs
-        const activeOrders = orders.filter(order => !order.status || order.status.toUpperCase() !== 'CANCELLED');
+        // Filter out cancelled and unpaid orders from all dashboard charts and graphs
+        const activeOrders = orders.filter(order => order && order.status && !['CANCELLED', 'PLACED', 'PENDING', 'CREATED'].includes(order.status.toUpperCase().trim()));
 
         const monthlyRevenue = Array.from({ length: 6 }, (_, i) => {
             const date = new Date();
@@ -332,19 +333,24 @@
 
     async function loadDashboard() {
         try {
-            allCachedProducts = await api.getAllProducts();
-            allCachedOrders = await api.getAllOrders();
-            const categoriesRes = await api.getCategories();
+            const [productsRes, ordersRes, categoriesRes, usersRes] = await Promise.all([
+                api.getAllProducts(),
+                api.getAllOrders(),
+                api.getCategories(),
+                api.getAllUsers()
+            ]);
+
+            allCachedProducts = Array.isArray(productsRes) ? productsRes : (productsRes && productsRes.data ? productsRes.data : []);
+            allCachedOrders = Array.isArray(ordersRes) ? ordersRes : (ordersRes && ordersRes.data ? ordersRes.data : []);
             allCachedCategories = categoriesRes.data || categoriesRes || [];
-            const usersRes = await api.getAllUsers();
             allCachedUsers = usersRes.data || [];
 
             const customerIds = new Set(allCachedUsers.filter(u => u && (u.role || '').toUpperCase() === 'CUSTOMER').map(u => u.userId));
             const customerOrders = allCachedOrders.filter(order => order && order.userId && customerIds.has(order.userId));
             const customers = allCachedUsers.filter(user => user && (user.role || '').toUpperCase() === 'CUSTOMER');
 
-            // Apply status filter for active revenue-generating orders
-            const revenueOrders = customerOrders.filter(order => !order.status || order.status.toUpperCase() !== 'CANCELLED');
+            // Apply status filter for active revenue-generating orders (exclude cancelled and unpaid)
+            const revenueOrders = customerOrders.filter(order => order && order.status && !['CANCELLED', 'PLACED', 'PENDING', 'CREATED'].includes(order.status.toUpperCase().trim()));
 
             const revenueSum = revenueOrders.reduce((sum, order) => sum + Number(order.totalAmount || 0), 0);
             const lowStock = allCachedProducts.filter(product => Number(product.stock || 0) < 5).length;
@@ -547,13 +553,21 @@
         if (!tbody) return;
 
         try {
-            allCachedOrders = await api.getAllOrders();
-            const usersRes = await api.getAllUsers();
+            const [ordersRes, usersRes] = await Promise.all([
+                api.getAllOrders(),
+                api.getAllUsers()
+            ]);
+
+            allCachedOrders = Array.isArray(ordersRes) ? ordersRes : (ordersRes && ordersRes.data ? ordersRes.data : []);
             allCachedUsers = usersRes.data || [];
 
-            // Filter dashboard orders so only orders belonging to current CUSTOMER user IDs are included safely
+            // Filter dashboard orders so only orders belonging to current CUSTOMER user IDs and paid/confirmed or cancelled are included
             const customerIds = new Set(allCachedUsers.filter(u => u && (u.role || '').toUpperCase() === 'CUSTOMER').map(u => u.userId));
-            const customerOrders = allCachedOrders.filter(o => o && o.userId && customerIds.has(o.userId));
+            const customerOrders = allCachedOrders.filter(o => {
+                if (!o || !o.userId || !customerIds.has(o.userId) || !o.status) return false;
+                const s = String(o.status).toUpperCase().trim();
+                return s !== 'PLACED' && s !== 'PENDING' && s !== 'CREATED';
+            });
 
             if (customerOrders.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 30px; color: var(--light-gray);">No customer orders placed yet.</td></tr>`;
@@ -752,8 +766,9 @@
             customers.forEach(u => {
                 const seenOrderIds = new Set();
                 const userOrders = (allCachedOrders || []).filter(o => {
-                    if (!o || o.userId !== u.userId) return false;
-                    if (o.status && o.status.toUpperCase() === 'CANCELLED') return false;
+                    if (!o || o.userId !== u.userId || !o.status) return false;
+                    const s = String(o.status).toUpperCase().trim();
+                    if (s === 'CANCELLED' || s === 'PLACED' || s === 'PENDING' || s === 'CREATED') return false;
                     if (o.orderId) {
                         if (seenOrderIds.has(o.orderId)) return false;
                         seenOrderIds.add(o.orderId);
@@ -945,9 +960,122 @@
         return 'badge-gold';
     }
 
+    function setupRoleBasedSidebar() {
+        const isSuperAdmin = userRole === 'SUPER_ADMIN';
+        const superAdminBtns = document.querySelectorAll('.superadmin-sidebar-btn');
+        const normalAdminOnlyPages = ['categories', 'products', 'orders', 'customers', 'inventory', 'reviews', 'settings'];
+
+        if (isSuperAdmin) {
+            superAdminBtns.forEach(btn => {
+                if (btn) btn.style.display = 'flex';
+            });
+            normalAdminOnlyPages.forEach(p => {
+                const btn = document.getElementById(p + '-btn');
+                if (btn) btn.style.display = 'none';
+            });
+        } else {
+            superAdminBtns.forEach(btn => {
+                if (btn) btn.style.display = 'none';
+            });
+            normalAdminOnlyPages.forEach(p => {
+                const btn = document.getElementById(p + '-btn');
+                if (btn) btn.style.display = 'flex';
+            });
+        }
+    }
+
+    async function loadAdminManagement() {
+        const tbody = document.getElementById('admin-mgmt-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--light-gray);">Loading administrators...</td></tr>';
+
+        try {
+            const resp = await api.getAdmins();
+            const admins = (resp && resp.data) ? resp.data : (Array.isArray(resp) ? resp : []);
+
+            if (!admins.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--light-gray);">No administrator accounts found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = admins.map(admin => {
+                const createdDate = admin.createdAt ? new Date(admin.createdAt).toLocaleDateString('en-IN', {
+                    day: 'numeric', month: 'short', year: 'numeric'
+                }) : 'N/A';
+                const name = admin.fullName || admin.username || 'Administrator';
+                return `
+                    <tr>
+                        <td><strong>#${admin.userId}</strong></td>
+                        <td><strong>${name}</strong></td>
+                        <td>${admin.email}</td>
+                        <td><span class="badge badge-gold" style="font-weight: 700;">${admin.role || 'ADMIN'}</span></td>
+                        <td>${createdDate}</td>
+                    </tr>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error('Error loading admins:', err);
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px; color: #ef4444;">Failed to load administrators: ${err.message || 'Unauthorized or server error.'}</td></tr>`;
+        }
+    }
+
+    async function loadTodayEarnings() {
+        const earningsEl = document.getElementById('superadmin-today-earnings');
+        const ordersCountEl = document.getElementById('superadmin-today-orders-count');
+        const badgeEl = document.getElementById('today-date-badge');
+        const tbody = document.getElementById('today-orders-tbody');
+
+        const now = new Date();
+        const dateString = now.toLocaleDateString('en-IN', {
+            day: 'numeric', month: 'short', year: 'numeric'
+        }).toUpperCase();
+        if (badgeEl) badgeEl.textContent = `TODAY - ${dateString}`;
+
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--light-gray);">Loading today\'s earnings...</td></tr>';
+
+        try {
+            const resp = await api.getTodayEarnings();
+            const data = (resp && resp.data) ? resp.data : resp;
+
+            const earnings = Number(data.todayEarnings || 0);
+            const count = data.paidOrdersCount || (data.paidOrders ? data.paidOrders.length : 0);
+            const orders = data.paidOrders || [];
+
+            if (earningsEl) earningsEl.textContent = formatCurrency(earnings);
+            if (ordersCountEl) ordersCountEl.textContent = count;
+
+            if (tbody) {
+                if (!orders.length) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--light-gray);">No paid orders recorded today yet.</td></tr>';
+                } else {
+                    tbody.innerHTML = orders.map(order => {
+                        const timeStr = order.createdAt ? new Date(order.createdAt).toLocaleTimeString('en-IN', {
+                            hour: '2-digit', minute: '2-digit'
+                        }) : 'Today';
+                        const statusClass = getStatusBadgeClass(order.status);
+                        return `
+                            <tr>
+                                <td><strong>#${order.orderId}</strong></td>
+                                <td>#${order.userId}</td>
+                                <td><strong style="color: #1F3A5F;">${formatCurrency(order.totalAmount)}</strong></td>
+                                <td><span class="badge ${statusClass}">${order.status || 'CONFIRMED'}</span></td>
+                                <td>${timeStr}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+        } catch (err) {
+            console.error('Error loading today earnings:', err);
+            if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px; color: #ef4444;">Failed to calculate today's earnings: ${err.message || 'Unauthorized.'}</td></tr>`;
+        }
+    }
+
     // Initialize DOM handlers
     document.addEventListener('DOMContentLoaded', function () {
         if (document.getElementById('admin-orders-tbody')) {
+            setupRoleBasedSidebar();
+
             const pages = [
                 "dashboard",
                 "categories",
@@ -957,7 +1085,9 @@
                 "inventory",
                 "analytics",
                 "reviews",
-                "settings"
+                "settings",
+                "admin-mgmt",
+                "today-earnings"
             ];
 
             pages.forEach(page => {
@@ -986,8 +1116,71 @@
                     if (page === "analytics") loadDashboard();
                     if (page === "reviews") loadAdminReviews();
                     if (page === "settings") loadStoreSettingsForm();
+                    if (page === "admin-mgmt") loadAdminManagement();
+                    if (page === "today-earnings") loadTodayEarnings();
                 });
             });
+
+            // Super Admin Create Admin Modal Bindings
+            const openCreateAdminBtn = document.getElementById('open-create-admin-modal-btn');
+            const createAdminModal = document.getElementById('create-admin-modal');
+            const closeCreateAdminBtn = document.getElementById('close-create-admin-modal-btn');
+            const cancelCreateAdminBtn = document.getElementById('cancel-create-admin-btn');
+            const createAdminForm = document.getElementById('create-admin-form');
+
+            if (openCreateAdminBtn && createAdminModal) {
+                openCreateAdminBtn.addEventListener('click', () => {
+                    if (createAdminForm) createAdminForm.reset();
+                    createAdminModal.style.display = 'flex';
+                });
+            }
+
+            const closeCreateAdminModal = () => {
+                if (createAdminModal) createAdminModal.style.display = 'none';
+            };
+
+            if (closeCreateAdminBtn) closeCreateAdminBtn.addEventListener('click', closeCreateAdminModal);
+            if (cancelCreateAdminBtn) cancelCreateAdminBtn.addEventListener('click', closeCreateAdminModal);
+            if (createAdminModal) {
+                createAdminModal.addEventListener('click', (e) => {
+                    if (e.target === createAdminModal) closeCreateAdminModal();
+                });
+            }
+
+            if (createAdminForm) {
+                createAdminForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const fullName = document.getElementById('admin-fullname-input').value.trim();
+                    const email = document.getElementById('admin-email-input').value.trim();
+                    const password = document.getElementById('admin-password-input').value;
+                    const confirmPassword = document.getElementById('admin-confirm-password-input').value;
+
+                    if (!fullName || !email || !password || !confirmPassword) {
+                        showAlert('Please fill in all required fields.', 'error');
+                        return;
+                    }
+
+                    if (password.length < 6) {
+                        showAlert('Password must be at least 6 characters.', 'error');
+                        return;
+                    }
+
+                    if (password !== confirmPassword) {
+                        showAlert('Passwords do not match.', 'error');
+                        return;
+                    }
+
+                    try {
+                        await api.createAdmin({ fullName, email, password, confirmPassword });
+                        showAlert(`Admin "${fullName}" created successfully!`, 'success');
+                        closeCreateAdminModal();
+                        createAdminForm.reset();
+                        loadAdminManagement();
+                    } catch (err) {
+                        showAlert(`Failed to create admin: ${err.message}`, 'error');
+                    }
+                });
+            }
 
             // Simple hash router for navbar navigation links
             function handleHashChange() {

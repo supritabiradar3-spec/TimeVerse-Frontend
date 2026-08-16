@@ -868,11 +868,11 @@
             box-shadow: 0 8px 24px rgba(31, 58, 95, 0.2) !important;
         }
 
-        /* TIME VERSE Logo styling */
+        /* TimeVerse Logo styling */
         .sidebar-title,
         header .logo,
         header .logo span {
-            color: #A67C52 !important;
+            color: #1F3A5F !important;
         }
 
         /* Accent & Buttons Styling */
@@ -1151,6 +1151,17 @@
                 <button class="sidebar-btn" id="settings-btn">
                     <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 5.5A2.5 2.5 0 1 1 8 10.5 2.5 2.5 0 0 1 8 5.5zm6.37 2.5-.9-.33a5.84 5.84 0 0 0-.62-1.5l.52-.8a.5.5 0 0 0-.05-.64l-1.1-1.1a.5.5 0 0 0-.64-.05l-.8.52a5.63 5.63 0 0 0-1.5-.62L9.5 1.63a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5l-.33.9a5.84 5.84 0 0 0-1.5.62l-.8-.52a.5.5 0 0 0-.64.05L2.14 3.78a.5.5 0 0 0-.05.64l.52.8c-.28.47-.5.97-.62 1.5l-.9.33a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5l.9.33c.12.53.34 1.03.62 1.5l-.52.8a.5.5 0 0 0 .05.64l1.1 1.1a.5.5 0 0 0 .64.05l.8-.52c.47.28.97.5 1.5.62l.33.9a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5l.33-.9c.53-.12 1.03-.34 1.5-.62l.8.52a.5.5 0 0 0 .64-.05l1.1-1.1a.5.5 0 0 0 .05-.64l-.52-.8c.28-.47.5-.97.62-1.5l.9-.33a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5z"/></svg>
                     <span>Settings</span>
+                </button>
+
+                <!-- Super Admin Dedicated Sidebar Controls (Visible Only to SUPER_ADMIN) -->
+                <button class="sidebar-btn superadmin-sidebar-btn" id="admin-mgmt-btn" style="display: none;">
+                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 8 10c-.289 0-1.516.68-2.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/></svg>
+                    <span>Admin Management</span>
+                </button>
+
+                <button class="sidebar-btn superadmin-sidebar-btn" id="today-earnings-btn" style="display: none;">
+                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.253-.33-1.806-.826-1.806-1.745 0-1.013.844-1.821 2.083-1.954v3.743l-.277-.044zm1.844 2.833c1.378.368 1.954.898 1.954 1.884 0 1.077-.88 1.88-2.228 1.986V9.822l.274.056z"/></svg>
+                    <span>Today's Earnings</span>
                 </button>
 
                 <button class="sidebar-btn" onclick="logout()" style="margin-top: auto;">
@@ -1582,9 +1593,142 @@
                     </div>
                 </section>
 
+                <!-- SUPER ADMIN: ADMIN MANAGEMENT SECTION -->
+                <section id="admin-mgmt-section" style="display: none;">
+                    <div class="dashboard-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 30px;">
+                        <div>
+                            <h1 class="luxury-text" style="margin: 0; font-size: 1.8rem; font-weight: 700; color: #000000; text-transform: uppercase; letter-spacing: 1.5px; font-family: 'Poppins', sans-serif;">Admin Management</h1>
+                            <p style="color: #6B6A67; font-size: 0.88rem; margin-top: 4px;">Authorized Super Admin Portal — Manage Administrator Accounts</p>
+                        </div>
+                        <button class="btn-luxury btn-luxury-solid" id="open-create-admin-modal-btn" style="padding: 11px 22px; font-size: 0.85rem; border-radius: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                            ➕ Add New Admin
+                        </button>
+                    </div>
 
+                    <div class="admin-list-col" style="border-radius: 12px; box-shadow: var(--border-glow); overflow: hidden; background: #FFFFFF; padding: 24px;">
+                        <h3 class="luxury-text" style="color: var(--gold); margin-bottom: 20px; font-size: 1.1rem;">
+                            Administrator Accounts
+                        </h3>
+                        <div style="overflow-x: auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Admin ID</th>
+                                        <th>Full Name</th>
+                                        <th>Email Address</th>
+                                        <th>Role</th>
+                                        <th>Created Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-mgmt-tbody">
+                                    <tr>
+                                        <td colspan="5" style="text-align:center; padding: 30px; color: var(--light-gray);">
+                                            Loading administrators...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SUPER ADMIN: TODAY'S EARNINGS SECTION -->
+                <section id="today-earnings-section" style="display: none;">
+                    <div class="dashboard-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 30px;">
+                        <div>
+                            <h1 class="luxury-text" style="margin: 0; font-size: 1.8rem; font-weight: 700; color: #000000; text-transform: uppercase; letter-spacing: 1.5px; font-family: 'Poppins', sans-serif;">Today's Earnings</h1>
+                            <p style="color: #6B6A67; font-size: 0.88rem; margin-top: 4px;">Real-Time Store-Wide Revenue Metrics for Today</p>
+                        </div>
+                        <div id="today-date-badge" style="background: #1F3A5F; color: #FFFFFF; font-weight: 700; font-size: 0.85rem; padding: 8px 16px; border-radius: 6px; letter-spacing: 1px;">
+                            TODAY
+                        </div>
+                    </div>
+
+                    <div class="metric-grid" style="margin-bottom: 30px;">
+                        <div class="metric-card" style="border-left: 4px solid #1F3A5F;">
+                            <h3>Store-Wide Revenue Today</h3>
+                            <h2 id="superadmin-today-earnings" style="color: #1F3A5F; font-size: 2.4rem;">₹0</h2>
+                            <p style="font-size: 0.8rem; color: #6B6A67; margin-top: 6px;">Excludes cancelled, refunded, &amp; failed orders</p>
+                        </div>
+                        <div class="metric-card" style="border-left: 4px solid var(--gold);">
+                            <h3>Completed / Paid Orders Today</h3>
+                            <h2 id="superadmin-today-orders-count">0</h2>
+                            <p style="font-size: 0.8rem; color: #6B6A67; margin-top: 6px;">Total successfully paid transactions</p>
+                        </div>
+                    </div>
+
+                    <div class="admin-list-col" style="border-radius: 12px; box-shadow: var(--border-glow); overflow: hidden; background: #FFFFFF; padding: 24px;">
+                        <h3 class="luxury-text" style="color: var(--gold); margin-bottom: 20px; font-size: 1.1rem;">
+                            Today's Transaction Log
+                        </h3>
+                        <div style="overflow-x: auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>User ID</th>
+                                        <th>Total Paid Amount</th>
+                                        <th>Order Status</th>
+                                        <th>Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="today-orders-tbody">
+                                    <tr>
+                                        <td colspan="5" style="text-align:center; padding: 30px; color: var(--light-gray);">
+                                            Loading today's orders...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
 
             </main>
+        </div>
+
+        <!-- ================= CREATE NEW ADMIN MODAL ================= -->
+        <div class="modal-overlay" id="create-admin-modal" style="display: none;">
+            <div class="modal-content" style="max-width: 480px; text-align: left;">
+                <button class="close-btn" id="close-create-admin-modal-btn">&times;</button>
+                <h3 class="luxury-text" style="font-size: 1.3rem; margin-bottom: 8px; color: #1F3A5F; font-weight: 700; text-transform: uppercase;">
+                    + Add New Administrator
+                </h3>
+                <p style="color: #6B6A67; font-size: 0.85rem; margin-bottom: 24px;">
+                    Create a new authenticated administrator account with automatic <strong>ADMIN</strong> role permissions.
+                </p>
+
+                <form id="create-admin-form">
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label class="form-label" style="font-weight: 600; font-size: 0.88rem;">Full Name *</label>
+                        <input type="text" id="admin-fullname-input" class="form-control" placeholder="e.g. John Doe" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label class="form-label" style="font-weight: 600; font-size: 0.88rem;">Gmail / Email Address *</label>
+                        <input type="email" id="admin-email-input" class="form-control" placeholder="admin@timeverse.com" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label class="form-label" style="font-weight: 600; font-size: 0.88rem;">Password * (min. 6 characters)</label>
+                        <input type="password" id="admin-password-input" class="form-control" placeholder="••••••••" required minlength="6">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label class="form-label" style="font-weight: 600; font-size: 0.88rem;">Confirm Password *</label>
+                        <input type="password" id="admin-confirm-password-input" class="form-control" placeholder="••••••••" required minlength="6">
+                    </div>
+
+                    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 10px;">
+                        <button type="button" id="cancel-create-admin-btn" class="btn-luxury" style="padding: 10px 20px; font-size: 0.85rem; border: 1px solid #ccc; background: #F5F5F5; color: #333; cursor: pointer; border-radius: 6px;">
+                            Cancel
+                        </button>
+                        <button type="submit" id="submit-create-admin-btn" class="btn-luxury btn-luxury-solid" style="padding: 10px 24px; font-size: 0.85rem; background: #1F3A5F; color: #FFFFFF; border: 1px solid #1F3A5F; cursor: pointer; border-radius: 6px; font-weight: 600;">
+                            Create Admin
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- ================= EDIT MODAL OVERLAY ================= -->

@@ -45,16 +45,22 @@
 
             const response = await api.getUserOrders(userId);
 
-            if (!response || response.length === 0) {
+            const visibleOrders = (response || []).filter(order => {
+                if (!order || !order.status) return false;
+                const s = String(order.status).toUpperCase().trim();
+                return s !== 'PLACED' && s !== 'PENDING' && s !== 'CREATED';
+            });
+
+            if (visibleOrders.length === 0) {
                 renderEmptyOrders(ordersContainer);
                 return;
             }
 
             // Sort orders: newest first
-            response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            visibleOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             let ordersHTML = '';
-            response.forEach(order => {
+            visibleOrders.forEach(order => {
                 const orderDate = new Date(order.createdAt);
                 const formattedDate = orderDate.toLocaleDateString('en-IN', {
                     year: 'numeric',
@@ -108,7 +114,7 @@
                             maximumFractionDigits: 0
                         }).format(item.price);
                         
-                        const fallbackImg = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=150';
+                        const fallbackImg = 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=150';
                         const imgSrc = productMap[item.productId] || fallbackImg;
                         
                         itemsHTML += `
@@ -175,7 +181,7 @@
                 }
 
                 ordersHTML += `
-                    <div class="glass-card" style="margin-bottom: 30px; padding: 25px; border-radius: 12px; box-shadow: var(--border-glow);">
+                    <div class="glass-card order-card-item" style="margin-bottom: 30px; padding: 25px; border-radius: 12px; box-shadow: var(--border-glow); transition: all 0.3s ease; border: 1px solid rgba(212, 175, 55, 0.25);" onmouseover="this.style.borderColor='var(--gold)';" onmouseout="this.style.borderColor='rgba(212, 175, 55, 0.25)';">
                         <div class="flex-between" style="border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                             <div>
                                 <span style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;">Order Reference</span>
@@ -198,16 +204,21 @@
                             ${timelineHTML}
                         </div>
 
-                        <div class="flex-between" style="flex-wrap: wrap; gap: 15px;">
+                        <div class="flex-between" style="flex-wrap: wrap; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 18px;">
                             <div>
-                                <span style="font-size: 0.85rem; color: var(--light-gray); margin-right: 5px;">Payment Status:</span>
+                                <span style="font-size: 0.85rem; color: var(--light-gray); margin-right: 5px;">Payment:</span>
                                 <span class="badge ${paymentStatusClass}">${paymentStatusText}</span>
                                 <span style="font-size: 0.85rem; color: var(--light-gray); margin-left: 15px; margin-right: 5px;">Est. Delivery:</span>
                                 <span style="font-size: 0.9rem; color: var(--white); font-weight: 500;">${formattedDelivery}</span>
                             </div>
-                            <div style="display: flex; align-items: baseline; gap: 10px;">
-                                <span style="font-size: 0.9rem; color: var(--light-gray);">Total Amount:</span>
-                                <span style="font-size: 1.4rem; color: var(--gold-light); font-weight: 600;">${formattedTotal}</span>
+                            <div style="display: flex; align-items: center; gap: 18px;">
+                                <div style="display: flex; align-items: baseline; gap: 8px;">
+                                    <span style="font-size: 0.85rem; color: var(--light-gray);">Total:</span>
+                                    <span style="font-size: 1.3rem; color: var(--gold-light); font-weight: 600;">${formattedTotal}</span>
+                                </div>
+                                <a href="./order-details.html?orderId=${order.orderId}" class="btn-luxury" style="padding: 7px 15px; font-size: 0.75rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
+                                    View Details & Tracking &rarr;
+                                </a>
                             </div>
                         </div>
                     </div>

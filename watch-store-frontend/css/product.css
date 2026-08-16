@@ -28,7 +28,7 @@
 
 .product-card-img-container {
     position: relative;
-    height: 240px;
+    height: 250px;
     width: 100%;
     overflow: hidden;
     background-color: #151515;
@@ -37,19 +37,67 @@
     justify-content: center;
 }
 
-.product-card-img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    padding: 16px;
-    box-sizing: border-box;
-    transition: var(--transition);
+.product-card-img-container a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.product-card:hover .product-card-img {
-    transform: scale(1.08);
+.product-card-img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    padding: 0;
+    box-sizing: border-box;
+    display: block;
+    transform: scale(1.35);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Aspect-ratio normalized visual scaling for consistent watch sizes */
+.product-card-img.img-landscape {
+    transform: scale(1.42);
+}
+.product-card:hover .product-card-img.img-landscape {
+    transform: scale(1.45);
+}
+
+.product-card-img.img-portrait {
+    transform: scale(1.30);
+}
+.product-card:hover .product-card-img.img-portrait {
+    transform: scale(1.33);
+}
+
+.product-card-img.img-square {
+    transform: scale(1.35);
+}
+.product-card:hover .product-card-img.img-square {
+    transform: scale(1.38);
+}
+
+.product-card:hover .product-card-img:not(.img-landscape):not(.img-portrait):not(.img-square) {
+    transform: scale(1.38);
+}
+
+/* Targeted Horizontal/Landscape Image Size Optimization for Titan Neo & Uniquest */
+.product-card[data-id="1"] .product-card-img,
+.product-card[data-id="2"] .product-card-img,
+.product-card[data-name*="Titan Neo"] .product-card-img,
+.product-card[data-name*="Uniquest"] .product-card-img {
+    transform: scale(1.48) !important;
+}
+
+.product-card[data-id="1"]:hover .product-card-img,
+.product-card[data-id="2"]:hover .product-card-img,
+.product-card[data-name*="Titan Neo"]:hover .product-card-img,
+.product-card[data-name*="Uniquest"]:hover .product-card-img {
+    transform: scale(1.52) !important;
 }
 
 .product-card-badge {
@@ -59,11 +107,189 @@
     z-index: 2;
 }
 
+/* Stock Indicator beside Rating */
+.product-card-rating-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 12px !important;
+    gap: 8px !important;
+}
+
+.product-stock-indicator {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: #1F3A5F !important;
+    white-space: nowrap !important;
+}
+
+body:not(.light-theme) .product-stock-indicator {
+    color: #F3E5AB !important;
+}
+
+/* Product Card Actions: Slightly Wider Buy Now (Blue/White) & Compact Cart (White/Navy) */
+.product-card-actions {
+    display: flex !important;
+    gap: 8px !important;
+    margin-top: auto !important;
+    align-items: center !important;
+}
+
+.product-card-actions .product-btn-buynow,
+.product-card .product-btn-buynow {
+    flex: 1 1 auto !important;
+    background-color: #1F3A5F !important;
+    color: #FFFFFF !important;
+    border: 1px solid #1F3A5F !important;
+    padding: 10px 18px !important;
+    text-align: center !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 4px !important;
+    box-sizing: border-box !important;
+    transition: var(--transition, all 0.3s ease) !important;
+}
+
+.product-card-actions .product-btn-buynow:hover,
+.product-card .product-btn-buynow:hover {
+    background-color: #152840 !important;
+    color: #FFFFFF !important;
+    border-color: #152840 !important;
+    opacity: 0.95 !important;
+}
+
+.product-card-actions .product-btn-cart,
+.product-card-actions .quick-add-cart-btn,
+.product-card .product-btn-cart {
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    padding: 8px !important;
+    background-color: #FFFFFF !important;
+    color: #1F3A5F !important;
+    border: 1px solid #1F3A5F !important;
+    border-radius: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+    cursor: pointer !important;
+    transition: var(--transition, all 0.3s ease) !important;
+}
+
+.product-card-actions .product-btn-cart:hover,
+.product-card-actions .quick-add-cart-btn:hover,
+.product-card .product-btn-cart:hover {
+    background-color: #F0F4F8 !important;
+    color: #152840 !important;
+    border-color: #152840 !important;
+}
+
+.product-card-actions .product-btn-cart svg,
+.product-card-actions .quick-add-cart-btn svg,
+.product-card .product-btn-cart svg {
+    width: 14px !important;
+    height: 14px !important;
+    color: #1F3A5F !important;
+    fill: #1F3A5F !important;
+}
+
+/* High Contrast Opaque In Stock Badge */
+.product-card-badge.badge-gold,
+.product-card .badge-gold,
+.product-card .badge.badge-gold {
+    background-color: #FFFFFF !important;
+    color: #1F3A5F !important;
+    border: 1px solid #1F3A5F !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.8px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    opacity: 1 !important;
+}
+
+body.light-theme .product-card-badge.badge-gold,
+body.light-theme .product-card .badge-gold,
+body.light-theme .product-card .badge.badge-gold {
+    background-color: #FFFFFF !important;
+    color: #1F3A5F !important;
+    border: 1px solid #1F3A5F !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.8px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    opacity: 1 !important;
+}
+
+body:not(.light-theme) .product-card-badge.badge-gold,
+body:not(.light-theme) .product-card .badge-gold,
+body:not(.light-theme) .product-card .badge.badge-gold {
+    background-color: rgba(18, 18, 22, 0.94) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(212, 175, 55, 0.5) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.8px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+    opacity: 1 !important;
+}
+
+/* High Visibility Wishlist / Heart Icon */
+.wishlist-toggle-icon-btn {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #1F3A5F !important;
+    border: 1px solid rgba(197, 160, 89, 0.4) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+.wishlist-toggle-icon-btn svg {
+    color: #1F3A5F !important;
+    fill: #1F3A5F !important;
+}
+
+.wishlist-toggle-icon-btn .bi-heart-fill {
+    color: #E63946 !important;
+    fill: #E63946 !important;
+}
+
+.wishlist-toggle-icon-btn:hover {
+    background: #FFFFFF !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 4px 10px rgba(31, 58, 95, 0.25) !important;
+}
+
+body:not(.light-theme) .wishlist-toggle-icon-btn {
+    background: rgba(22, 22, 26, 0.88) !important;
+    color: #F4E0A5 !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+}
+
+body:not(.light-theme) .wishlist-toggle-icon-btn svg {
+    color: #F4E0A5 !important;
+    fill: #F4E0A5 !important;
+}
+
+body:not(.light-theme) .wishlist-toggle-icon-btn .bi-heart-fill {
+    color: #E63946 !important;
+    fill: #E63946 !important;
+}
+
 .product-card-details {
     padding: 10px 15px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+}
+
+.product-card-details p {
+    font-size: 0.92rem !important;
+    line-height: 1.45 !important;
+    color: var(--light-gray);
+    margin-bottom: 12px !important;
 }
 
 .product-card-category {
@@ -110,6 +336,7 @@
 /* Category Filter Layout */
 .filter-layout {
     display: flex;
+    align-items: flex-start;
     gap: 40px;
     margin-top: 40px;
 }
@@ -119,8 +346,10 @@
     flex-shrink: 0;
     background-color: var(--dark-gray);
     border: var(--border);
-    padding: 25px;
-    height: fit-content;
+    padding: 22px 20px;
+    height: auto !important;
+    min-height: 0 !important;
+    align-self: flex-start !important;
 }
 
 .filter-main {
@@ -128,9 +357,9 @@
 }
 
 .filter-widget {
-    margin-bottom: 30px;
+    margin-bottom: 22px;
     border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-    padding-bottom: 25px;
+    padding-bottom: 20px;
 }
 
 .filter-widget:last-child {

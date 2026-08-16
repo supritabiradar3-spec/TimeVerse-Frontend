@@ -322,10 +322,10 @@
             box-shadow: 0 8px 24px rgba(31, 58, 95, 0.15) !important;
         }
 
-        /* TIME VERSE Logo styling */
+        /* TimeVerse Logo styling */
         .logo,
         .logo span {
-            color: #A67C52 !important;
+            color: #1F3A5F !important;
         }
 
         /* Accent & Buttons Styling */
@@ -441,26 +441,37 @@
                 url('https://images.unsplash.com/photo-1526045431048-f857369baa09?q=80&w=1920&cb=2') center/cover no-repeat !important;
         }
 
-        /* Premium Carousel Hero Banner Styles */
+        /* ================================================== */
+        /* PREMIUM LUXURY HERO BANNER & CAROUSEL               */
+        /* ================================================== */
         .hero-carousel {
             position: relative;
-            height: 75vh;
-            min-height: 500px;
+            margin-top: 80px;
             width: 100%;
+            min-height: 560px;
             overflow: hidden;
-            background-color: #0d0d0e;
+            background: linear-gradient(135deg, #FBF9F5 0%, #F4EFE6 50%, #FAF8F5 100%);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.25);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        body:not(.light-theme) .hero-carousel {
+            background: linear-gradient(135deg, #0d0d0f 0%, #151518 50%, #0d0d0f 100%);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.15);
         }
 
         .carousel-container {
             position: relative;
             width: 100%;
-            height: 100%;
+            min-height: 560px;
+            display: flex;
+            align-items: center;
         }
 
         .carousel-track {
             position: relative;
             width: 100%;
-            height: 100%;
+            min-height: 560px;
         }
 
         .carousel-slide {
@@ -469,12 +480,14 @@
             left: 0;
             width: 100%;
             height: 100%;
+            min-height: 560px;
             opacity: 0;
             visibility: hidden;
             display: flex;
             align-items: center;
             transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s;
             z-index: 1;
+            padding: 40px 0;
         }
 
         .carousel-slide.active {
@@ -483,10 +496,20 @@
             z-index: 2;
         }
 
-        .carousel-slide .hero-content {
+        .hero-slide-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            align-items: center;
+            gap: 50px;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .hero-content {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+            transform: translateY(24px);
+            transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+            max-width: 600px;
         }
 
         .carousel-slide.active .hero-content {
@@ -494,106 +517,496 @@
             transform: translateY(0);
         }
 
-        .carousel-slide .hero-title {
-            font-size: 3rem !important;
-            font-weight: 700 !important;
-            line-height: 1.2 !important;
-            color: #FFFFFF !important;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
-        }
-
-        .carousel-slide .hero-subtitle {
-            color: #A67C52 !important;
-            /* Gold luxury accent */
-            font-size: 1.1rem !important;
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.9rem !important;
             font-weight: 600 !important;
             letter-spacing: 4px !important;
             text-transform: uppercase !important;
-            margin-bottom: 15px !important;
-            display: block !important;
+            color: #C5A059 !important;
+            margin-bottom: 14px;
         }
 
-        /* Arrows styling */
-        .carousel-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(13, 13, 14, 0.6);
-            border: 1px solid rgba(166, 124, 82, 0.3);
-            color: #FFFFFF;
-            font-size: 1.5rem;
-            padding: 12px 18px;
-            cursor: pointer;
-            border-radius: 50%;
-            z-index: 10;
-            transition: all 0.3s ease;
+        .hero-eyebrow::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 2px;
+            background: #C5A059;
+        }
+
+        .hero-title {
+            font-family: 'Cinzel', serif !important;
+            font-size: 3.4rem !important;
+            font-weight: 700 !important;
+            line-height: 1.12 !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            margin-bottom: 18px !important;
+            color: #121212 !important;
+            text-shadow: none !important;
+        }
+
+        body:not(.light-theme) .hero-title {
+            color: #FFFFFF !important;
+        }
+
+        .hero-desc {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 1.05rem !important;
+            line-height: 1.75 !important;
+            color: #4A4844 !important;
+            margin-bottom: 32px !important;
+            font-weight: 400 !important;
+        }
+
+        body:not(.light-theme) .hero-desc {
+            color: #A3A3B0 !important;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero-primary {
+            background: #121212 !important;
+            color: #FFFFFF !important;
+            border: 1px solid #121212 !important;
+            padding: 14px 34px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            border-radius: 4px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        .btn-hero-primary:hover {
+            background: #C5A059 !important;
+            border-color: #C5A059 !important;
+            color: #121212 !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 10px 25px rgba(197, 160, 89, 0.35) !important;
+        }
+
+        body:not(.light-theme) .btn-hero-primary {
+            background: #C5A059 !important;
+            color: #121212 !important;
+            border-color: #C5A059 !important;
+        }
+
+        body:not(.light-theme) .btn-hero-primary:hover {
+            background: #E8D7B3 !important;
+            border-color: #E8D7B3 !important;
+            color: #121212 !important;
+        }
+
+        .btn-hero-secondary {
+            background: transparent !important;
+            color: #121212 !important;
+            border: 1px solid rgba(18, 18, 18, 0.4) !important;
+            padding: 14px 28px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            border-radius: 4px !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        .btn-hero-secondary:hover {
+            border-color: #C5A059 !important;
+            color: #C5A059 !important;
+            background: rgba(197, 160, 89, 0.08) !important;
+            transform: translateY(-3px) !important;
+        }
+
+        body:not(.light-theme) .btn-hero-secondary {
+            color: #FFFFFF !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        body:not(.light-theme) .btn-hero-secondary:hover {
+            border-color: #C5A059 !important;
+            color: #C5A059 !important;
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            transition: opacity 0.9s ease 0.3s, transform 0.9s ease 0.3s;
+        }
+
+        .carousel-slide.active .hero-image-wrapper {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .hero-watch-frame {
+            position: relative;
+            max-width: 440px;
+            width: 100%;
+            height: 440px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .carousel-arrow:hover {
-            background: #1F3A5F;
-            border-color: #1F3A5F;
+        .hero-watch-glow {
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.22) 0%, rgba(197, 160, 89, 0.05) 55%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-watch-img {
+            max-width: 100%;
+            max-height: 430px;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.16));
+            border-radius: 16px;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hero-image-wrapper:hover .hero-watch-img {
+            transform: scale(1.03) rotate(-1deg);
+        }
+
+        /* Carousel Navigation Controls */
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(197, 160, 89, 0.35);
+            color: #121212;
+            font-size: 1.25rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body:not(.light-theme) .carousel-arrow {
+            background: rgba(20, 20, 24, 0.8);
+            border-color: rgba(197, 160, 89, 0.3);
             color: #FFFFFF;
+        }
+
+        .carousel-arrow:hover {
+            background: #121212;
+            color: #C5A059;
+            border-color: #C5A059;
             transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(197, 160, 89, 0.3);
+        }
+
+        body:not(.light-theme) .carousel-arrow:hover {
+            background: #C5A059;
+            color: #121212;
+            border-color: #C5A059;
         }
 
         .carousel-prev {
-            left: 30px;
+            left: 25px;
         }
 
         .carousel-next {
-            right: 30px;
+            right: 25px;
         }
 
-        /* Dots styling */
         .carousel-dots {
             position: absolute;
-            bottom: 30px;
+            bottom: 22px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 12px;
+            gap: 10px;
             z-index: 10;
         }
 
         .carousel-dot {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(197, 160, 89, 0.3);
+            border: 1px solid transparent;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 1px solid transparent;
         }
 
         .carousel-dot.active {
-            background: #A67C52;
-            transform: scale(1.2);
-            box-shadow: 0 0 8px rgba(166, 124, 82, 0.8);
+            background: #C5A059;
+            transform: scale(1.25);
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.6);
+        }
+
+        /* ================================================== */
+        /* TRUST & BENEFITS SECTION                           */
+        /* ================================================== */
+        .trust-benefits-section {
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #EBE6DC;
+            padding: 28px 0;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        body:not(.light-theme) .trust-benefits-section {
+            background-color: #0d0d0e;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .trust-benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            align-items: center;
+        }
+
+        .trust-benefit-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: #FAF8F5;
+            border: 1px solid #EFEBE4;
+            transition: all 0.3s ease;
+        }
+
+        body:not(.light-theme) .trust-benefit-card {
+            background: #141416;
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .trust-benefit-card:hover {
+            transform: translateY(-3px);
+            border-color: #C5A059;
+            box-shadow: 0 6px 18px rgba(197, 160, 89, 0.12);
+        }
+
+        .trust-benefit-icon {
+            color: #C5A059;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .trust-benefit-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .trust-benefit-title {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
+            color: #121212 !important;
+            margin: 0 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            line-height: 1.2 !important;
+        }
+
+        body:not(.light-theme) .trust-benefit-title {
+            color: #FFFFFF !important;
+        }
+
+        .trust-benefit-desc {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.76rem !important;
+            color: #6B6862 !important;
+            margin: 0 !important;
+            line-height: 1.3 !important;
+        }
+
+        body:not(.light-theme) .trust-benefit-desc {
+            color: #94A3B8 !important;
+        }
+
+        /* ================================================== */
+        /* IMPORTANT NOTICE SECTION                           */
+        /* ================================================== */
+        .security-notice-section {
+            background-color: #F8F6F1;
+            border-bottom: 1px solid #EBE6DC;
+            padding: 16px 0;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        body:not(.light-theme) .security-notice-section {
+            background-color: #08080a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .security-notice-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 12px 24px;
+            background: rgba(197, 160, 89, 0.08);
+            border: 1px solid rgba(197, 160, 89, 0.35);
+            border-radius: 8px;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        body:not(.light-theme) .security-notice-card {
+            background: rgba(197, 160, 89, 0.05);
+            border-color: rgba(197, 160, 89, 0.22);
+        }
+
+        .security-notice-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #9A7B3E;
+            font-weight: 700;
+            font-size: 0.84rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: 'Poppins', sans-serif;
+            flex-shrink: 0;
+        }
+
+        body:not(.light-theme) .security-notice-badge {
+            color: #E8D7B3;
+        }
+
+        .security-notice-text {
+            color: #383632;
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.5;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body:not(.light-theme) .security-notice-text {
+            color: #CBD5E1;
+        }
+
+        /* Responsive Breakpoints for Banner & Sections */
+        @media (max-width: 1200px) {
+            .trust-benefits-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .hero-title {
+                font-size: 2.8rem !important;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero-slide-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                text-align: center;
+            }
+            .hero-content {
+                max-width: 100%;
+                margin: 0 auto;
+                order: 2;
+            }
+            .hero-image-wrapper {
+                order: 1;
+            }
+            .hero-watch-frame {
+                height: 320px;
+                max-width: 320px;
+                margin: 0 auto;
+            }
+            .hero-watch-glow {
+                width: 280px;
+                height: 280px;
+            }
+            .hero-watch-img {
+                max-height: 300px;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .trust-benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 768px) {
             .hero-carousel {
-                height: 60vh;
+                min-height: 580px;
+                margin-top: 80px;
             }
-
-            .carousel-slide .hero-title {
+            .carousel-slide {
+                padding: 30px 0 50px 0;
+            }
+            .hero-title {
                 font-size: 2.2rem !important;
             }
-
+            .hero-desc {
+                font-size: 0.95rem !important;
+            }
+            .btn-hero-primary, .btn-hero-secondary {
+                padding: 12px 24px !important;
+                font-size: 0.8rem !important;
+            }
             .carousel-arrow {
-                padding: 8px 14px;
-                font-size: 1.2rem;
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
             }
-
             .carousel-prev {
-                left: 15px;
+                left: 10px;
             }
-
             .carousel-next {
-                right: 15px;
+                right: 10px;
+            }
+            .security-notice-card {
+                flex-direction: column;
+                gap: 8px;
+                padding: 10px 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 1.85rem !important;
+            }
+            .hero-watch-frame {
+                height: 240px;
+                max-width: 240px;
+            }
+            .hero-watch-img {
+                max-height: 220px;
+            }
+            .trust-benefits-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -605,56 +1018,154 @@
     <header></header>
 
     <!-- Hero Carousel Section -->
-    <section class="hero-carousel">
+    <section class="hero-carousel" id="hero-carousel">
         <div class="carousel-container">
             <div class="carousel-track" id="carousel-track">
-                <!-- Slide 1 -->
-                <div class="carousel-slide active"
-                    style="background: url('../sports-watch.jpg') center/cover no-repeat;">
+                <!-- Slide 1: Timeless Elegance (Featured Luxury Masterpiece) -->
+                <div class="carousel-slide active" data-slide="0">
                     <div class="container">
-                        <div class="hero-content">
-                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px;">
-                                <a href="./products.html" class="btn-luxury btn-luxury-solid">Shop Now</a>
-                                <a href="./products.html" class="btn-luxury">Explore Collection</a>
+                        <div class="hero-slide-grid">
+                            <div class="hero-content">
+                                <span class="hero-eyebrow">Timeless Elegance</span>
+                                <h1 class="hero-title">Crafted For You</h1>
+                                <p class="hero-desc">
+                                    Discover masterfully curated horological timepieces designed with precision engineering, Swiss movement artistry, and distinguished luxury.
+                                </p>
+                                <div class="hero-actions">
+                                    <a href="./products.html" class="btn-luxury btn-hero-primary">
+                                        Shop Now
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                    <a href="./products.html" class="btn-luxury btn-hero-secondary">Explore Collection</a>
+                                </div>
+                            </div>
+                            <div class="hero-image-wrapper">
+                                <div class="hero-watch-frame">
+                                    <div class="hero-watch-glow"></div>
+                                    <img src="../hero-watch-luxury.jpg" alt="TimeVerse Luxury Chronometer Watch" class="hero-watch-img">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Slide 2 -->
-                <div class="carousel-slide"
-                    style="background: linear-gradient(rgba(13, 13, 14, 0.65), rgba(13, 13, 14, 0.85)), url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1920') center/cover no-repeat;">
+
+                <!-- Slide 2: The Premium Collection -->
+                <div class="carousel-slide" data-slide="1">
                     <div class="container">
-                        <div class="hero-content">
-                            <span class="hero-subtitle">THE PREMIUM COLLECTION</span>
-                            <h1 class="hero-title">Precision. Style. Perfection.</h1>
-                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px;">
-                                <a href="./products.html" class="btn-luxury">Shop Collection</a>
+                        <div class="hero-slide-grid">
+                            <div class="hero-content">
+                                <span class="hero-eyebrow">The Premium Collection</span>
+                                <h1 class="hero-title">Precision &amp; Perfection</h1>
+                                <p class="hero-desc">
+                                    Handcrafted with meticulous Swiss movements and sapphire crystal casing, built for connoisseurs who appreciate true luxury.
+                                </p>
+                                <div class="hero-actions">
+                                    <a href="./products.html" class="btn-luxury btn-hero-primary">
+                                        Shop Collection
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                    <a href="./products.html?categoryId=3" class="btn-luxury btn-hero-secondary">Luxury Watches</a>
+                                </div>
+                            </div>
+                            <div class="hero-image-wrapper">
+                                <div class="hero-watch-frame">
+                                    <div class="hero-watch-glow"></div>
+                                    <img src="./new-watch-2.jpg" alt="TimeVerse Premium Watch Collection" class="hero-watch-img" onerror="this.src='../new-watch-2.jpg'">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Slide 3 -->
-                <div class="carousel-slide"
-                    style="background: linear-gradient(rgba(13, 13, 14, 0.65), rgba(13, 13, 14, 0.85)), url('https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1920') center/cover no-repeat;">
+
+                <!-- Slide 3: Sports Chronometers -->
+                <div class="carousel-slide" data-slide="2">
                     <div class="container">
-                        <div class="hero-content">
-                            <span class="hero-subtitle">BUILT FOR EVERY MOMENT</span>
-                            <h1 class="hero-title">Performance Meets Modern Design</h1>
-                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px;">
-                                <a href="./products.html?categoryId=4" class="btn-luxury">Explore Sports Watches</a>
+                        <div class="hero-slide-grid">
+                            <div class="hero-content">
+                                <span class="hero-eyebrow">Built For Every Moment</span>
+                                <h1 class="hero-title">Performance Meets Design</h1>
+                                <p class="hero-desc">
+                                    Rugged titanium engineering paired with chronographic accuracy. Engineered to excel across every altitude, depth, and adventure.
+                                </p>
+                                <div class="hero-actions">
+                                    <a href="./products.html?categoryId=4" class="btn-luxury btn-hero-primary">
+                                        Explore Sports
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                    <a href="./products.html" class="btn-luxury btn-hero-secondary">All Timepieces</a>
+                                </div>
+                            </div>
+                            <div class="hero-image-wrapper">
+                                <div class="hero-watch-frame">
+                                    <div class="hero-watch-glow"></div>
+                                    <img src="../sports-watch.jpg" alt="TimeVerse High Performance Sports Watch" class="hero-watch-img">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Slide 4 -->
-                <div class="carousel-slide"
-                    style="background: linear-gradient(rgba(13, 13, 14, 0.65), rgba(13, 13, 14, 0.85)), url('https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=1920') center/cover no-repeat;">
+
+                <!-- Slide 4: New Arrivals -->
+                <div class="carousel-slide" data-slide="3">
                     <div class="container">
-                        <div class="hero-content">
-                            <span class="hero-subtitle">NEW ARRIVALS</span>
-                            <h1 class="hero-title">Discover Your Next Statement Timepiece</h1>
-                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px;">
-                                <a href="./products.html" class="btn-luxury">Shop Now</a>
+                        <div class="hero-slide-grid">
+                            <div class="hero-content">
+                                <span class="hero-eyebrow">New Arrivals 2026</span>
+                                <h1 class="hero-title">Statement Timepieces</h1>
+                                <p class="hero-desc">
+                                    Discover our newest curated additions of limited-edition mechanical chronometers and luxury automatic timepieces.
+                                </p>
+                                <div class="hero-actions">
+                                    <a href="./products.html" class="btn-luxury btn-hero-primary">
+                                        Shop New Arrivals
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                    <a href="./products.html?categoryId=1" class="btn-luxury btn-hero-secondary">Analog Classics</a>
+                                </div>
+                            </div>
+                            <div class="hero-image-wrapper">
+                                <div class="hero-watch-frame">
+                                    <div class="hero-watch-glow"></div>
+                                    <img src="./new-watch-4.jpg" alt="TimeVerse New Arrivals Statement Timepiece" class="hero-watch-img" onerror="this.src='../new-watch-4.jpg'">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 5: Limited Edition Legacy -->
+                <div class="carousel-slide" data-slide="4">
+                    <div class="container">
+                        <div class="hero-slide-grid">
+                            <div class="hero-content">
+                                <span class="hero-eyebrow">LIMITED EDITION</span>
+                                <h1 class="hero-title">Wear Your Legacy</h1>
+                                <p class="hero-desc">
+                                    Exceptional timepieces crafted to make every moment unforgettable. Discover precision, character, and timeless luxury on your wrist.
+                                </p>
+                                <div class="hero-actions">
+                                    <a href="./products.html" class="btn-luxury btn-hero-primary">
+                                        Own The Moment
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                    <a href="./products.html" class="btn-luxury btn-hero-secondary">See The Details</a>
+                                </div>
+                            </div>
+                            <div class="hero-image-wrapper">
+                                <div class="hero-watch-frame">
+                                    <div class="hero-watch-glow"></div>
+                                    <img src="./banner-5.jpg" alt="Limited Edition Legacy Watch" class="hero-watch-img" onerror="this.src='../banner-5.jpg'">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -662,16 +1173,116 @@
             </div>
 
             <!-- Navigation Arrows -->
-            <button class="carousel-arrow carousel-prev" id="carousel-prev"
-                aria-label="Previous slide">&#10094;</button>
+            <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous slide">&#10094;</button>
             <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next slide">&#10095;</button>
 
             <!-- Navigation Dots -->
             <div class="carousel-dots" id="carousel-dots">
-                <span class="carousel-dot active" data-index="0"></span>
-                <span class="carousel-dot" data-index="1"></span>
-                <span class="carousel-dot" data-index="2"></span>
-                <span class="carousel-dot" data-index="3"></span>
+                <span class="carousel-dot active" data-index="0" aria-label="Slide 1"></span>
+                <span class="carousel-dot" data-index="1" aria-label="Slide 2"></span>
+                <span class="carousel-dot" data-index="2" aria-label="Slide 3"></span>
+                <span class="carousel-dot" data-index="3" aria-label="Slide 4"></span>
+                <span class="carousel-dot" data-index="4" aria-label="Slide 5"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & Benefits Section -->
+    <section id="trust-benefits-section" class="trust-benefits-section">
+        <div class="container">
+            <div class="trust-benefits-grid">
+                <!-- Benefit 1 -->
+                <div class="trust-benefit-card">
+                    <div class="trust-benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <div class="trust-benefit-content">
+                        <h4 class="trust-benefit-title">100% Authentic</h4>
+                        <p class="trust-benefit-desc">Original Products</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="trust-benefit-card">
+                    <div class="trust-benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="3" width="15" height="13"/>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                            <circle cx="5.5" cy="18.5" r="2.5"/>
+                            <circle cx="18.5" cy="18.5" r="2.5"/>
+                        </svg>
+                    </div>
+                    <div class="trust-benefit-content">
+                        <h4 class="trust-benefit-title">Free Shipping</h4>
+                        <p class="trust-benefit-desc">On Orders Above &#8377;499</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="trust-benefit-card">
+                    <div class="trust-benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="6"/>
+                            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                        </svg>
+                    </div>
+                    <div class="trust-benefit-content">
+                        <h4 class="trust-benefit-title">1 Year Warranty</h4>
+                        <p class="trust-benefit-desc">On All Watches</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 4 -->
+                <div class="trust-benefit-card">
+                    <div class="trust-benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M8 16H3v5"/>
+                        </svg>
+                    </div>
+                    <div class="trust-benefit-content">
+                        <h4 class="trust-benefit-title">Easy Returns</h4>
+                        <p class="trust-benefit-desc">Hassle Free</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 5 -->
+                <div class="trust-benefit-card">
+                    <div class="trust-benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                    <div class="trust-benefit-content">
+                        <h4 class="trust-benefit-title">Secure Payments</h4>
+                        <p class="trust-benefit-desc">100% Safe &amp; Secure</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Important Notice Section -->
+    <section id="security-notice-section" class="security-notice-section">
+        <div class="container">
+            <div class="security-notice-card">
+                <div class="security-notice-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>Important Notice</span>
+                </div>
+                <p class="security-notice-text">
+                    Beware of fake websites and unauthorized sellers. TimeVerse will never ask for OTP, CVV, password, or other confidential information.
+                </p>
             </div>
         </div>
     </section>
@@ -684,26 +1295,8 @@
                 <div class="categories-divider"></div>
             </div>
             <div class="category-grid">
-                <!-- Category 1 -->
-                <div class="category-card" onclick="window.location.href='./products.html?categoryId=3'">
-                    <div class="category-card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&cb=2"
-                            alt="Luxury Watches" class="category-card-img">
-                    </div>
-                    <div class="category-card-info">
-                        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z" />
-                            <path d="M3 20h18" stroke-width="2" />
-                        </svg>
-                        <h3 class="category-card-title">Luxury Watches</h3>
-                        <div class="category-card-divider"></div>
-                        <div class="btn-view-collection">View Collection &rarr;</div>
-                    </div>
-                </div>
-                <!-- Category 2 -->
-                <div class="category-card" onclick="window.location.href='./products.html?categoryId=1'">
+                <!-- Category 1: Analog Watches -->
+                <div class="category-card" onclick="window.location.href='./products.html?categoryId=1&category=Analog%20Watches'">
                     <div class="category-card-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2"
                             alt="Analog Watches" class="category-card-img">
@@ -720,27 +1313,8 @@
                         <div class="btn-view-collection">View Collection &rarr;</div>
                     </div>
                 </div>
-                <!-- Category 3 -->
-                <div class="category-card" onclick="window.location.href='./products.html?categoryId=4'">
-                    <div class="category-card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2"
-                            alt="Sports Watches" class="category-card-img">
-                    </div>
-                    <div class="category-card-info">
-                        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 15 15" />
-                            <path d="M16.24 7.76a6 6 0 1 0 0 8.49" />
-                        </svg>
-                        <h3 class="category-card-title">Sports Watches</h3>
-                        <div class="category-card-divider"></div>
-                        <div class="btn-view-collection">View Collection &rarr;</div>
-                    </div>
-                </div>
-                <!-- Category 4 -->
-                <div class="category-card" onclick="window.location.href='./products.html?categoryId=2'">
+                <!-- Category 2: Digital Watches -->
+                <div class="category-card" onclick="window.location.href='./products.html?categoryId=2&category=Digital%20Watches'">
                     <div class="category-card-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=600&cb=2"
                             alt="Digital Watches" class="category-card-img">
@@ -755,6 +1329,43 @@
                             <circle cx="12" cy="12" r="4" fill="none" />
                         </svg>
                         <h3 class="category-card-title">Digital Watches</h3>
+                        <div class="category-card-divider"></div>
+                        <div class="btn-view-collection">View Collection &rarr;</div>
+                    </div>
+                </div>
+                <!-- Category 3: Luxury Watches -->
+                <div class="category-card" onclick="window.location.href='./products.html?categoryId=3&category=Luxury%20Watches'">
+                    <div class="category-card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&cb=2"
+                            alt="Luxury Watches" class="category-card-img">
+                    </div>
+                    <div class="category-card-info">
+                        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z" />
+                            <path d="M3 20h18" stroke-width="2" />
+                        </svg>
+                        <h3 class="category-card-title">Luxury Watches</h3>
+                        <div class="category-card-divider"></div>
+                        <div class="btn-view-collection">View Collection &rarr;</div>
+                    </div>
+                </div>
+                <!-- Category 4: Sports Watches -->
+                <div class="category-card" onclick="window.location.href='./products.html?categoryId=4&category=Sports%20Watches'">
+                    <div class="category-card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2"
+                            alt="Sports Watches" class="category-card-img">
+                    </div>
+                    <div class="category-card-info">
+                        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 15 15" />
+                            <path d="M16.24 7.76a6 6 0 1 0 0 8.49" />
+                        </svg>
+                        <h3 class="category-card-title">Sports Watches</h3>
                         <div class="category-card-divider"></div>
                         <div class="btn-view-collection">View Collection &rarr;</div>
                     </div>
@@ -962,10 +1573,6 @@
             localStorage.setItem('timeverse_category_img_4', 'https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2');
             localStorage.setItem('timeverse_category_img_Sports_Watches', 'https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2');
 
-            if (typeof window.loadHomepageCategories === 'function') {
-                await window.loadHomepageCategories();
-            }
-
             // Post-load DOM check to guarantee the image is updated
             const sportsImg = document.querySelector('img[alt="Sports Watches"]');
             if (sportsImg) {
@@ -982,19 +1589,28 @@
             if (newarrivalsGrid) newarrivalsGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading new arrivals...</p>';
 
             try {
-                // Prefetch wishlist if logged in and not admin
+                // Prefetch wishlist concurrently if logged in and not admin
                 const token = localStorage.getItem('token');
                 const role = localStorage.getItem('role') || 'CUSTOMER';
-                if (token && role !== 'ADMIN' && !window.wishlistProductIds) {
-                    try {
-                        const wishlist = await api.getWishlist();
-                        window.wishlistProductIds = new Set(wishlist.map(item => item.productId));
-                    } catch (e) {
+                const wishlistPromise = (token && role !== 'ADMIN' && !window.wishlistProductIds)
+                    ? api.getWishlist().catch(e => {
                         console.warn("Failed to load wishlist for homepage:", e);
-                    }
+                        return [];
+                    })
+                    : Promise.resolve(null);
+
+                const productsPromise = api.getAllProducts().catch(async (apiErr) => {
+                    console.warn("api.getAllProducts error, attempting fallback to filterProducts:", apiErr);
+                    return api.filterProducts({ page: 0, size: 40 });
+                });
+
+                const [wishlistRes, response] = await Promise.all([wishlistPromise, productsPromise]);
+
+                if (wishlistRes && Array.isArray(wishlistRes)) {
+                    window.wishlistProductIds = new Set(wishlistRes.map(item => item.productId));
                 }
 
-                const products = await api.getAllProducts();
+                let products = Array.isArray(response) ? response : (response && (response.content || response.data) ? (response.content || response.data) : []);
                 console.log("Products received:", products);
 
                 if (products && products.length > 0) {

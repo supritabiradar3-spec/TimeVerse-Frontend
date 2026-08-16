@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeVerse | Order Details & Tracking</title>
+
+    <!-- Link Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        .order-details-container {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 15px;
+        }
+
+        .details-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gold-light);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--white);
+            transform: translateX(-4px);
+        }
+
+        .status-hero-card {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
+            border: var(--border);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--border-glow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .status-icon-box {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+        }
+
+        .stepper-container {
+            background: var(--dark-gray);
+            border: var(--border);
+            border-radius: 12px;
+            padding: 30px 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--border-glow);
+        }
+
+        .stepper-progress-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            margin: 25px 0 10px 0;
+        }
+
+        .stepper-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            min-width: 75px;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: #111;
+            border: 2px solid var(--light-gray);
+            color: var(--light-gray);
+            transition: all 0.3s ease;
+        }
+
+        .step-circle.active {
+            border-color: var(--gold);
+            color: var(--gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            background: rgba(212, 175, 55, 0.15);
+        }
+
+        .step-circle.completed {
+            border-color: var(--success);
+            background: var(--success);
+            color: var(--black);
+        }
+
+        .step-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: var(--light-gray);
+            margin-bottom: 2px;
+        }
+
+        .step-date {
+            font-size: 0.72rem;
+            color: var(--gold-light);
+        }
+
+        .stepper-connector {
+            position: absolute;
+            top: 16px;
+            left: 12%;
+            right: 12%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            z-index: 1;
+        }
+
+        .stepper-connector-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--gold) 100%);
+            transition: width 0.5s ease;
+        }
+
+        .active-hub-pill {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--gold-light);
+            margin-top: 15px;
+        }
+
+        .section-card {
+            background: var(--dark-gray);
+            border: var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--border-glow);
+        }
+
+        .card-header-title {
+            font-size: 1rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        /* Concierge Modal */
+        .concierge-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Holder -->
+    <header></header>
+
+    <!-- Main Order Details Content -->
+    <div class="order-details-container">
+        
+        <!-- Top Action Bar -->
+        <div class="details-top-bar">
+            <a href="./orders.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+                My Orders
+            </a>
+            <button id="btn-help-concierge" class="btn-luxury" style="padding: 6px 16px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12V6a5 5 0 0 0-5-5z"/>
+                </svg>
+                Concierge Help
+            </button>
+        </div>
+
+        <!-- Dynamic Content Holder -->
+        <div id="order-details-root">
+            <p style="text-align: center; color: var(--light-gray); padding: 50px 0;">Loading bespoke order details...</p>
+        </div>
+
+    </div>
+
+    <!-- Concierge Support Modal -->
+    <div id="concierge-modal" class="concierge-modal">
+        <div class="glass-card" style="max-width: 480px; width: 90%; padding: 30px; border-radius: 12px; position: relative;">
+            <button id="close-concierge-modal" style="position: absolute; top: 15px; right: 20px; background: none; border: none; color: var(--light-gray); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h3 class="luxury-text" style="font-size: 1.3rem; color: var(--gold); margin-bottom: 10px;">TimeVerse Concierge</h3>
+            <p style="color: var(--light-gray); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.6;">Our horology specialists are available 24/7 to assist you with order tracking, adjustments, or delivery queries.</p>
+            
+            <div style="background: rgba(0,0,0,0.4); border: var(--border); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase;">Direct Line</div>
+                <div style="color: var(--white); font-size: 1rem; margin-top: 3px; font-weight: 500;">+91 1800 200 8989 (Toll Free)</div>
+            </div>
+            
+            <div style="background: rgba(0,0,0,0.4); border: var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <div style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase;">Email Inquiries</div>
+                <div style="color: var(--white); font-size: 1rem; margin-top: 3px; font-weight: 500;">concierge@timeverse.com</div>
+            </div>
+
+            <button id="btn-concierge-done" class="btn-luxury btn-luxury-solid" style="width: 100%; padding: 12px;">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer Holder -->
+    <footer></footer>
+
+    <!-- Scripts -->
+    <script src="../components/loader.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../components/alert.js"></script>
+    <script src="../components/product-card.js"></script>
+    <script src="../js/category.js"></script>
+    <script src="../components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+
+    <!-- Page Controller -->
+    <script src="../js/order-details.js"></script>
+</body>
+
+</html>

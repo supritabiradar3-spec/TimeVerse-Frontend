@@ -10,18 +10,130 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/product.css">
     <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        /* Compact Premium Luxury Collection Banner for Products Showroom */
+        .showroom-page-header {
+            margin-top: 80px;
+            height: 200px;
+            min-height: 180px;
+            max-height: 210px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FBF9F5 0%, #F5F1E8 50%, #FAF8F5 100%);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.25);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        body:not(.light-theme) .showroom-page-header {
+            background: linear-gradient(135deg, #0d0d0f 0%, #151518 50%, #0d0d0f 100%);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+        }
+
+        .showroom-page-header .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .showroom-page-header h1 {
+            font-family: 'Cinzel', serif !important;
+            font-size: 2.3rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 3px !important;
+            text-transform: uppercase !important;
+            color: #121212 !important;
+            margin: 0 0 10px 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        body:not(.light-theme) .showroom-page-header h1 {
+            color: #FFFFFF !important;
+        }
+
+        .showroom-page-header .breadcrumbs {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 1.5px !important;
+            color: #6B6862 !important;
+            margin-top: 0 !important;
+            text-transform: uppercase !important;
+            font-weight: 500 !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body:not(.light-theme) .showroom-page-header .breadcrumbs {
+            color: #94A3B8 !important;
+        }
+
+        .showroom-page-header .breadcrumbs a {
+            color: #1F3A5F !important;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .showroom-page-header .breadcrumbs a:hover {
+            color: #C5A059 !important;
+        }
+
+        body:not(.light-theme) .showroom-page-header .breadcrumbs a {
+            color: #E8D7B3 !important;
+        }
+
+        .showroom-page-header .breadcrumbs span.sep {
+            color: #C5A059 !important;
+            font-weight: 600;
+        }
+
+        .showroom-page-header .breadcrumbs span.current {
+            color: #C5A059 !important;
+            font-weight: 600;
+        }
+
+        @media (max-width: 992px) {
+            .showroom-page-header {
+                height: 175px;
+                min-height: 160px;
+            }
+            .showroom-page-header h1 {
+                font-size: 2rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .showroom-page-header {
+                height: 155px;
+                min-height: 140px;
+            }
+            .showroom-page-header h1 {
+                font-size: 1.75rem !important;
+            }
+            .showroom-page-header .breadcrumbs {
+                font-size: 0.78rem !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <!-- Header Holder -->
     <header></header>
 
-    <!-- Page Header Hero -->
-    <section class="page-header">
+    <!-- Page Header Hero (Compact Luxury Collection Banner) -->
+    <section class="showroom-page-header">
         <div class="container">
-            <h1>The Showroom</h1>
+            <h1>THE SHOWROOM</h1>
             <div class="breadcrumbs">
-                <a href="./index.html">Home</a> &nbsp;/&nbsp; <span>Collection</span>
+                <a href="./index.html">Home</a> <span class="sep">/</span> <span class="current">Collection</span>
             </div>
         </div>
     </section>
@@ -110,7 +222,6 @@
     <script src="../js/auth.js"></script>
     <script src="../components/alert.js"></script>
     <script src="../components/product-card.js"></script>
-    <script src="../js/category.js"></script>
     <script src="../components/footer.js"></script>
     <script src="../components/navbar.js"></script>
     

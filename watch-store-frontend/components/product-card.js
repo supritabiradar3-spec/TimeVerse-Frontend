@@ -10,7 +10,7 @@ console.log("PRODUCT CARD FILE LOADED");
     };
 
     window.resolveImageUrl = function (url) {
-        if (!url) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400';
+        if (!url) return 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=400';
         if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
             return url;
         }
@@ -34,11 +34,20 @@ console.log("PRODUCT CARD FILE LOADED");
         return `<span class="stars-gold">${stars}</span>`;
     };
 
+    window.resolveProductName = function (name, productId) {
+        if (!name) return 'Luxury Timepiece';
+        const str = String(name).trim();
+        if (str.toLowerCase() === 'titan neo updated' || Number(productId) === 1) {
+            return 'Titan Neo';
+        }
+        return str;
+    };
+
     window.openQuickView = async function (productId) {
         try {
             const product = await api.getProductById(productId);
 
-            let rawImgUrl = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400';
+            let rawImgUrl = 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=400';
             if (product.images && product.images.length > 0 && product.images[0].imageUrl) {
                 rawImgUrl = product.images[0].imageUrl;
             } else if (product.imageUrls && product.imageUrls.length > 0) {
@@ -72,7 +81,7 @@ console.log("PRODUCT CARD FILE LOADED");
                     <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left;">
                         <div>
                             <span style="font-size: 0.75rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase;">${categoryName}</span>
-                            <h2 class="luxury-text" style="font-size: 1.6rem; margin-top: 5px; margin-bottom: 10px; line-height: 1.2;">${product.name}</h2>
+                            <h2 class="luxury-text" style="font-size: 1.6rem; margin-top: 5px; margin-bottom: 10px; line-height: 1.2;">${window.resolveProductName(product.name, product.productId || productId)}</h2>
                             <div class="product-card-rating" style="margin-bottom: 15px;">
                                 ${stars}
                                 <span class="rating-score">${rating.score}</span>
@@ -112,9 +121,17 @@ console.log("PRODUCT CARD FILE LOADED");
     };
 
     window.createProductCardHtml = function (product) {
-        const { productId, name, description, price, stock, categoryId, images, imageUrls } = product;
+        if (!product) return '';
+        const productId = product.productId || product.id || 0;
+        const name = window.resolveProductName(product.name, productId);
+        const description = product.description || '';
+        const price = product.price || 0;
+        const stock = typeof product.stock === 'number' ? product.stock : 1;
+        const categoryId = product.categoryId || 1;
+        const images = product.images;
+        const imageUrls = product.imageUrls;
 
-        let rawImgUrl = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400';
+        let rawImgUrl = 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=400';
         if (images && images.length > 0 && images[0].imageUrl) {
             rawImgUrl = images[0].imageUrl;
         } else if (imageUrls && imageUrls.length > 0) {
@@ -162,21 +179,23 @@ console.log("PRODUCT CARD FILE LOADED");
         `;
 
         const addToBagButtonHTML = isAdmin ? '' : `
-            <button class="btn-luxury btn-luxury-solid quick-add-cart-btn" 
-                    data-id="${productId}" 
+            <button class="quick-add-cart-btn product-btn-cart"
+                    data-id="${productId}"
                     ${isOutOfStock ? 'disabled' : ''}
-                    style="flex: 1.2;">
-                ${isOutOfStock ? 'Sold Out' : 'Add to Bag'}
+                    title="Add to Shopping Bag"
+                    style="padding: 8px 10px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; flex: 0 0 38px; width: 38px; height: 38px; min-width: 38px; box-sizing: border-box; background-color: #FFFFFF; color: #1F3A5F; border: 1px solid #1F3A5F; border-radius: 4px; cursor: pointer;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#1F3A5F" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
             </button>
         `;
 
         return `
-            <div class="product-card" data-id="${productId}">
+            <div class="product-card" data-id="${productId}" data-name="${name}">
                 <div class="product-card-img-container">
-                    ${badgeHTML}
                     ${wishlistButtonHTML}
                     <a href="./product-details.html?id=${productId}">
-                        <img src="${imgUrl}" alt="${name}" class="product-card-img" onerror="this.src='https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=400'">
+                        <img src="${imgUrl}" alt="${name}" class="product-card-img" onload="if(this.naturalWidth/this.naturalHeight>=1.25){this.classList.add('img-landscape')}else if(this.naturalWidth/this.naturalHeight<=0.85){this.classList.add('img-portrait')}else{this.classList.add('img-square')}" onerror="this.src='https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=400'">
                     </a>
                 </div>
                 <div class="product-card-details">
@@ -184,16 +203,19 @@ console.log("PRODUCT CARD FILE LOADED");
                     <h3 class="product-card-name" title="${name}">
                         <a href="./product-details.html?id=${productId}">${name}</a>
                     </h3>
-                    <div class="product-card-rating">
-                        ${starsHtml}
-                        <span class="rating-score">${rating.score}</span>
-                        <span class="rating-count">(${rating.count})</span>
-                    </div>
-                    <p style="color: var(--light-gray); font-size: 0.85rem; margin-bottom: 15px;">${descExcerpt}</p>
                     <div class="product-card-price">${formattedPrice}</div>
                     
-                    <div class="product-card-actions">
-                        <button onclick="openQuickView(${productId})" class="btn-luxury" style="padding: 10px; font-size: 0.75rem; text-align: center; flex: 1;">Quick View</button>
+                    <div class="product-card-rating-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <div class="product-card-rating" style="margin-bottom: 0;">
+                            ${starsHtml}
+                            <span class="rating-score">${rating.score}</span>
+                            <span class="rating-count">(${rating.count})</span>
+                        </div>
+                        <span class="product-stock-indicator" style="font-size: 0.85rem; font-weight: 700; color: #1F3A5F; white-space: nowrap;">(${stock})</span>
+                    </div>
+
+                    <div class="product-card-actions" style="display: flex; gap: 8px; margin-top: auto; align-items: center;">
+                        <a href="./product-details.html?id=${productId}" class="product-btn-buynow" style="padding: 10px 18px; font-size: 0.8rem; text-align: center; flex: 1; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; letter-spacing: 0.5px; background-color: #1F3A5F; color: #FFFFFF; border: 1px solid #1F3A5F; border-radius: 4px;">Buy Now</a>
                         ${addToBagButtonHTML}
                     </div>
                 </div>
@@ -218,9 +240,16 @@ console.log("PRODUCT CARD FILE LOADED");
             return;
         }
 
+        const originalHTML = btn.innerHTML;
+
         try {
             btn.disabled = true;
-            btn.textContent = 'Adding...';
+            btn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="animation: spin 1s linear infinite;">
+                    <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                    <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                </svg>
+            `;
 
             // Call global API helper
             if (window.api && typeof window.api.addToCart === 'function') {
@@ -238,9 +267,10 @@ console.log("PRODUCT CARD FILE LOADED");
             showAlert(err.message || 'Failed to add item to cart.', 'error');
         } finally {
             btn.disabled = false;
-            btn.textContent = 'Add to Bag';
+            btn.innerHTML = originalHTML;
         }
     });
+
     // Event delegation helper for wishlist toggle
     document.addEventListener('click', async function (e) {
         const btn = e.target.closest('.wishlist-toggle-icon-btn');
@@ -313,4 +343,22 @@ console.log("PRODUCT CARD FILE LOADED");
             }
         }
     });
+
+    // Auto-normalize any existing or dynamically loaded images
+    window.normalizeProductImages = function () {
+        document.querySelectorAll('.product-card-img').forEach(img => {
+            if (img.complete && img.naturalWidth && img.naturalHeight) {
+                const ar = img.naturalWidth / img.naturalHeight;
+                if (ar >= 1.25) img.classList.add('img-landscape');
+                else if (ar <= 0.85) img.classList.add('img-portrait');
+                else img.classList.add('img-square');
+            }
+        });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', window.normalizeProductImages);
+    } else {
+        window.normalizeProductImages();
+    }
 })();

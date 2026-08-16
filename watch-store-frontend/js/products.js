@@ -23,17 +23,21 @@
         try {
             const response = await api.getCategories();
 
-            if (response.success && response.data) {
-
-                // Check URL parameter
+            if (response && response.data && Array.isArray(response.data)) {
+                // Check URL parameter for category
                 const params = new URLSearchParams(window.location.search);
+                const urlCatId = params.get('categoryId');
                 const urlCategoryName = params.get('category');
 
-                if (urlCategoryName) {
+                if (urlCatId) {
+                    const parsedId = parseInt(urlCatId, 10);
+                    if (!isNaN(parsedId) && parsedId > 0) {
+                        state.categoryId = parsedId;
+                    }
+                } else if (urlCategoryName) {
                     const matchedCat = response.data.find(cat =>
-                        cat.categoryName.toLowerCase() === urlCategoryName.toLowerCase()
+                        cat.categoryName && cat.categoryName.toLowerCase() === urlCategoryName.toLowerCase().trim()
                     );
-
                     if (matchedCat) {
                         state.categoryId = matchedCat.categoryId;
                     }
@@ -48,10 +52,7 @@
             `;
 
                 response.data.forEach(cat => {
-
-                    const isActive =
-                        state.categoryId === cat.categoryId ? 'active' : '';
-
+                    const isActive = state.categoryId === cat.categoryId ? 'active' : '';
                     categoriesHTML += `
                     <li class="filter-category-item">
                         <span
@@ -65,57 +66,145 @@
 
                 categoriesContainer.innerHTML = categoriesHTML;
 
-                const links =
-                    categoriesContainer.querySelectorAll('.filter-category-link');
-
+                const links = categoriesContainer.querySelectorAll('.filter-category-link');
                 links.forEach(link => {
                     link.addEventListener('click', function () {
-
                         links.forEach(l => l.classList.remove('active'));
                         this.classList.add('active');
 
-                        const id = this.dataset.id;
-
-                        state.categoryId = id ? Number(id) : null;
+                        const rawId = this.dataset.id;
+                        const parsedId = parseInt(rawId, 10);
+                        state.categoryId = (!isNaN(parsedId) && parsedId > 0) ? parsedId : null;
                         state.page = 0;
 
                         loadProducts();
                     });
                 });
             }
-
         } catch (err) {
             console.error("Failed to load categories:", err);
         }
     }
 
-
-    // Load product list using filter api
+    // Load product list using filter api with resilient fallback
     async function loadProducts() {
         const productGrid = document.getElementById('catalog-products-grid');
         const paginationContainer = document.getElementById('catalog-pagination');
         if (!productGrid) return;
 
         try {
-            // Prefetch wishlist if logged in and not admin
+            // Prefetch wishlist concurrently if logged in and not admin
             const token = localStorage.getItem('token');
             const role = localStorage.getItem('role') || 'CUSTOMER';
-            if (token && role !== 'ADMIN' && !window.wishlistProductIds) {
-                try {
-                    const wishlist = await api.getWishlist();
-                    window.wishlistProductIds = new Set(wishlist.map(item => item.productId));
-                } catch (e) {
+            const wishlistPromise = (token && role !== 'ADMIN' && !window.wishlistProductIds)
+                ? api.getWishlist().catch(e => {
                     console.warn("Failed to load wishlist for catalog:", e);
-                }
+                    return [];
+                })
+                : Promise.resolve(null);
+
+            // Sanitize filter state before making request
+            const cleanFilters = {
+                page: typeof state.page === 'number' && !isNaN(state.page) && state.page >= 0 ? state.page : 0,
+                size: typeof state.size === 'number' && !isNaN(state.size) && state.size > 0 ? state.size : 9,
+                sortBy: state.sortBy || 'productId',
+                direction: state.direction || 'asc'
+            };
+
+            if (state.keyword && String(state.keyword).trim()) {
+                cleanFilters.keyword = String(state.keyword).trim();
+            }
+            if (typeof state.categoryId === 'number' && !isNaN(state.categoryId) && state.categoryId > 0) {
+                cleanFilters.categoryId = state.categoryId;
+            }
+            if (typeof state.minPrice === 'number' && !isNaN(state.minPrice) && state.minPrice >= 0) {
+                cleanFilters.minPrice = state.minPrice;
+            }
+            if (typeof state.maxPrice === 'number' && !isNaN(state.maxPrice) && state.maxPrice >= 0) {
+                cleanFilters.maxPrice = state.maxPrice;
+            }
+            if (state.inStock === true) {
+                cleanFilters.inStock = true;
             }
 
-            // Fetch filtered, paginated products
-            const pageData = await api.filterProducts(state);
+            const fetchPagePromise = api.filterProducts(cleanFilters).catch(async (filterErr) => {
+                console.warn('Filter API request encountered an issue, falling back to getAllProducts:', filterErr);
+                const allRes = await api.getAllProducts();
+                let allList = Array.isArray(allRes) ? allRes : (allRes && allRes.data && Array.isArray(allRes.data) ? allRes.data : []);
+
+                // Client-side filtering
+                if (cleanFilters.categoryId) {
+                    allList = allList.filter(p => p.categoryId === cleanFilters.categoryId);
+                }
+                if (cleanFilters.keyword) {
+                    const kw = cleanFilters.keyword.toLowerCase();
+                    allList = allList.filter(p =>
+                        (p.name && p.name.toLowerCase().includes(kw)) ||
+                        (p.description && p.description.toLowerCase().includes(kw))
+                    );
+                }
+                if (typeof cleanFilters.minPrice === 'number') {
+                    allList = allList.filter(p => p.price >= cleanFilters.minPrice);
+                }
+                if (typeof cleanFilters.maxPrice === 'number') {
+                    allList = allList.filter(p => p.price <= cleanFilters.maxPrice);
+                }
+                if (cleanFilters.inStock === true) {
+                    allList = allList.filter(p => p.stock > 0);
+                }
+
+                // Client-side sorting
+                if (cleanFilters.sortBy === 'price') {
+                    allList.sort((a, b) => cleanFilters.direction === 'desc' ? b.price - a.price : a.price - b.price);
+                } else if (cleanFilters.sortBy === 'name') {
+                    allList.sort((a, b) => cleanFilters.direction === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name));
+                } else {
+                    allList.sort((a, b) => cleanFilters.direction === 'desc' ? b.productId - a.productId : a.productId - b.productId);
+                }
+
+                const pageSize = cleanFilters.size || 9;
+                const totalElements = allList.length;
+                const totalPages = Math.max(1, Math.ceil(totalElements / pageSize));
+                const pageNum = Math.min(cleanFilters.page || 0, totalPages - 1);
+                const sliceStart = pageNum * pageSize;
+                const pagedSlice = allList.slice(sliceStart, sliceStart + pageSize);
+
+                return {
+                    content: pagedSlice,
+                    number: pageNum,
+                    totalPages: totalPages,
+                    totalElements: totalElements
+                };
+            });
+
+            const [wishlistRes, pageData] = await Promise.all([wishlistPromise, fetchPagePromise]);
+
+            if (wishlistRes && Array.isArray(wishlistRes)) {
+                window.wishlistProductIds = new Set(wishlistRes.map(item => item.productId));
+            }
 
             // Note: Spring Boot Page contains: content, number, totalPages, totalElements
-            const products = pageData.content || [];
-            const currentPage = pageData.number || 0;
-            const totalPages = pageData.totalPages || 0;
+            let products = [];
+            let currentPage = 0;
+            let totalPages = 1;
+
+            if (Array.isArray(pageData)) {
+                products = pageData;
+                currentPage = 0;
+                totalPages = 1;
+            } else if (pageData && Array.isArray(pageData.content)) {
+                products = pageData.content;
+                currentPage = typeof pageData.number === 'number' ? pageData.number : 0;
+                totalPages = typeof pageData.totalPages === 'number' ? pageData.totalPages : 1;
+            } else if (pageData && pageData.data) {
+                if (Array.isArray(pageData.data)) {
+                    products = pageData.data;
+                } else if (pageData.data.content && Array.isArray(pageData.data.content)) {
+                    products = pageData.data.content;
+                    currentPage = typeof pageData.data.number === 'number' ? pageData.data.number : 0;
+                    totalPages = typeof pageData.data.totalPages === 'number' ? pageData.data.totalPages : 1;
+                }
+            }
 
             if (products.length === 0) {
                 productGrid.innerHTML = `
@@ -213,14 +302,30 @@
         const inStockCheckbox = document.getElementById('filter-instock');
         const sortSelect = document.getElementById('catalog-sort');
 
-        // Check query params for category filter (e.g. from footer links)
+        // Check query params for category filter (e.g. from footer links or category cards)
         const params = new URLSearchParams(window.location.search);
         const urlCatId = params.get('categoryId');
+        const urlCategoryName = params.get('category');
+
         if (urlCatId) {
-            state.categoryId = parseInt(urlCatId);
+            const parsedId = parseInt(urlCatId, 10);
+            if (!isNaN(parsedId) && parsedId > 0) {
+                state.categoryId = parsedId;
+            }
+        } else if (urlCategoryName) {
+            const catMap = {
+                'analog': 1, 'analog watches': 1,
+                'digital': 2, 'digital watches': 2,
+                'luxury': 3, 'luxury watches': 3,
+                'sports': 4, 'sports watches': 4
+            };
+            const matchedId = catMap[urlCategoryName.toLowerCase().trim()];
+            if (matchedId) {
+                state.categoryId = matchedId;
+            }
         }
 
-        const urlKeyword = params.get('search') || params.get('q');
+        const urlKeyword = params.get('search') || params.get('q') || params.get('keyword');
         if (urlKeyword) {
             state.keyword = urlKeyword.trim();
             if (searchInput) {
@@ -283,8 +388,16 @@
 
         // Initial loadings
         if (document.getElementById('catalog-products-grid')) {
-            await loadCategories();
-            await loadProducts();
+            const params = new URLSearchParams(window.location.search);
+            const urlCategoryName = params.get('category');
+            if (urlCategoryName) {
+                // When filtering by named category from URL, resolve category list first
+                await loadCategories();
+                await loadProducts();
+            } else {
+                // Otherwise load categories and catalog products concurrently
+                await Promise.all([loadCategories(), loadProducts()]);
+            }
         }
     });
 })();

@@ -8,6 +8,13 @@
         "Sports Watches": "https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2"
     };
 
+    const CATEGORY_ORDER = {
+        "Analog Watches": 1,
+        "Digital Watches": 2,
+        "Luxury Watches": 3,
+        "Sports Watches": 4
+    };
+
     window.loadHomepageCategories = async function () {
 
         const grid = document.querySelector(".category-grid");
@@ -16,52 +23,57 @@
         try {
 
             if (!window.api || typeof window.api.getCategories !== "function") {
-                grid.innerHTML = `
-                    <p style="grid-column:1/-1;text-align:center;color:red;">
-                        Category API not available.
-                    </p>
-                `;
                 return;
             }
 
             const response = await api.getCategories();
 
-            if (!response.success || !response.data || response.data.length === 0) {
-                grid.innerHTML = `
-                    <p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">
-                        No categories available.
-                    </p>
-                `;
+            let categoryList = [];
+            if (response) {
+                if (Array.isArray(response)) {
+                    categoryList = response;
+                } else if (response.data && Array.isArray(response.data)) {
+                    categoryList = response.data;
+                } else if (response.content && Array.isArray(response.content)) {
+                    categoryList = response.content;
+                }
+            }
+
+            if (!categoryList || categoryList.length === 0) {
                 return;
             }
 
+            // Ensure all 4 categories are ordered: 1. Analog Watches, 2. Digital Watches, 3. Luxury Watches, 4. Sports Watches
+            categoryList.sort((a, b) => {
+                const nameA = a.categoryName || '';
+                const nameB = b.categoryName || '';
+                const orderA = CATEGORY_ORDER[nameA] || a.categoryId || 99;
+                const orderB = CATEGORY_ORDER[nameB] || b.categoryId || 99;
+                return orderA - orderB;
+            });
+
             let categoriesHTML = "";
 
-            response.data.forEach(cat => {
+            categoryList.forEach(cat => {
 
                 const categoryName = cat.categoryName;
                 const categoryId = cat.categoryId;
 
                 // Load custom category image from localStorage if it exists
                 let customCatImg = localStorage.getItem('timeverse_category_img_' + categoryId) || 
-                                   localStorage.getItem('timeverse_category_img_' + categoryName.replace(/\s+/g, '_'));
+                                   localStorage.getItem('timeverse_category_img_' + (categoryName || '').replace(/\s+/g, '_'));
 
-                const expectedURL = {
-                    "Analog Watches": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2",
-                    "Digital Watches": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=600&cb=2",
-                    "Luxury Watches": "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&cb=2",
-                    "Sports Watches": "https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2"
-                }[categoryName];
+                const expectedURL = CATEGORY_IMAGES[categoryName];
 
                 if (expectedURL) {
                     if (customCatImg !== expectedURL) {
                         localStorage.setItem('timeverse_category_img_' + categoryId, expectedURL);
-                        localStorage.setItem('timeverse_category_img_' + categoryName.replace(/\s+/g, '_'), expectedURL);
+                        localStorage.setItem('timeverse_category_img_' + (categoryName || '').replace(/\s+/g, '_'), expectedURL);
                     }
                     customCatImg = expectedURL;
                 }
 
-                const imgUrl = customCatImg || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600";
+                const imgUrl = customCatImg || expectedURL || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600";
 
                 const categoryIcons = {
                     "Analog Watches": `
@@ -101,7 +113,7 @@
 
                 categoriesHTML += `
                     <div class="category-card"
-                        onclick="window.location.href='./products.html?category=${encodeURIComponent(categoryName)}'">
+                        onclick="window.location.href='./products.html?categoryId=${categoryId}&category=${encodeURIComponent(categoryName)}'">
                         
                         <div class="category-card-img-wrapper">
                             <img
@@ -130,12 +142,6 @@
         } catch (err) {
 
             console.error("Failed to load categories:", err);
-
-            grid.innerHTML = `
-                <p style="grid-column:1/-1;text-align:center;color:red;">
-                    Unable to load categories.
-                </p>
-            `;
         }
 
     };

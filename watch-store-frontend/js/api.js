@@ -17,12 +17,25 @@
         }
     }
 
-    // Helper: Build query parameters string
+    // Helper: Build query parameters string safely
     function buildQueryString(params) {
-        if (!params) return '';
-        const keys = Object.keys(params).filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '');
-        if (keys.length === 0) return '';
-        return '?' + keys.map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
+        if (!params || typeof params !== 'object') return '';
+        const entries = [];
+        for (const [key, value] of Object.entries(params)) {
+            if (
+                value === undefined ||
+                value === null ||
+                value === '' ||
+                Number.isNaN(value) ||
+                value === 'null' ||
+                value === 'undefined' ||
+                value === 'NaN'
+            ) {
+                continue;
+            }
+            entries.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+        }
+        return entries.length > 0 ? '?' + entries.join('&') : '';
     }
 
     // Central request handler
@@ -31,7 +44,7 @@
 
         // Setup headers
         options.headers = options.headers || {};
-        if (!(options.body instanceof FormData)) {
+        if (options.body && !(options.body instanceof FormData)) {
             options.headers['Content-Type'] = 'application/json';
         }
 
@@ -367,6 +380,45 @@
             return request(`/api/orders/user/${userId}`);
         },
 
+        getOrderById: async (orderId) => {
+            const targetId = parseInt(orderId);
+            try {
+                return await request(`/api/orders/${orderId}`);
+            } catch (err) {
+                // If backend does not have /api/orders/{orderId} mapped (e.g. running older remote deployment),
+                // fallback to securely loading the authenticated user's orders list and finding the target order
+                let userId = null;
+                if (window.auth && typeof window.auth.getUserId === 'function') {
+                    userId = window.auth.getUserId();
+                }
+                if (!userId) {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        try {
+                            const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+                            userId = payload.userId;
+                        } catch (e) {
+                            userId = localStorage.getItem('userId');
+                        }
+                    }
+                }
+
+                const role = (localStorage.getItem('role') || '').toUpperCase();
+                let orders = [];
+                if (role === 'ADMIN') {
+                    orders = await request('/api/orders/all', { cache: 'no-store' });
+                } else if (userId) {
+                    orders = await request(`/api/orders/user/${userId}`);
+                }
+
+                const found = (orders || []).find(o => o && o.orderId === targetId);
+                if (found) {
+                    return found;
+                }
+                throw err;
+            }
+        },
+
         getAllOrders: () => request('/api/orders/all', { cache: 'no-store' }),
 
         updateOrderStatus: (orderId, status) => {
@@ -399,6 +451,26 @@
         updatePaymentStatus: (paymentId, status) => {
             return request(`/api/payments/${paymentId}/status?status=${encodeURIComponent(status)}`, {
                 method: 'PUT'
+            });
+        },
+
+        // --- Super Admin ---
+        createAdmin: (adminData) => {
+            return request('/api/super-admin/admins', {
+                method: 'POST',
+                body: JSON.stringify(adminData)
+            });
+        },
+
+        getAdmins: () => {
+            return request('/api/super-admin/admins', {
+                cache: 'no-store'
+            });
+        },
+
+        getTodayEarnings: () => {
+            return request('/api/super-admin/today-earnings', {
+                cache: 'no-store'
             });
         }
     };

@@ -5,7 +5,7 @@
         const role = String(rawRole || '').trim();
         if (!role) return null;
         const normalized = role.toUpperCase().replace(/^ROLE_/, '');
-        return normalized === 'ADMIN' || normalized === 'CUSTOMER' ? normalized : null;
+        return normalized === 'ADMIN' || normalized === 'CUSTOMER' || normalized === 'SUPER_ADMIN' ? normalized : null;
     }
 
     function getJwtClaims() {
@@ -80,7 +80,7 @@
             }
 
             if (isAuthPage) {
-                if (role === 'ADMIN') {
+                if (role === 'ADMIN' || role === 'SUPER_ADMIN') {
                     window.location.href = './admin.html';
                     return;
                 }
@@ -88,7 +88,7 @@
                 return;
             }
 
-            if (isAdmin && role !== 'ADMIN') {
+            if (isAdmin && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
                 if (typeof window.showAlert === 'function') {
                     window.showAlert('Access Denied: Admins Only', 'error');
                 }
@@ -98,7 +98,7 @@
                 return;
             }
 
-            if ((isCart || isCheckout || isOrders || isCustomerProtected) && role === 'ADMIN') {
+            if ((isCart || isCheckout || isOrders || isCustomerProtected) && (role === 'ADMIN' || role === 'SUPER_ADMIN')) {
                 if (typeof window.showAlert === 'function') {
                     window.showAlert('Admins are redirected to the dashboard.', 'error');
                 }
@@ -195,14 +195,14 @@
                         showAlert('Login successful!', 'success');
                         setTimeout(() => {
                             window.location.href = './index.html';
-                        }, 700);
+                        }, 150);
                         return;
                     }
 
                     if (role === 'ADMIN') {
                         console.log("LOGIN SUCCESS - admin flow, token exists:", !!response.data.token);
 
-                        if (response.data.role !== 'ADMIN' || !response.data.token) {
+                        if ((response.data.role !== 'ADMIN' && response.data.role !== 'SUPER_ADMIN') || !response.data.token) {
                             showAlert('Admin login could not be completed.', 'error');
                             return;
                         }
@@ -212,11 +212,11 @@
                         localStorage.setItem('email', response.data.email);
                         localStorage.setItem('role', response.data.role);
 
-                        showAlert('Admin login successful!', 'success');
+                        showAlert(response.data.role === 'SUPER_ADMIN' ? 'Super Admin login successful!' : 'Admin login successful!', 'success');
 
                         setTimeout(() => {
                             window.location.href = './admin.html';
-                        }, 700);
+                        }, 150);
 
                         return;
                     }

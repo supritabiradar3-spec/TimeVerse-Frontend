@@ -61,26 +61,38 @@
 
     // Calculate checkout totals
     function calculateCheckoutTotals() {
-        const gst = cartSubtotal * 0.18;
-        const shipping = cartSubtotal > 100000 ? 0 : 500;
-        checkoutTotalAmount = cartSubtotal + gst + shipping;
+        const applied = localStorage.getItem('cart_coupon_applied') === 'true';
+        const discount = applied ? (cartSubtotal * 0.10) : 0;
+        checkoutTotalAmount = Math.max(0, cartSubtotal - discount);
 
         document.getElementById('checkout-subtotal').textContent = formatCurrency(cartSubtotal);
-        document.getElementById('checkout-gst').textContent = formatCurrency(gst);
-        document.getElementById('checkout-shipping').textContent = shipping === 0 ? 'Free' : formatCurrency(shipping);
+
+        const couponRow = document.getElementById('checkout-coupon-row');
+        const discountElem = document.getElementById('checkout-discount');
+        if (couponRow && discountElem) {
+            if (applied && discount > 0) {
+                discountElem.textContent = '-' + formatCurrency(discount);
+                couponRow.style.display = 'flex';
+            } else {
+                couponRow.style.display = 'none';
+            }
+        }
+
         document.getElementById('checkout-grandtotal').textContent = formatCurrency(checkoutTotalAmount);
     }
 
     // Format currency helper
     function formatCurrency(amount) {
+        const num = Number(amount) || 0;
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
             currency: 'INR',
-            maximumFractionDigits: 0
-        }).format(amount);
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(num);
     }
 
-    // Handle checkout submission and payments opening
+    // Process Complete Checkout and Payment Sequence
     async function processPayment(e) {
         e.preventDefault();
 
@@ -120,7 +132,8 @@
 
             // STEP 2: Place Order in DB using the saved address.
             showAlert('Creating order...', 'info');
-            const orderResponse = await api.placeOrder(userId, addressResponse.addressId);
+            const couponCode = (localStorage.getItem('cart_coupon_applied') === 'true') ? 'TIMEVERSE10' : null;
+            const orderResponse = await api.placeOrder(userId, addressResponse.addressId, couponCode);
             const orderId = orderResponse.orderId;
             const amount = orderResponse.totalAmount;
 
@@ -137,7 +150,7 @@
                 currency: "INR",
                 name: "TimeVerse Watches",
                 description: `Bespoke Order Reference #TV-ORD-${orderId}`,
-                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=150",
+                image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=150",
                 order_id: razorpayOrderId,
                 handler: async function (response) {
                     try {
@@ -149,6 +162,9 @@
                             response.razorpay_payment_id,
                             response.razorpay_signature
                         );
+
+                        // Clear coupon state on successful order placement
+                        localStorage.removeItem('cart_coupon_applied');
 
                         // Show success layout on window
                         renderPaymentSuccess(orderId);

@@ -145,25 +145,73 @@
             color: #1C1A17 !important; /* Main text: dark charcoal */
         }
 
+        /* Profile Sidebar Buttons Styling */
+        .sidebar-btn,
         body.light-theme .sidebar-btn {
-            background-color: #F3EDE2 !important; /* Section/menu background: soft warm beige */
-            color: #1C1A17 !important; /* Main text: dark charcoal */
-            border: 1px solid #E6DEC9 !important;
+            background-color: #F5F0E6 !important;
+            background: #F5F0E6 !important;
+            color: #1F1F1F !important;
+            border: 1px solid #E5D9C5 !important;
             margin-bottom: 10px;
-            transition: var(--transition);
+            padding: 12px 18px !important;
+            border-radius: 8px !important;
+            font-weight: 500 !important;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            text-align: left;
+            transform: none !important;
         }
 
+        .sidebar-btn:hover,
         body.light-theme .sidebar-btn:hover {
-            background-color: #EBDCB9 !important;
-            color: #A88548 !important; /* Active hover text: muted luxury gold */
-            transform: translateX(4px);
+            background-color: #1F3A5F !important;
+            background: #1F3A5F !important;
+            color: #FFFFFF !important;
+            border-color: #1F3A5F !important;
+            box-shadow: 0 4px 15px rgba(31, 58, 95, 0.2) !important;
+            transform: none !important;
         }
 
-        body.light-theme .sidebar-btn.active {
-            background-color: #A88548 !important; /* Active item: muted luxury gold background */
-            color: #FFFFFF !important; /* White text for contrast */
-            border-color: #A88548 !important;
-            font-weight: 600;
+        .sidebar-btn.active,
+        body.light-theme .sidebar-btn.active,
+        #tab-profile-btn.active,
+        #tab-orders-btn.active,
+        #tab-wishlist-btn.active,
+        #tab-reviews-btn.active,
+        #tab-address-btn.active {
+            background-color: #1F3A5F !important;
+            background: #1F3A5F !important;
+            color: #FFFFFF !important;
+            border-color: #1F3A5F !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 18px rgba(31, 58, 95, 0.28) !important;
+            transform: none !important;
+        }
+
+        /* Dark Theme Sidebar Buttons */
+        body:not(.light-theme) .sidebar-btn {
+            background-color: #161618 !important;
+            background: #161618 !important;
+            color: #E2E8F0 !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        body:not(.light-theme) .sidebar-btn:hover {
+            background-color: #1F3A5F !important;
+            background: #1F3A5F !important;
+            color: #FFFFFF !important;
+            border-color: #1F3A5F !important;
+        }
+
+        body:not(.light-theme) .sidebar-btn.active {
+            background-color: #1F3A5F !important;
+            background: #1F3A5F !important;
+            color: #FFFFFF !important;
+            border-color: #1F3A5F !important;
+            box-shadow: 0 4px 18px rgba(31, 58, 95, 0.4) !important;
         }
 
         body.light-theme .profile-field-group label {
@@ -198,6 +246,186 @@
             background: #F3EDE2 !important;
             color: #A88548 !important;
             border: 1px solid #E6DEC9 !important;
+        }
+
+        /* My Profile - Bookmarked Timepieces (Wishlist) Sizing & Layout */
+        #profile-wishlist-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+            gap: 25px !important;
+            margin-top: 0 !important;
+        }
+
+        #profile-wishlist-grid .product-card {
+            background-color: var(--dark-gray);
+            border: var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            transition: var(--transition);
+            display: flex !important;
+            flex-direction: column !important;
+            height: 460px !important;
+            box-sizing: border-box;
+        }
+
+        #profile-wishlist-grid .product-card:hover {
+            border-color: var(--gold);
+            box-shadow: var(--border-glow);
+            transform: translateY(-4px);
+        }
+
+        #profile-wishlist-grid .product-card-img-container {
+            position: relative;
+            height: 200px !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            background-color: #151515 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+
+        #profile-wishlist-grid .product-card-img-container a {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        #profile-wishlist-grid .product-card-img {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+            display: block !important;
+            transform: scale(1.08) !important;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        #profile-wishlist-grid .product-card:hover .product-card-img {
+            transform: scale(1.12) !important;
+        }
+
+        #profile-wishlist-grid .product-card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 2;
+            font-size: 0.65rem;
+            padding: 3px 8px;
+        }
+
+        #profile-wishlist-grid .wishlist-toggle-icon-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 10;
+        }
+
+        #profile-wishlist-grid .product-card-details {
+            padding: 14px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            flex-grow: 1 !important;
+            box-sizing: border-box !important;
+            text-align: left !important;
+        }
+
+        #profile-wishlist-grid .product-card-category {
+            font-size: 0.72rem !important;
+            color: var(--gold) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            margin-bottom: 4px !important;
+            font-weight: 500 !important;
+            display: block !important;
+        }
+
+        #profile-wishlist-grid .product-card-name {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 6px !important;
+            color: var(--white) !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 1 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            line-height: 1.3 !important;
+            height: 1.3em !important;
+        }
+
+        #profile-wishlist-grid .product-card-name a {
+            color: var(--white) !important;
+            text-decoration: none !important;
+        }
+
+        #profile-wishlist-grid .product-card-rating {
+            display: flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            font-size: 0.8rem !important;
+            margin-bottom: 6px !important;
+        }
+
+        #profile-wishlist-grid .product-card-details p {
+            color: var(--light-gray) !important;
+            font-size: 0.8rem !important;
+            margin-bottom: 10px !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            line-height: 1.4 !important;
+            height: 2.8em !important;
+        }
+
+        #profile-wishlist-grid .product-card-price {
+            font-size: 1.15rem !important;
+            font-weight: 600 !important;
+            color: var(--gold-light) !important;
+            margin-bottom: 12px !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        #profile-wishlist-grid .product-card-actions {
+            margin-top: auto !important;
+            display: flex !important;
+            gap: 8px !important;
+            align-items: center !important;
+        }
+
+        #profile-wishlist-grid .product-card-actions .btn-luxury {
+            flex: 1 !important;
+            padding: 8px 10px !important;
+            font-size: 0.75rem !important;
+            text-align: center !important;
+            white-space: nowrap !important;
+            box-sizing: border-box !important;
+        }
+
+        #profile-wishlist-grid .product-card-actions .quick-add-cart-btn {
+            flex: 1.2 !important;
+        }
+
+        /* Light Theme Overrides for Wishlist Cards */
+        body.light-theme #profile-wishlist-grid .product-card {
+            background-color: #FFFFFF !important;
+            border: 1px solid #E6DEC9 !important;
+        }
+        body.light-theme #profile-wishlist-grid .product-card-img-container {
+            background-color: #F8F7F4 !important;
+        }
+        body.light-theme #profile-wishlist-grid .product-card-name,
+        body.light-theme #profile-wishlist-grid .product-card-name a {
+            color: #1C1A17 !important;
         }
     </style>
 </head>
@@ -542,13 +770,18 @@
                 list.innerHTML = '<p style="color:var(--light-gray);">Loading orders...</p>';
                 try {
                     const response = await api.getUserOrders(userId);
-                    if (!response || response.length === 0) {
+                    const visibleOrders = (response || []).filter(order => {
+                        if (!order || !order.status) return false;
+                        const s = String(order.status).toUpperCase().trim();
+                        return s !== 'PLACED' && s !== 'PENDING' && s !== 'CREATED';
+                    });
+                    if (visibleOrders.length === 0) {
                         list.innerHTML = '<p style="color:var(--light-gray);">No orders placed yet.</p>';
                         return;
                     }
-                    response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    visibleOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     let html = '';
-                    response.forEach(order => {
+                    visibleOrders.forEach(order => {
                         const total = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(order.totalAmount);
                         const date = new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
                         let items = '';
@@ -564,9 +797,12 @@
                                     </div>
                                     <span class="badge ${order.status === 'DELIVERED' || order.status === 'SHIPPED' ? 'badge-success' : 'badge-gold'}">${order.status}</span>
                                 </div>
-                                <div style="display:flex; justify-content:space-between; font-size:0.85rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 10px;">
+                                <div style="display:flex; justify-content:space-between; align-items: center; font-size:0.85rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 10px; flex-wrap: wrap; gap: 10px;">
                                     <span style="color:var(--light-gray);">Placed: ${date}</span>
-                                    <span style="color:var(--gold-light); font-weight:600; font-size: 1.05rem;">${total}</span>
+                                    <div style="display:flex; align-items: center; gap: 15px;">
+                                        <span style="color:var(--gold-light); font-weight:600; font-size: 1.05rem;">${total}</span>
+                                        <a href="./order-details.html?orderId=${order.orderId}" class="btn-luxury" style="padding: 4px 10px; font-size: 0.75rem;">Tracking &rarr;</a>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -583,12 +819,13 @@
                 grid.innerHTML = '<p style="color:var(--light-gray); grid-column:1/-1; text-align:center;">Loading bookmarks...</p>';
                 try {
                     const response = await api.getWishlist();
-                    if (!response || response.length === 0) {
+                    const wishlist = Array.isArray(response) ? response : (response && (response.data || response.content) ? (response.data || response.content) : []);
+                    if (!wishlist || wishlist.length === 0) {
                         grid.innerHTML = '<p style="color:var(--light-gray); grid-column:1/-1; text-align:center;">No bookmarked timepieces.</p>';
                         return;
                     }
                     let html = '';
-                    response.forEach(item => {
+                    wishlist.forEach(item => {
                         html += createProductCardHtml(item);
                     });
                     grid.innerHTML = html;
