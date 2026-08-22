@@ -11,6 +11,7 @@
     <!-- Style Sheets -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/responsive.css">
     <style>
         .settings-container {
             max-width: 700px;
@@ -34,8 +35,8 @@
             font-family: var(--font-title);
             font-size: 1.6rem;
             color: var(--gold-light);
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
         }
 
         .settings-section {
@@ -47,8 +48,8 @@
             font-size: 1.05rem;
             color: var(--gold);
             margin-bottom: 18px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -180,9 +181,9 @@
             cursor: pointer;
             font-family: var(--font-title);
             font-size: 0.8rem;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
             transition: var(--transition);
-            text-transform: uppercase;
         }
 
         .btn-delete-act:hover {
@@ -200,12 +201,12 @@
     <main class="container">
         <div class="settings-container">
             <div class="settings-header">
-                <h2>⚙️ Account Settings</h2>
+                <h2>Account Settings</h2>
             </div>
 
             <!-- Theme Preference -->
             <div class="settings-section">
-                <h3>🎨 Personalization</h3>
+                <h3>Personalization</h3>
                 <div class="settings-card">
                     <div class="setting-row">
                         <div class="setting-info">
@@ -238,7 +239,7 @@
 
             <!-- Notification Preferences -->
             <div class="settings-section">
-                <h3>🔔 Notifications</h3>
+                <h3>Notifications</h3>
                 <div class="settings-card">
                     <div class="setting-row">
                         <div class="setting-info">
@@ -270,7 +271,7 @@
 
             <!-- Privacy Preferences -->
             <div class="settings-section">
-                <h3>🔒 Privacy & Security</h3>
+                <h3>Privacy & Security</h3>
                 <div class="settings-card">
                     <div class="setting-row">
                         <div class="setting-info">
@@ -289,7 +290,7 @@
 
             <!-- Danger Zone -->
             <div class="settings-section" style="margin-top: 40px;">
-                <h3 style="color: #ef4444;">⚠️ Danger Zone</h3>
+                <h3 style="color: #ef4444;">Danger Zone</h3>
                 <div class="settings-card" style="border-color: rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.01);">
                     <div class="setting-row" style="border: none;">
                         <div class="setting-info">
@@ -304,7 +305,7 @@
             </div>
 
             <div style="text-align: right; margin-top: 25px;">
-                <button type="button" class="btn-luxury btn-luxury-solid" id="btn-save-settings" style="padding: 12px 30px;">💾 Save Preferences</button>
+                <button type="button" class="btn-luxury btn-luxury-solid" id="btn-save-settings" style="padding: 12px 30px;">Save Preferences</button>
             </div>
         </div>
     </main>
@@ -313,7 +314,7 @@
     <div class="modal-overlay" id="delete-confirm-modal">
         <div class="modal-content" style="max-width: 400px; text-align: center;">
             <button class="close-btn" id="close-delete-modal-btn">&times;</button>
-            <h3 class="luxury-text" style="font-size: 1.25rem; margin-bottom: 15px; color: #ef4444; text-transform: uppercase;">Are you absolutely sure?</h3>
+            <h3 class="luxury-text" style="font-size: 1.25rem; margin-bottom: 15px; color: #ef4444; font-weight: 700;">Are you absolutely sure?</h3>
             <p style="font-size: 0.9rem; color: var(--light-gray); margin-bottom: 25px; line-height: 1.5;">This will completely delete your account from our database. You will lose access to all your order histories immediately.</p>
             <div style="display: flex; gap: 15px; justify-content: center;">
                 <button type="button" class="btn-luxury" id="btn-cancel-delete" style="flex: 1;">Cancel</button>

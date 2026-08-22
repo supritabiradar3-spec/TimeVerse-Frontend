@@ -35,9 +35,9 @@
             font-family: var(--font-title);
             font-size: 1.1rem;
             color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             margin-bottom: 20px;
+            font-weight: 600;
             display: block;
         }
 
@@ -46,7 +46,6 @@
             font-weight: 700;
             line-height: 1.1;
             margin-bottom: 25px;
-            text-transform: uppercase;
             color: var(--light);
         }
 
@@ -70,8 +69,7 @@
             font-family: var(--font-title);
             font-size: 2.2rem;
             color: #1C1A17;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 1px;
             font-weight: 700;
             margin-bottom: 5px;
         }
@@ -156,10 +154,9 @@
             font-family: var(--font-title);
             font-size: 1.15rem;
             color: #FFFFFF !important;
-            font-weight: 500;
+            font-weight: 600;
             margin: 5px 0 10px 0;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .category-card-divider {
@@ -180,10 +177,9 @@
             background: transparent;
             padding: 8px 20px;
             font-family: var(--font-body);
-            font-size: 0.72rem;
+            font-size: 0.76rem;
             font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
             border-radius: 4px;
             display: flex;
@@ -263,8 +259,8 @@
         .luxury-text {
             font-family: 'Poppins', sans-serif !important;
             font-weight: 700 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 1.5px !important;
+            text-transform: none !important;
+            letter-spacing: 0.5px !important;
         }
 
         /* Premium Light Mode Cards & Sections */
@@ -340,8 +336,7 @@
             border: 1px solid #1F3A5F !important;
             border-radius: 8px !important;
             font-weight: 600 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 1px !important;
+            letter-spacing: 0.3px !important;
             transition: background 0.2s ease, border-color 0.2s ease !important;
         }
 
@@ -448,6 +443,7 @@
             position: relative;
             margin-top: 80px;
             width: 100%;
+            height: 600px;
             min-height: 560px;
             overflow: hidden;
             background: linear-gradient(135deg, #FBF9F5 0%, #F4EFE6 50%, #FAF8F5 100%);
@@ -463,6 +459,7 @@
         .carousel-container {
             position: relative;
             width: 100%;
+            height: 100%;
             min-height: 560px;
             display: flex;
             align-items: center;
@@ -471,6 +468,7 @@
         .carousel-track {
             position: relative;
             width: 100%;
+            height: 100%;
             min-height: 560px;
         }
 
@@ -488,6 +486,7 @@
             transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s;
             z-index: 1;
             padding: 40px 0;
+            box-sizing: border-box;
         }
 
         .carousel-slide.active {
@@ -524,8 +523,7 @@
             font-family: 'Poppins', sans-serif !important;
             font-size: 0.9rem !important;
             font-weight: 600 !important;
-            letter-spacing: 4px !important;
-            text-transform: uppercase !important;
+            letter-spacing: 2px !important;
             color: #C5A059 !important;
             margin-bottom: 14px;
         }
@@ -543,8 +541,7 @@
             font-size: 3.4rem !important;
             font-weight: 700 !important;
             line-height: 1.12 !important;
-            letter-spacing: 2px !important;
-            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
             margin-bottom: 18px !important;
             color: #121212 !important;
             text-shadow: none !important;
@@ -581,8 +578,7 @@
             padding: 14px 34px !important;
             font-size: 0.85rem !important;
             font-weight: 600 !important;
-            letter-spacing: 2px !important;
-            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
             border-radius: 4px !important;
             display: inline-flex !important;
             align-items: center !important;
@@ -618,8 +614,7 @@
             padding: 14px 28px !important;
             font-size: 0.85rem !important;
             font-weight: 600 !important;
-            letter-spacing: 2px !important;
-            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
             border-radius: 4px !important;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
@@ -646,6 +641,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 440px;
+            height: 440px;
+            max-width: 100%;
+            flex: 0 0 440px;
             opacity: 0;
             transform: scale(0.95) translateY(20px);
             transition: opacity 0.9s ease 0.3s, transform 0.9s ease 0.3s;
@@ -658,12 +657,21 @@
 
         .hero-watch-frame {
             position: relative;
-            max-width: 440px;
-            width: 100%;
+            width: 440px;
             height: 440px;
+            min-width: 440px;
+            min-height: 440px;
+            max-width: 440px;
+            max-height: 440px;
+            aspect-ratio: 1 / 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .hero-watch-glow {
@@ -677,14 +685,20 @@
         }
 
         .hero-watch-img {
-            max-width: 100%;
-            max-height: 430px;
-            object-fit: contain;
+            width: 440px !important;
+            height: 440px !important;
+            min-width: 440px;
+            min-height: 440px;
+            max-width: 440px;
+            max-height: 440px;
+            object-fit: cover !important;
+            object-position: center center !important;
             position: relative;
             z-index: 2;
             filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.16));
             border-radius: 16px;
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            display: block;
         }
 
         .hero-image-wrapper:hover .hero-watch-img {
@@ -830,8 +844,7 @@
             font-weight: 700 !important;
             color: #121212 !important;
             margin: 0 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
+            letter-spacing: 0.3px !important;
             line-height: 1.2 !important;
         }
 
@@ -891,8 +904,7 @@
             color: #9A7B3E;
             font-weight: 700;
             font-size: 0.84rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-family: 'Poppins', sans-serif;
             flex-shrink: 0;
         }
@@ -919,6 +931,7 @@
             .trust-benefits-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
+
             .hero-title {
                 font-size: 2.8rem !important;
             }
@@ -930,29 +943,49 @@
                 gap: 30px;
                 text-align: center;
             }
+
             .hero-content {
                 max-width: 100%;
                 margin: 0 auto;
                 order: 2;
             }
+
             .hero-image-wrapper {
                 order: 1;
-            }
-            .hero-watch-frame {
-                height: 320px;
-                max-width: 320px;
+                width: 340px;
+                height: 340px;
+                flex: 0 0 340px;
                 margin: 0 auto;
             }
+
+            .hero-watch-frame {
+                height: 340px;
+                width: 340px;
+                min-width: 340px;
+                min-height: 340px;
+                max-width: 340px;
+                max-height: 340px;
+                margin: 0 auto;
+            }
+
             .hero-watch-glow {
                 width: 280px;
                 height: 280px;
             }
+
             .hero-watch-img {
-                max-height: 300px;
+                width: 340px !important;
+                height: 340px !important;
+                min-width: 340px;
+                min-height: 340px;
+                max-height: 340px !important;
+                max-width: 340px !important;
             }
+
             .hero-actions {
                 justify-content: center;
             }
+
             .trust-benefits-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -963,30 +996,65 @@
                 min-height: 580px;
                 margin-top: 80px;
             }
+
             .carousel-slide {
                 padding: 30px 0 50px 0;
             }
+
             .hero-title {
                 font-size: 2.2rem !important;
             }
+
             .hero-desc {
                 font-size: 0.95rem !important;
             }
-            .btn-hero-primary, .btn-hero-secondary {
+
+            .btn-hero-primary,
+            .btn-hero-secondary {
                 padding: 12px 24px !important;
                 font-size: 0.8rem !important;
             }
+
+            .hero-image-wrapper {
+                width: 280px;
+                height: 280px;
+                flex: 0 0 280px;
+                margin: 0 auto;
+            }
+
+            .hero-watch-frame {
+                height: 280px;
+                width: 280px;
+                min-width: 280px;
+                min-height: 280px;
+                max-width: 280px;
+                max-height: 280px;
+                margin: 0 auto;
+            }
+
+            .hero-watch-img {
+                width: 280px !important;
+                height: 280px !important;
+                min-width: 280px;
+                min-height: 280px;
+                max-height: 280px !important;
+                max-width: 280px !important;
+            }
+
             .carousel-arrow {
                 width: 38px;
                 height: 38px;
                 font-size: 1rem;
             }
+
             .carousel-prev {
                 left: 10px;
             }
+
             .carousel-next {
                 right: 10px;
             }
+
             .security-notice-card {
                 flex-direction: column;
                 gap: 8px;
@@ -995,18 +1063,122 @@
         }
 
         @media (max-width: 576px) {
+            .hero-carousel {
+                min-height: 520px;
+                margin-top: 60px;
+            }
+
+            .carousel-slide {
+                padding: 20px 0 45px 0;
+            }
+
             .hero-title {
-                font-size: 1.85rem !important;
+                font-size: 1.75rem !important;
             }
+
+            .hero-desc {
+                font-size: 0.9rem !important;
+                margin-bottom: 22px !important;
+            }
+
+            .hero-image-wrapper {
+                width: 220px;
+                height: 220px;
+                flex: 0 0 220px;
+                margin: 0 auto;
+                max-width: 100%;
+            }
+
             .hero-watch-frame {
-                height: 240px;
-                max-width: 240px;
-            }
-            .hero-watch-img {
+                height: 220px;
+                width: 220px;
+                min-width: 0;
+                min-height: 0;
+                max-width: 220px;
                 max-height: 220px;
+                margin: 0 auto;
             }
+
+            .hero-watch-img {
+                width: 220px !important;
+                height: 220px !important;
+                min-width: 0;
+                min-height: 0;
+                max-height: 220px !important;
+                max-width: 220px !important;
+                object-fit: contain !important;
+            }
+
+            .hero-watch-glow {
+                width: 180px;
+                height: 180px;
+            }
+
             .trust-benefits-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .carousel-arrow {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+
+            .carousel-prev {
+                left: 4px;
+            }
+
+            .carousel-next {
+                right: 4px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .hero-title {
+                font-size: 1.45rem !important;
+            }
+
+            .hero-eyebrow {
+                font-size: 0.78rem !important;
+            }
+
+            .hero-desc {
+                font-size: 0.84rem !important;
+            }
+
+            .hero-image-wrapper {
+                width: 180px;
+                height: 180px;
+                flex: 0 0 180px;
+            }
+
+            .hero-watch-frame {
+                height: 180px;
+                width: 180px;
+                max-width: 180px;
+                max-height: 180px;
+            }
+
+            .hero-watch-img {
+                width: 180px !important;
+                height: 180px !important;
+                max-height: 180px !important;
+                max-width: 180px !important;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .btn-hero-primary,
+            .btn-hero-secondary {
+                width: 100%;
+                max-width: 260px;
+                text-align: center;
+                justify-content: center;
+                box-sizing: border-box;
             }
         }
     </style>
@@ -1029,22 +1201,27 @@
                                 <span class="hero-eyebrow">Timeless Elegance</span>
                                 <h1 class="hero-title">Crafted For You</h1>
                                 <p class="hero-desc">
-                                    Discover masterfully curated horological timepieces designed with precision engineering, Swiss movement artistry, and distinguished luxury.
+                                    Discover masterfully curated horological timepieces designed with precision
+                                    engineering, Swiss movement artistry, and distinguished luxury.
                                 </p>
                                 <div class="hero-actions">
                                     <a href="./products.html" class="btn-luxury btn-hero-primary">
                                         Shop Now
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
                                         </svg>
                                     </a>
-                                    <a href="./products.html" class="btn-luxury btn-hero-secondary">Explore Collection</a>
+                                    <a href="./products.html" class="btn-luxury btn-hero-secondary">Explore
+                                        Collection</a>
                                 </div>
                             </div>
                             <div class="hero-image-wrapper">
                                 <div class="hero-watch-frame">
                                     <div class="hero-watch-glow"></div>
-                                    <img src="../hero-watch-luxury.jpg" alt="TimeVerse Luxury Chronometer Watch" class="hero-watch-img">
+                                    <img src="./hero-watch-luxury.jpg" alt="TimeVerse Luxury Chronometer Watch"
+                                        class="hero-watch-img" onerror="this.src='../hero-watch-luxury.jpg'">
                                 </div>
                             </div>
                         </div>
@@ -1059,22 +1236,27 @@
                                 <span class="hero-eyebrow">The Premium Collection</span>
                                 <h1 class="hero-title">Precision &amp; Perfection</h1>
                                 <p class="hero-desc">
-                                    Handcrafted with meticulous Swiss movements and sapphire crystal casing, built for connoisseurs who appreciate true luxury.
+                                    Handcrafted with meticulous Swiss movements and sapphire crystal casing, built for
+                                    connoisseurs who appreciate true luxury.
                                 </p>
                                 <div class="hero-actions">
                                     <a href="./products.html" class="btn-luxury btn-hero-primary">
                                         Shop Collection
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
                                         </svg>
                                     </a>
-                                    <a href="./products.html?categoryId=3" class="btn-luxury btn-hero-secondary">Luxury Watches</a>
+                                    <a href="./products.html?categoryId=3" class="btn-luxury btn-hero-secondary">Luxury
+                                        Watches</a>
                                 </div>
                             </div>
                             <div class="hero-image-wrapper">
                                 <div class="hero-watch-frame">
                                     <div class="hero-watch-glow"></div>
-                                    <img src="./new-watch-2.jpg" alt="TimeVerse Premium Watch Collection" class="hero-watch-img" onerror="this.src='../new-watch-2.jpg'">
+                                    <img src="./new-watch-2.jpg" alt="TimeVerse Premium Watch Collection"
+                                        class="hero-watch-img" onerror="this.src='../new-watch-2.jpg'">
                                 </div>
                             </div>
                         </div>
@@ -1089,13 +1271,16 @@
                                 <span class="hero-eyebrow">Built For Every Moment</span>
                                 <h1 class="hero-title">Performance Meets Design</h1>
                                 <p class="hero-desc">
-                                    Rugged titanium engineering paired with chronographic accuracy. Engineered to excel across every altitude, depth, and adventure.
+                                    Rugged titanium engineering paired with chronographic accuracy. Engineered to excel
+                                    across every altitude, depth, and adventure.
                                 </p>
                                 <div class="hero-actions">
                                     <a href="./products.html?categoryId=4" class="btn-luxury btn-hero-primary">
                                         Explore Sports
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
                                         </svg>
                                     </a>
                                     <a href="./products.html" class="btn-luxury btn-hero-secondary">All Timepieces</a>
@@ -1104,7 +1289,8 @@
                             <div class="hero-image-wrapper">
                                 <div class="hero-watch-frame">
                                     <div class="hero-watch-glow"></div>
-                                    <img src="../sports-watch.jpg" alt="TimeVerse High Performance Sports Watch" class="hero-watch-img">
+                                    <img src="./sports-watch.jpg" alt="TimeVerse High Performance Sports Watch"
+                                        class="hero-watch-img" onerror="this.src='../sports-watch.jpg'">
                                 </div>
                             </div>
                         </div>
@@ -1119,22 +1305,27 @@
                                 <span class="hero-eyebrow">New Arrivals 2026</span>
                                 <h1 class="hero-title">Statement Timepieces</h1>
                                 <p class="hero-desc">
-                                    Discover our newest curated additions of limited-edition mechanical chronometers and luxury automatic timepieces.
+                                    Discover our newest curated additions of limited-edition mechanical chronometers and
+                                    luxury automatic timepieces.
                                 </p>
                                 <div class="hero-actions">
                                     <a href="./products.html" class="btn-luxury btn-hero-primary">
                                         Shop New Arrivals
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
                                         </svg>
                                     </a>
-                                    <a href="./products.html?categoryId=1" class="btn-luxury btn-hero-secondary">Analog Classics</a>
+                                    <a href="./products.html?categoryId=1" class="btn-luxury btn-hero-secondary">Analog
+                                        Classics</a>
                                 </div>
                             </div>
                             <div class="hero-image-wrapper">
                                 <div class="hero-watch-frame">
                                     <div class="hero-watch-glow"></div>
-                                    <img src="./new-watch-4.jpg" alt="TimeVerse New Arrivals Statement Timepiece" class="hero-watch-img" onerror="this.src='../new-watch-4.jpg'">
+                                    <img src="./new-watch-4.jpg" alt="TimeVerse New Arrivals Statement Timepiece"
+                                        class="hero-watch-img" onerror="this.src='../new-watch-4.jpg'">
                                 </div>
                             </div>
                         </div>
@@ -1149,13 +1340,16 @@
                                 <span class="hero-eyebrow">LIMITED EDITION</span>
                                 <h1 class="hero-title">Wear Your Legacy</h1>
                                 <p class="hero-desc">
-                                    Exceptional timepieces crafted to make every moment unforgettable. Discover precision, character, and timeless luxury on your wrist.
+                                    Exceptional timepieces crafted to make every moment unforgettable. Discover
+                                    precision, character, and timeless luxury on your wrist.
                                 </p>
                                 <div class="hero-actions">
                                     <a href="./products.html" class="btn-luxury btn-hero-primary">
                                         Own The Moment
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
                                         </svg>
                                     </a>
                                     <a href="./products.html" class="btn-luxury btn-hero-secondary">See The Details</a>
@@ -1164,7 +1358,8 @@
                             <div class="hero-image-wrapper">
                                 <div class="hero-watch-frame">
                                     <div class="hero-watch-glow"></div>
-                                    <img src="./banner-5.jpg" alt="Limited Edition Legacy Watch" class="hero-watch-img" onerror="this.src='../banner-5.jpg'">
+                                    <img src="./banner-5.jpg" alt="Limited Edition Legacy Watch" class="hero-watch-img"
+                                        onerror="this.src='../banner-5.jpg'">
                                 </div>
                             </div>
                         </div>
@@ -1173,7 +1368,8 @@
             </div>
 
             <!-- Navigation Arrows -->
-            <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous slide">&#10094;</button>
+            <button class="carousel-arrow carousel-prev" id="carousel-prev"
+                aria-label="Previous slide">&#10094;</button>
             <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next slide">&#10095;</button>
 
             <!-- Navigation Dots -->
@@ -1194,9 +1390,10 @@
                 <!-- Benefit 1 -->
                 <div class="trust-benefit-card">
                     <div class="trust-benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                            <path d="m9 12 2 2 4-4"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            <path d="m9 12 2 2 4-4" />
                         </svg>
                     </div>
                     <div class="trust-benefit-content">
@@ -1208,11 +1405,12 @@
                 <!-- Benefit 2 -->
                 <div class="trust-benefit-card">
                     <div class="trust-benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="3" width="15" height="13"/>
-                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
-                            <circle cx="5.5" cy="18.5" r="2.5"/>
-                            <circle cx="18.5" cy="18.5" r="2.5"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="3" width="15" height="13" />
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                            <circle cx="5.5" cy="18.5" r="2.5" />
+                            <circle cx="18.5" cy="18.5" r="2.5" />
                         </svg>
                     </div>
                     <div class="trust-benefit-content">
@@ -1224,9 +1422,10 @@
                 <!-- Benefit 3 -->
                 <div class="trust-benefit-card">
                     <div class="trust-benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="8" r="6"/>
-                            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="6" />
+                            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
                         </svg>
                     </div>
                     <div class="trust-benefit-content">
@@ -1238,11 +1437,12 @@
                 <!-- Benefit 4 -->
                 <div class="trust-benefit-card">
                     <div class="trust-benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                            <path d="M21 3v5h-5"/>
-                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-                            <path d="M8 16H3v5"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                            <path d="M21 3v5h-5" />
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                            <path d="M8 16H3v5" />
                         </svg>
                     </div>
                     <div class="trust-benefit-content">
@@ -1254,9 +1454,10 @@
                 <!-- Benefit 5 -->
                 <div class="trust-benefit-card">
                     <div class="trust-benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
                     </div>
                     <div class="trust-benefit-content">
@@ -1273,15 +1474,17 @@
         <div class="container">
             <div class="security-notice-card">
                 <div class="security-notice-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
                     <span>Important Notice</span>
                 </div>
                 <p class="security-notice-text">
-                    Beware of fake websites and unauthorized sellers. TimeVerse will never ask for OTP, CVV, password, or other confidential information.
+                    Beware of fake websites and unauthorized sellers. TimeVerse will never ask for OTP, CVV, password,
+                    or other confidential information.
                 </p>
             </div>
         </div>
@@ -1296,7 +1499,8 @@
             </div>
             <div class="category-grid">
                 <!-- Category 1: Analog Watches -->
-                <div class="category-card" onclick="window.location.href='./products.html?categoryId=1&category=Analog%20Watches'">
+                <div class="category-card"
+                    onclick="window.location.href='./products.html?categoryId=1&category=Analog%20Watches'">
                     <div class="category-card-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2"
                             alt="Analog Watches" class="category-card-img">
@@ -1314,7 +1518,8 @@
                     </div>
                 </div>
                 <!-- Category 2: Digital Watches -->
-                <div class="category-card" onclick="window.location.href='./products.html?categoryId=2&category=Digital%20Watches'">
+                <div class="category-card"
+                    onclick="window.location.href='./products.html?categoryId=2&category=Digital%20Watches'">
                     <div class="category-card-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=600&cb=2"
                             alt="Digital Watches" class="category-card-img">
@@ -1334,7 +1539,8 @@
                     </div>
                 </div>
                 <!-- Category 3: Luxury Watches -->
-                <div class="category-card" onclick="window.location.href='./products.html?categoryId=3&category=Luxury%20Watches'">
+                <div class="category-card"
+                    onclick="window.location.href='./products.html?categoryId=3&category=Luxury%20Watches'">
                     <div class="category-card-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&cb=2"
                             alt="Luxury Watches" class="category-card-img">
@@ -1352,10 +1558,11 @@
                     </div>
                 </div>
                 <!-- Category 4: Sports Watches -->
-                <div class="category-card" onclick="window.location.href='./products.html?categoryId=4&category=Sports%20Watches'">
+                <div class="category-card"
+                    onclick="window.location.href='./products.html?categoryId=4&category=Sports%20Watches'">
                     <div class="category-card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2"
-                            alt="Sports Watches" class="category-card-img">
+                        <img src="../sports-watch.jpg" alt="Sports Watches" class="category-card-img"
+                            onerror="this.src='https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=600&cb=2'">
                     </div>
                     <div class="category-card-info">
                         <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
@@ -1492,7 +1699,6 @@
                 style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-top: 20px;">
                 <div class="glass-card"
                     style="padding: 30px; text-align: center; background: var(--dark-gray); border: var(--border); border-radius: 12px; box-shadow: var(--border-glow);">
-                    <div style="font-size: 1.8rem; margin-bottom: 15px; color: var(--gold);">📍</div>
                     <h4 class="luxury-text"
                         style="color: var(--gold); font-size: 1rem; margin-bottom: 10px; letter-spacing: 1px;">Boutique
                         HQ</h4>
@@ -1501,7 +1707,6 @@
                 </div>
                 <div class="glass-card"
                     style="padding: 30px; text-align: center; background: var(--dark-gray); border: var(--border); border-radius: 12px; box-shadow: var(--border-glow);">
-                    <div style="font-size: 1.8rem; margin-bottom: 15px; color: var(--gold);">📞</div>
                     <h4 class="luxury-text"
                         style="color: var(--gold); font-size: 1rem; margin-bottom: 10px; letter-spacing: 1px;">Concierge
                         Line</h4>
@@ -1510,7 +1715,6 @@
                 </div>
                 <div class="glass-card"
                     style="padding: 30px; text-align: center; background: var(--dark-gray); border: var(--border); border-radius: 12px; box-shadow: var(--border-glow);">
-                    <div style="font-size: 1.8rem; margin-bottom: 15px; color: var(--gold);">✉️</div>
                     <h4 class="luxury-text"
                         style="color: var(--gold); font-size: 1rem; margin-bottom: 10px; letter-spacing: 1px;">Email
                         Support</h4>
@@ -1570,8 +1774,8 @@
             }
 
             // Sync correct category images to localStorage to bypass caching
-            localStorage.setItem('timeverse_category_img_4', 'https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2');
-            localStorage.setItem('timeverse_category_img_Sports_Watches', 'https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2');
+            localStorage.setItem('timeverse_category_img_4', '../sports-watch.jpg');
+            localStorage.setItem('timeverse_category_img_Sports_Watches', '../sports-watch.jpg');
 
             // Post-load DOM check to guarantee the image is updated
             const sportsImg = document.querySelector('img[alt="Sports Watches"]');
@@ -1608,6 +1812,9 @@
 
                 if (wishlistRes && Array.isArray(wishlistRes)) {
                     window.wishlistProductIds = new Set(wishlistRes.map(item => item.productId));
+                    if (typeof window.updateNavbarWishlistCount === 'function') {
+                        window.updateNavbarWishlistCount(wishlistRes.length);
+                    }
                 }
 
                 let products = Array.isArray(response) ? response : (response && (response.content || response.data) ? (response.content || response.data) : []);

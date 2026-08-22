@@ -1,88 +1,759 @@
-/* Additional Responsive Enhancements */
+/* ==========================================================================
+   TimeVerse Master Responsive Stylesheet
+   Supports all screen sizes: 320px, 360px, 375px, 390px, 414px, 430px,
+   768px tablet, and 1280px/1440px desktop.
+   ========================================================================== */
 
-@media (max-width: 992px) {
-    section {
-        padding: 50px 0;
+/* Universal Layout & Overflow Safeguards */
+html {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   BREAKPOINT: Large Tablets & Laptops (<= 1200px)
+   ========================================================================== */
+@media (max-width: 1200px) {
+    .trust-benefits-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
-    
-    .section-title h2 {
-        font-size: 2rem;
+
+    .hero-title {
+        font-size: 2.8rem !important;
     }
 }
 
+/* ==========================================================================
+   BREAKPOINT: Tablets & Landscape Mobile (<= 992px)
+   ========================================================================== */
+@media (max-width: 992px) {
+    section {
+        padding: 45px 0;
+    }
+
+    .container {
+        padding: 0 20px;
+    }
+
+    .section-title {
+        margin-bottom: 35px;
+    }
+
+    .section-title h2 {
+        font-size: 2rem;
+    }
+
+    /* Category Grid on Tablets */
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 25px;
+    }
+
+    .category-card {
+        height: auto !important;
+        min-height: 380px;
+    }
+
+    /* Trust & Benefits Grid */
+    .trust-benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    /* Catalog & Filter Layout */
+    .filter-layout {
+        flex-direction: column !important;
+        gap: 30px !important;
+        margin-top: 25px !important;
+    }
+
+    .filter-sidebar {
+        width: 100% !important;
+        position: static !important;
+        border-radius: 12px;
+    }
+
+    .filter-main {
+        width: 100% !important;
+    }
+
+    /* Cart & Checkout Layout */
+    .cart-wrapper {
+        flex-direction: column !important;
+        gap: 30px !important;
+        margin-top: 25px !important;
+        margin-bottom: 40px !important;
+    }
+
+    .cart-main {
+        width: 100% !important;
+    }
+
+    .cart-summary {
+        width: 100% !important;
+    }
+
+    .checkout-wrapper {
+        flex-direction: column !important;
+        gap: 30px !important;
+        margin-top: 25px !important;
+    }
+
+    .checkout-form-container {
+        width: 100% !important;
+    }
+
+    .checkout-summary-sidebar {
+        width: 100% !important;
+    }
+
+    /* Product Details Layout */
+    .details-container {
+        flex-direction: column !important;
+        gap: 35px !important;
+        margin-top: 20px !important;
+    }
+
+    .details-gallery,
+    .details-info {
+        width: 100% !important;
+    }
+
+    .details-main-img-wrap {
+        height: 380px;
+    }
+
+    /* Profile Layout */
+    .profile-layout-wrapper {
+        flex-direction: column !important;
+        gap: 25px !important;
+    }
+
+    .profile-layout-wrapper aside,
+    .profile-layout-wrapper main {
+        width: 100% !important;
+    }
+
+    /* Admin Dashboard */
+    .admin-dashboard {
+        flex-direction: column !important;
+        gap: 25px !important;
+    }
+
+    .admin-sidebar {
+        width: 100% !important;
+        position: static !important;
+        height: auto !important;
+    }
+
+    .admin-main {
+        width: 100% !important;
+    }
+
+    .admin-split-layout {
+        flex-direction: column !important;
+    }
+
+    .admin-form-col {
+        width: 100% !important;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Footer */
+    .footer-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 30px !important;
+    }
+}
+
+/* ==========================================================================
+   BREAKPOINT: Portrait Tablets & Phablets (<= 768px)
+   ========================================================================== */
 @media (max-width: 768px) {
-    /* Base typography adjustments */
     body {
         font-size: 14px;
     }
 
+    /* Page Headers */
     .page-header {
-        padding: 80px 0 40px 0;
+        padding: 85px 0 30px 0 !important;
+        margin-top: 60px !important;
     }
 
     .page-header h1 {
-        font-size: 2.2rem;
+        font-size: 1.85rem !important;
     }
 
-    /* Form grid collapsing */
+    .showroom-page-header,
+    .cart-page-header {
+        height: 150px !important;
+        min-height: 140px !important;
+        margin-top: 60px !important;
+    }
+
+    .showroom-page-header h1,
+    .cart-page-header h1 {
+        font-size: 1.75rem !important;
+    }
+
+    /* Grid utilities collapse to single column */
     .grid-cols-2, .grid-cols-3, .grid-cols-4 {
         grid-template-columns: 1fr !important;
-        gap: 15px;
+        gap: 15px !important;
     }
 
-    /* Cart layout collapsing */
+    /* Catalog Controls */
+    .catalog-controls {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .catalog-controls select,
+    #catalog-sort {
+        width: 100% !important;
+    }
+
+    /* Touch-friendly Cart Table Container */
     .cart-table-container {
-        overflow-x: auto;
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        margin-bottom: 15px;
+        display: block;
     }
 
     .cart-table {
-        min-width: 600px;
+        min-width: 520px !important;
+        width: 100% !important;
     }
 
-    .cart-summary-wrapper {
-        margin-top: 30px;
+    .cart-table th,
+    .cart-table td {
+        padding: 12px 8px !important;
+        font-size: 0.85rem !important;
     }
 
-    /* Admin dashboard layout */
+    /* Product Details Adjustments */
+    .details-main-img-wrap {
+        height: 320px !important;
+    }
+
+    .details-thumbs {
+        gap: 10px !important;
+        padding-bottom: 8px !important;
+    }
+
+    .details-thumb {
+        width: 75px !important;
+        height: 75px !important;
+        min-width: 75px !important;
+    }
+
+    .details-name {
+        font-size: 1.8rem !important;
+        margin-bottom: 12px !important;
+    }
+
+    .details-price {
+        font-size: 1.6rem !important;
+        margin-bottom: 15px !important;
+        padding-bottom: 12px !important;
+    }
+
+    /* Auth Forms */
+    .auth-container {
+        padding: 90px 16px 35px 16px !important;
+        min-height: 75vh !important;
+    }
+
+    .auth-card {
+        padding: 35px 22px !important;
+        border-radius: 12px !important;
+    }
+
+    .auth-card h2 {
+        font-size: 1.7rem !important;
+    }
+
+    /* Profile Container */
+    .profile-container,
+    .settings-container {
+        margin: 85px auto 40px auto !important;
+        padding: 25px 18px !important;
+        width: 100% !important;
+    }
+
+    /* Order Details */
+    .order-details-wrapper {
+        margin: 15px auto 30px auto !important;
+        width: 100% !important;
+        padding: 0 12px !important;
+    }
+
+    .order-card,
+    .order-header-card {
+        padding: 12px 14px !important;
+    }
+
+    .stepper-node span {
+        font-size: 0.72rem !important;
+    }
+
+    /* Admin Navigation */
     .admin-nav-tabs {
-        flex-direction: column;
-        border-bottom: none;
-        border-left: 2px solid rgba(212, 175, 55, 0.2);
-        padding-left: 10px;
-        margin-bottom: 25px;
+        flex-direction: column !important;
+        border-bottom: none !important;
+        border-left: 2px solid rgba(212, 175, 55, 0.2) !important;
+        padding-left: 10px !important;
+        margin-bottom: 25px !important;
     }
 
     .admin-nav-tab {
-        width: 100%;
-        text-align: left;
-        margin-bottom: 10px;
-    }
-
-    /* Hero section font sizing */
-    .hero-title {
-        font-size: 2.5rem !important;
-    }
-    
-    .hero-subtitle {
-        font-size: 0.9rem !important;
+        width: 100% !important;
+        text-align: left !important;
+        margin-bottom: 8px !important;
     }
 }
 
-@media (max-width: 480px) {
+/* ==========================================================================
+   BREAKPOINT: Mobile Phones Standard (<= 576px)
+   (390px, 414px, 430px, 375px)
+   ========================================================================== */
+@media (max-width: 576px) {
     .container {
-        padding: 0 15px;
+        padding: 0 14px !important;
     }
 
-    .hero-title {
-        font-size: 2rem !important;
+    section {
+        padding: 35px 0 !important;
     }
 
-    .btn-luxury {
-        padding: 10px 20px;
-        font-size: 0.8rem;
+    .section-title h2 {
+        font-size: 1.6rem !important;
+        letter-spacing: 0.5px !important;
     }
 
+    .section-title h2::after {
+        margin-top: 10px !important;
+        width: 45px !important;
+    }
+
+    /* Categories Section on Mobile */
+    #categories-section {
+        padding: 50px 0 !important;
+    }
+
+    #categories-section .section-title h2 {
+        font-size: 1.6rem !important;
+    }
+
+    .categories-divider {
+        margin: 10px auto 25px auto !important;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+    }
+
+    .category-card {
+        height: auto !important;
+        min-height: 350px !important;
+        border-radius: 12px !important;
+    }
+
+    .category-card-img-wrapper {
+        height: 190px !important;
+    }
+
+    .category-card-info {
+        padding: 18px 16px !important;
+    }
+
+    .category-card-title {
+        font-size: 1.1rem !important;
+    }
+
+    /* Product Cards & Grids on Mobile */
+    .product-grid {
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+        margin-top: 20px !important;
+    }
+
+    .product-card {
+        width: 100% !important;
+        min-height: auto !important;
+        height: auto !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+    }
+
+    .product-card-img-container {
+        height: 250px !important;
+        min-height: 250px !important;
+        max-height: 250px !important;
+        padding: 10px !important;
+    }
+
+    .product-card-details {
+        padding: 12px 14px !important;
+    }
+
+    .product-card-name {
+        font-size: 1.05rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    .product-card-price {
+        font-size: 1.15rem !important;
+        margin-bottom: 4px !important;
+    }
+
+    .product-stock-indicator {
+        font-size: 0.8rem !important;
+    }
+
+    .product-card-actions {
+        display: flex !important;
+        gap: 8px !important;
+        margin-top: 8px !important;
+        align-items: center !important;
+    }
+
+    .product-card-actions .product-btn-buynow,
+    .product-card .product-btn-buynow {
+        flex: 1 1 auto !important;
+        padding: 9px 14px !important;
+        font-size: 0.78rem !important;
+        border-radius: 4px !important;
+    }
+
+    .product-card-actions .product-btn-cart,
+    .product-card-actions .quick-add-cart-btn,
+    .product-card .product-btn-cart {
+        flex: 0 0 38px !important;
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        border-radius: 4px !important;
+    }
+
+    /* Wishlist Page & Profile Wishlist Grid */
+    .wishlist-section {
+        margin: 80px auto 35px auto !important;
+        width: 100% !important;
+        padding: 0 14px !important;
+    }
+
+    .wishlist-grid,
+    #profile-wishlist-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+        margin-top: 15px !important;
+    }
+
+    .wishlist-card,
+    #profile-wishlist-grid .wishlist-card {
+        width: 100% !important;
+        min-height: auto !important;
+        height: auto !important;
+        padding: 14px !important;
+        border-radius: 8px !important;
+    }
+
+    .wishlist-img-wrap,
+    #profile-wishlist-grid .wishlist-img-wrap {
+        height: 230px !important;
+        min-height: 230px !important;
+        max-height: 230px !important;
+    }
+
+    /* Details Page on Mobile */
     .details-main-img-wrap {
-        height: 350px;
+        height: 270px !important;
+        border-radius: 8px !important;
+    }
+
+    .details-name {
+        font-size: 1.5rem !important;
+    }
+
+    .details-price {
+        font-size: 1.35rem !important;
+    }
+
+    .details-desc {
+        font-size: 0.92rem !important;
+        line-height: 1.6 !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Cart & Checkout on Mobile */
+    .cart-main,
+    .cart-summary,
+    .checkout-form-container,
+    .checkout-summary-sidebar {
+        padding: 20px 14px !important;
+        border-radius: 8px !important;
+    }
+
+    /* Profile Page on Mobile */
+    .profile-fields-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    .collector-info-box {
+        padding: 16px 14px !important;
+    }
+
+    .collector-photo-box {
+        padding: 14px 14px !important;
+    }
+
+    /* Settings Page on Mobile */
+    .setting-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+
+    .setting-info {
+        padding-right: 0 !important;
+    }
+
+    .setting-control {
+        width: 100% !important;
+    }
+
+    .setting-control select {
+        width: 100% !important;
+    }
+
+    /* Testimonials & About & Contact */
+    .glass-card {
+        padding: 22px 16px !important;
+    }
+
+    #about-section,
+    #contact-section {
+        padding: 50px 0 !important;
+    }
+
+    /* Footer */
+    .footer-grid {
+        grid-template-columns: 1fr !important;
+        gap: 25px !important;
+    }
+
+    footer {
+        padding: 40px 0 20px 0 !important;
+        margin-top: 50px !important;
+    }
+
+    /* Chatbot Widget on Mobile */
+    .chat-widget {
+        bottom: 15px !important;
+        right: 15px !important;
+    }
+
+    .chat-toggle-btn {
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+    .chat-icon {
+        font-size: 22px !important;
+    }
+
+    .chat-window {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100vw !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        z-index: 10002 !important;
+    }
+
+    /* Modals & Dialogs on Mobile */
+    .modal-content {
+        width: 94% !important;
+        max-width: 440px !important;
+        padding: 28px 16px !important;
+        margin: 10px !important;
+        border-radius: 12px !important;
+    }
+
+    .quickview-content {
+        width: 94% !important;
+        padding: 20px 14px !important;
+        max-height: 88vh !important;
+        overflow-y: auto !important;
+        border-radius: 12px !important;
+    }
+}
+
+/* ==========================================================================
+   BREAKPOINT: Extra-Small Mobile Phones (<= 380px)
+   (320px, 360px)
+   ========================================================================== */
+@media (max-width: 380px) {
+    .container {
+        padding: 0 10px !important;
+    }
+
+    /* Typography */
+    .section-title h2 {
+        font-size: 1.45rem !important;
+    }
+
+    .page-header h1 {
+        font-size: 1.55rem !important;
+    }
+
+    .showroom-page-header h1,
+    .cart-page-header h1 {
+        font-size: 1.45rem !important;
+    }
+
+    /* Buttons */
+    .btn-luxury {
+        padding: 9px 14px !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Product Cards on 320px - 360px */
+    .product-card-img-container {
+        height: 220px !important;
+        min-height: 220px !important;
+        max-height: 220px !important;
+    }
+
+    .product-card-details {
+        padding: 10px 12px !important;
+    }
+
+    .product-card-name {
+        font-size: 0.98rem !important;
+    }
+
+    .product-card-price {
+        font-size: 1.05rem !important;
+    }
+
+    .product-stock-indicator {
+        font-size: 0.75rem !important;
+    }
+
+    .product-card-actions .product-btn-buynow,
+    .product-card .product-btn-buynow {
+        padding: 8px 10px !important;
+        font-size: 0.74rem !important;
+    }
+
+    /* Wishlist on Small Screen */
+    .wishlist-img-wrap,
+    #profile-wishlist-grid .wishlist-img-wrap {
+        height: 200px !important;
+        min-height: 200px !important;
+        max-height: 200px !important;
+    }
+
+    .wishlist-name,
+    #profile-wishlist-grid .wishlist-name {
+        font-size: 0.9rem !important;
+    }
+
+    .wishlist-price,
+    #profile-wishlist-grid .wishlist-price {
+        font-size: 0.92rem !important;
+    }
+
+    /* Details Page on 320px */
+    .details-main-img-wrap {
+        height: 230px !important;
+    }
+
+    .details-thumb {
+        width: 60px !important;
+        height: 60px !important;
+        min-width: 60px !important;
+    }
+
+    .details-name {
+        font-size: 1.35rem !important;
+    }
+
+    .details-price {
+        font-size: 1.25rem !important;
+    }
+
+    /* Auth Cards on 320px */
+    .auth-card {
+        padding: 24px 14px !important;
+    }
+
+    .auth-card h2 {
+        font-size: 1.45rem !important;
+    }
+
+    .auth-subtitle {
+        font-size: 0.82rem !important;
+        margin-bottom: 22px !important;
+    }
+
+    .form-label {
+        font-size: 0.78rem !important;
+    }
+
+    .form-control {
+        padding: 10px 12px !important;
+        font-size: 0.88rem !important;
+    }
+
+    /* OTP Inputs on 320px */
+    #otp,
+    #restore-otp,
+    #registration-otp {
+        font-size: 1.2rem !important;
+        letter-spacing: 3px !important;
+        padding: 8px 6px !important;
+    }
+
+    /* Order Details Stepper */
+    .stepper-node span {
+        font-size: 0.62rem !important;
+    }
+
+    .order-headline-text {
+        font-size: 0.95rem !important;
     }
 }

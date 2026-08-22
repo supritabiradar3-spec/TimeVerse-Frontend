@@ -34,7 +34,7 @@
                     localStorage.setItem(
                         'fullName',
                         response.data.username || localStorage.getItem('username') || ''
-                    );;
+                    );
                     renderNavbar(); // Re-render once cached
                 }
             } catch (e) {
@@ -43,39 +43,117 @@
         }
     }
 
-    // Expose global wishlist count updater
-    window.updateNavbarWishlistCount = async function () {
-        const badgeCounts = document.querySelectorAll('#nav-wishlist-badge-count');
-        if (badgeCounts.length === 0) return;
+    function hasValidCustomerSession() {
+        const token = localStorage.getItem('token');
+        if (!token) return false;
+        const role = (localStorage.getItem('role') || '').toUpperCase();
+        if (role === 'ADMIN') return false;
 
         try {
-            if (window.api && typeof window.api.getWishlistCount === 'function') {
-                const count = await window.api.getWishlistCount();
-                badgeCounts.forEach(el => {
-                    el.textContent = count;
-                    el.style.display = count > 0 ? 'flex' : 'none';
-                });
+            const parts = token.split('.');
+            if (parts.length !== 3) return false;
+            const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+            if (payload.exp && (payload.exp * 1000) <= Date.now()) {
+                return false;
             }
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
+
+    // Expose global wishlist count updater
+    window.updateNavbarWishlistCount = async function (explicitCount) {
+        const badgeCounts = document.querySelectorAll('.nav-wishlist-badge-count, #nav-wishlist-badge-count');
+        const heartSvgs = document.querySelectorAll('.nav-wishlist-heart-svg');
+
+        if (!hasValidCustomerSession()) {
+            badgeCounts.forEach(el => {
+                el.textContent = '0';
+                el.style.display = 'none';
+            });
+            heartSvgs.forEach(svg => {
+                svg.setAttribute('fill', 'none');
+            });
+            return;
+        }
+
+        try {
+            let count = 0;
+            if (typeof explicitCount === 'number' && !isNaN(explicitCount)) {
+                count = Math.max(0, explicitCount);
+            } else if (window.api && typeof window.api.getWishlistCount === 'function') {
+                const res = await window.api.getWishlistCount();
+                count = parseInt(res, 10) || 0;
+            } else if (window.api && typeof window.api.getWishlist === 'function') {
+                const res = await window.api.getWishlist();
+                count = Array.isArray(res) ? res.length : 0;
+            }
+
+            badgeCounts.forEach(el => {
+                el.textContent = count > 99 ? '99+' : String(count);
+                el.style.display = count > 0 ? 'flex' : 'none';
+            });
+
+            heartSvgs.forEach(svg => {
+                if (count > 0) {
+                    svg.setAttribute('fill', '#E63946');
+                } else {
+                    svg.setAttribute('fill', 'none');
+                }
+            });
         } catch (error) {
-            console.error('Failed to update wishlist count badge:', error);
+            badgeCounts.forEach(el => {
+                el.textContent = '0';
+                el.style.display = 'none';
+            });
+            heartSvgs.forEach(svg => {
+                svg.setAttribute('fill', 'none');
+            });
+            if (error && (error.message.includes('403') || error.message.includes('Unauthorized') || error.message.includes('Access denied'))) {
+                console.warn('Wishlist count unavailable for unauthenticated session.');
+            } else {
+                console.warn('Failed to update wishlist count badge:', error);
+            }
         }
     };
 
     // Expose global cart count updater
-    window.updateNavbarCartCount = async function () {
-        const badgeCounts = document.querySelectorAll('#nav-cart-badge-count');
+    window.updateNavbarCartCount = async function (explicitCount) {
+        const badgeCounts = document.querySelectorAll('#nav-cart-badge-count, .nav-cart-badge-count');
         if (badgeCounts.length === 0) return;
 
+        if (!hasValidCustomerSession()) {
+            badgeCounts.forEach(el => {
+                el.textContent = '0';
+                el.style.display = 'none';
+            });
+            return;
+        }
+
         try {
-            if (window.api && typeof window.api.getCartCount === 'function') {
-                const count = await window.api.getCartCount();
-                badgeCounts.forEach(el => {
-                    el.textContent = count;
-                    el.style.display = count > 0 ? 'flex' : 'none';
-                });
+            let count = 0;
+            if (typeof explicitCount === 'number' && !isNaN(explicitCount)) {
+                count = Math.max(0, explicitCount);
+            } else if (window.api && typeof window.api.getCartCount === 'function') {
+                const res = await window.api.getCartCount();
+                count = parseInt(res, 10) || 0;
             }
+
+            badgeCounts.forEach(el => {
+                el.textContent = count > 99 ? '99+' : String(count);
+                el.style.display = count > 0 ? 'flex' : 'none';
+            });
         } catch (error) {
-            console.error('Failed to update cart count badge:', error);
+            badgeCounts.forEach(el => {
+                el.textContent = '0';
+                el.style.display = 'none';
+            });
+            if (error && (error.message.includes('403') || error.message.includes('Unauthorized') || error.message.includes('Access denied'))) {
+                console.warn('Cart count unavailable for unauthenticated session.');
+            } else {
+                console.warn('Failed to update cart count badge:', error);
+            }
         }
     };
 
@@ -87,8 +165,17 @@
         // Retrieve auth state from localStorage
         const token = localStorage.getItem('token');
         const username = localStorage.getItem('username');
+        const storedFullName = localStorage.getItem('fullName');
         const role = localStorage.getItem('role') || 'CUSTOMER';
-        const fullName = username || 'Collector';
+        const rawName = (storedFullName || username || '').trim();
+        const fullName = rawName || 'Collector';
+
+        // Determine user display name for welcome pill
+        let customerName = 'Profile';
+        if (token && rawName) {
+            customerName = rawName.split(' ')[0] || rawName;
+        }
+        const welcomeLabel = token ? `Welcome back, ${customerName}` : 'Welcome back, Profile';
         let navLinksHTML = "";
 
         if (token && role === "ADMIN") {
@@ -119,109 +206,122 @@
             initials = initials.toUpperCase().substring(0, 2);
         }
 
-        const dropdownItems = role === 'ADMIN' ? `
-            <a href="./admin.html" class="dropdown-item">📊 Dashboard</a>
-            <span class="dropdown-item nav-change-pw-btn">🔒 Change Password</span>
-            <div class="dropdown-divider"></div>
-            <span class="dropdown-item logout-link-btn" style="color: var(--error); font-weight: 500;">🚪 Logout</span>
-        ` : `
-            <a href="./profile.html" class="dropdown-item">👤 My Profile</a>
-            <a href="./orders.html" class="dropdown-item">📦 My Orders</a>
-            <div class="dropdown-divider"></div>
-            <span class="dropdown-item logout-link-btn" style="color: var(--error); font-weight: 500;">🚪 Logout</span>
+        const searchHTML = `
+            <div class="nav-search-container">
+                <span class="nav-search-icon" title="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input type="text" class="nav-search-input" placeholder="Search watches..." aria-label="Search watches...">
+            </div>
         `;
 
-        const searchBarHTML = `
-            <div class="nav-search-container">
-                <input type="text" class="nav-search-input" placeholder="Search timepiece..." aria-label="Search timepiece">
-                <span class="nav-search-icon">🔍</span>
-            </div>
+        const dropdownItems = role === 'ADMIN' ? `
+            <a href="./admin.html" class="dropdown-item">Dashboard</a>
+            <span class="dropdown-item nav-change-pw-btn">Change Password</span>
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-item logout-link-btn" style="color: var(--error); font-weight: 500;">Logout</span>
+        ` : `
+            <a href="./profile.html" class="dropdown-item">My Profile</a>
+            <a href="./orders.html" class="dropdown-item">My Orders</a>
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-item logout-link-btn" style="color: var(--error); font-weight: 500;">Logout</span>
         `;
 
         const themeToggleHTML = `
-            <button class="theme-toggle-btn" type="button" title="Toggle theme">☀️</button>
+            <button class="theme-toggle-btn nav-action-btn" id="nav-theme-toggle-btn" type="button" title="Theme" aria-label="Theme">
+                <span class="theme-crescent-icon">☾</span>
+            </button>
         `;
 
         const wishlistHTML = role === 'ADMIN' ? '' : `
-            <a href="./wishlist.html" class="nav-action-btn" title="Wishlist" style="position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.25); border-radius: 50%; text-decoration: none; font-size: 1.1rem;">
-                ❤️ <span id="nav-wishlist-badge-count" class="nav-icon-badge" style="display: none;">0</span>
+            <a href="./wishlist.html" class="nav-action-btn nav-wishlist-btn" title="Wishlist" aria-label="Wishlist">
+                <svg class="nav-wishlist-heart-svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#E63946" stroke="#E63946" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                <span id="nav-wishlist-badge-count" class="nav-wishlist-badge-count nav-icon-badge" style="display: none;">0</span>
             </a>
         `;
         const cartHTML = role === 'ADMIN' ? '' : `
-            <a href="./cart.html" class="nav-action-btn cart-icon-container" title="Cart" style="position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.25); border-radius: 50%; text-decoration: none; font-size: 1.1rem;">
-                🛒 <span id="nav-cart-badge-count" class="nav-icon-badge" style="display: none;">0</span>
+            <a href="./cart.html" class="nav-action-btn nav-cart-btn cart-icon-container" title="Cart" aria-label="Cart">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <span id="nav-cart-badge-count" class="nav-cart-badge-count nav-icon-badge" style="display: none;">0</span>
             </a>
         `;
 
-        const profileMenuHTML = token ? `
+        const profileMenuHTML = `
             <div class="user-profile-menu">
-                <div class="profile-display-btn" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" aria-label="User Profile Dropdown" style="padding: 4px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.25);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16" style="color: var(--gold-light); display: block;">
-                      <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                <div class="profile-display-btn nav-action-btn" id="nav-profile-btn" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" aria-label="Account" title="Account">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                 </div>
                 <div class="profile-dropdown-menu">
-                    <div class="profile-dropdown-header" style="padding: 15px 20px; border-bottom: 1px solid rgba(197, 160, 89, 0.15); text-align: left; background: rgba(255, 255, 255, 0.02); border-top-left-radius: 8px; border-top-right-radius: 8px;">
-                        <span style="font-size: 0.75rem; color: var(--light-gray); display: block;">Welcome,</span>
-                        <strong style="font-size: 0.9rem; color: var(--gold-light); display: block; margin-top: 2px; font-family: var(--font-title); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${fullName}</strong>
-                        <span class="badge badge-gold" style="font-size: 0.6rem; padding: 2px 6px; margin-top: 5px; border-radius: 2px; display: inline-block;">${role}</span>
-                    </div>
-                    ${dropdownItems}
+                    ${token ? `
+                        <div class="profile-dropdown-header">
+                            <span class="profile-greeting" style="font-size: 13px; font-weight: 600; color: var(--gold-light, #C5A059);">Welcome back</span>
+                            <span class="badge-role" style="margin-top: 4px; display: inline-block;">${role === 'ADMIN' ? 'Admin' : 'Customer'}</span>
+                        </div>
+                        ${dropdownItems}
+                    ` : `
+                        <div class="profile-dropdown-header">
+                            <span class="profile-greeting" style="font-size: 13px; font-weight: 600; color: var(--gold-light, #C5A059);">Welcome</span>
+                        </div>
+                        <a href="./login.html" class="dropdown-item">Collector Login</a>
+                        <a href="./register.html" class="dropdown-item">Create Account</a>
+                    `}
                 </div>
             </div>
-        ` : `
-            <a href="./login.html" class="btn-luxury" style="padding: 8px 16px; font-size: 0.75rem;">Login</a>
         `;
 
-        const desktopActionsHTML = `
-            ${searchBarHTML}
-            ${themeToggleHTML}
-            ${wishlistHTML}
-            ${cartHTML}
-            ${profileMenuHTML}
-        `;
-
-        const mobileActionsHTML = `
-            ${searchBarHTML}
-            <div style="display:flex; align-items:center; justify-content:center; gap:15px; margin-top:15px; flex-wrap:wrap; width:100%;">
-                ${themeToggleHTML}
-                ${wishlistHTML}
-                ${cartHTML}
-                ${profileMenuHTML}
-            </div>
-        `;
+        const isPagesDir = window.location.pathname.includes('/pages/');
+        const homeHref = isPagesDir ? './index.html' : './pages/index.html';
+        const logoSrc = isPagesDir ? './logo.jpg' : './pages/logo.jpg';
 
         header.innerHTML = `
             <div class="container">
-                <a href="./index.html" class="logo" style="display: flex; align-items: center; gap: 8px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--gold); display: block;">
-                      <path d="M9 3.5L10 6h4l1-2.5M9 20.5l1-2.5h4l1 2.5" />
-                      <circle cx="12" cy="12" r="7.5" />
-                      <circle cx="12" cy="12" r="5.5" stroke-dasharray="1 2" opacity="0.6" />
-                      <path d="M12 12l-2-2" stroke-width="2" />
-                      <path d="M12 12l3-0.5" stroke-width="2" />
-                      <circle cx="12" cy="12" r="0.8" fill="currentColor" />
-                      <path d="M19.5 11h1v2h-1z" fill="currentColor" />
-                    </svg>
-                    <span>TimeVerse</span>
-                </a>
-                
-                <button class="mobile-nav-toggle" id="mobile-toggle" aria-label="Toggle Menu">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-                    </svg>
-                </button>
+                <div class="nav-left-group">
+                    <a href="${homeHref}" class="logo" title="TimeVerse Home" aria-label="TimeVerse Home">
+                        <img src="${logoSrc}" alt="TimeVerse Logo" class="brand-logo-img" onerror="if(!this.dataset.retried){this.dataset.retried=true; this.src=(window.location.pathname.includes('/pages/') ? '../logo.jpg' : './logo.jpg');}">
+                        <span class="logo-title">TimeVerse</span>
+                    </a>
 
-                <ul class="nav-menu" id="nav-menu">
-                    ${navLinksHTML}
-                    <div class="nav-actions mobile-only-actions">
-                        ${mobileActionsHTML}
-                    </div>
-                </ul>
+                    <ul class="nav-menu" id="nav-menu">
+                        ${navLinksHTML}
+                        <div class="nav-actions mobile-only-actions">
+                            <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-top:15px; flex-wrap:wrap; width:100%;">
+                                <div style="width: 100%; margin-bottom: 8px;">${searchHTML}</div>
+                                ${themeToggleHTML}
+                                ${wishlistHTML}
+                                ${cartHTML}
+                                ${profileMenuHTML}
+                            </div>
+                        </div>
+                    </ul>
+                </div>
 
                 <div class="nav-actions desktop-only-actions">
-                    ${desktopActionsHTML}
+                    ${searchHTML}
+                    ${themeToggleHTML}
+                    ${wishlistHTML}
+                    ${cartHTML}
+                    ${profileMenuHTML}
                 </div>
+
+                <button class="mobile-nav-toggle" id="mobile-toggle" aria-label="Toggle Menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
             </div>
         `;
 
@@ -248,6 +348,23 @@
             });
         });
 
+        document.querySelectorAll('.nav-search-icon').forEach(icon => {
+            icon.addEventListener('click', function () {
+                const container = this.closest('.nav-search-container');
+                if (container) {
+                    const input = container.querySelector('.nav-search-input');
+                    if (input) {
+                        const val = input.value.trim();
+                        if (val) {
+                            window.location.href = `./products.html?search=${encodeURIComponent(val)}`;
+                        } else {
+                            input.focus();
+                        }
+                    }
+                }
+            });
+        });
+
         const catalogSearch = document.getElementById('catalog-search');
         if (catalogSearch) {
             catalogSearch.addEventListener('input', function () {
@@ -262,13 +379,19 @@
         // Apply persisted theme and wire the toggle in both desktop/mobile navbars.
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.body.classList.toggle('light-theme', savedTheme === 'light');
+        const updateThemeButtons = (isLight) => {
+            document.querySelectorAll('.theme-toggle-btn').forEach(b => {
+                b.setAttribute('title', 'Theme');
+                b.setAttribute('aria-label', 'Theme');
+            });
+        };
+        updateThemeButtons(savedTheme === 'light');
         document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
-            btn.textContent = savedTheme === 'light' ? '🌙' : '☀️';
             btn.addEventListener('click', () => {
                 const light = !document.body.classList.contains('light-theme');
                 document.body.classList.toggle('light-theme', light);
                 localStorage.setItem('theme', light ? 'light' : 'dark');
-                document.querySelectorAll('.theme-toggle-btn').forEach(b => b.textContent = light ? '🌙' : '☀️');
+                updateThemeButtons(light);
             });
         });
 
@@ -276,71 +399,87 @@
         const mobileToggle = document.getElementById('mobile-toggle');
         const navMenu = document.getElementById('nav-menu');
         if (mobileToggle && navMenu) {
-            mobileToggle.addEventListener('click', () => {
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
                 navMenu.classList.toggle('open');
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (navMenu.classList.contains('open') && !navMenu.contains(e.target) && e.target !== mobileToggle && !mobileToggle.contains(e.target)) {
+                    navMenu.classList.remove('open');
+                }
+            });
+
+            // Close mobile menu when clicking any nav link inside it
+            navMenu.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('open');
+                });
             });
         }
 
-        if (token) {
-            // Handle dropdown toggles
-            document.querySelectorAll('.profile-display-btn').forEach(btn => {
-                const parent = btn.closest('.user-profile-menu');
+        // Handle dropdown toggles
+        document.querySelectorAll('.profile-display-btn').forEach(btn => {
+            const parent = btn.closest('.user-profile-menu');
+            if (!parent) return;
 
-                const toggleDropdown = () => {
-                    // Close all other dropdowns
-                    document.querySelectorAll('.user-profile-menu').forEach(menu => {
-                        if (menu !== parent) {
-                            menu.classList.remove('active');
-                            const b = menu.querySelector('.profile-display-btn');
-                            if (b) b.setAttribute('aria-expanded', 'false');
-                        }
-                    });
-
-                    const isActive = parent.classList.toggle('active');
-                    btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-                };
-
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleDropdown();
+            const toggleDropdown = () => {
+                // Close all other dropdowns
+                document.querySelectorAll('.user-profile-menu').forEach(menu => {
+                    if (menu !== parent) {
+                        menu.classList.remove('active');
+                        const b = menu.querySelector('.profile-display-btn');
+                        if (b) b.setAttribute('aria-expanded', 'false');
+                    }
                 });
 
-                btn.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleDropdown();
-                    }
+                const isActive = parent.classList.toggle('active');
+                btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+            };
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleDropdown();
+            });
+
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleDropdown();
+                }
+            });
+        });
+
+        // Close dropdown when clicking outside and Escape key (Bound only once globally)
+        if (!listenersBound) {
+            window.addEventListener('click', () => {
+                document.querySelectorAll('.user-profile-menu').forEach(menu => {
+                    menu.classList.remove('active');
+                    const btn = menu.querySelector('.profile-display-btn');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
                 });
             });
 
-            // Close dropdown when clicking outside and Escape key (Bound only once globally)
-            if (!listenersBound) {
-                window.addEventListener('click', () => {
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
                     document.querySelectorAll('.user-profile-menu').forEach(menu => {
-                        menu.classList.remove('active');
-                        const btn = menu.querySelector('.profile-display-btn');
-                        if (btn) btn.setAttribute('aria-expanded', 'false');
-                    });
-                });
-
-                window.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        document.querySelectorAll('.user-profile-menu').forEach(menu => {
-                            if (menu.classList.contains('active')) {
-                                menu.classList.remove('active');
-                                const displayBtn = menu.querySelector('.profile-display-btn');
-                                if (displayBtn) {
-                                    displayBtn.setAttribute('aria-expanded', 'false');
-                                    displayBtn.focus();
-                                }
+                        if (menu.classList.contains('active')) {
+                            menu.classList.remove('active');
+                            const btn = menu.querySelector('.profile-display-btn');
+                            if (btn) {
+                                btn.setAttribute('aria-expanded', 'false');
+                                btn.focus();
                             }
-                        });
-                    }
-                });
-                listenersBound = true;
-            }
+                        }
+                    });
+                }
+            });
+            listenersBound = true;
+        }
 
+        if (token) {
             // Handle Change Password modal triggers
             document.querySelectorAll('.nav-change-pw-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -375,7 +514,7 @@
                     <div class="modal-overlay" id="change-pw-modal">
                         <div class="modal-content" style="max-width: 400px;">
                             <button class="close-btn" id="close-change-pw-btn" aria-label="Close modal">&times;</button>
-                            <h3 class="luxury-text" style="font-size: 1.25rem; margin-bottom: 25px; color: var(--gold); text-transform: uppercase; text-align: center;">Change Password</h3>
+                            <h3 class="luxury-text" style="font-size: 1.25rem; margin-bottom: 25px; color: var(--gold); font-weight: 700; text-align: center;">Change Password</h3>
 
                             <form id="change-pw-form">
                                 <div class="form-group">
@@ -448,13 +587,21 @@
                     });
                 }
             }
-
-            // Fetch counts & cache user details
-            if (role !== 'ADMIN') {
-                updateNavbarCartCount();
-                updateNavbarWishlistCount();
-            }
             fetchProfileDetails();
+        }
+
+        // Always update badges based on current user session
+        if (hasValidCustomerSession()) {
+            updateNavbarCartCount();
+            updateNavbarWishlistCount();
+        } else {
+            document.querySelectorAll('#nav-cart-badge-count, .nav-cart-badge-count, .nav-wishlist-badge-count, #nav-wishlist-badge-count').forEach(el => {
+                el.textContent = '0';
+                el.style.display = 'none';
+            });
+            document.querySelectorAll('.nav-wishlist-heart-svg').forEach(svg => {
+                svg.setAttribute('fill', 'none');
+            });
         }
 
         // Wire event listeners to navbar links for smooth scroll / navigation
@@ -489,7 +636,25 @@
         });
     }
 
-    // Render navbar when page loads
-    document.addEventListener('DOMContentLoaded', renderNavbar);
+    // Listen to custom updates across tabs or pages
+    window.addEventListener('wishlist-updated', function (e) {
+        const explicitCount = e && e.detail && typeof e.detail.count === 'number' ? e.detail.count : undefined;
+        if (typeof window.updateNavbarWishlistCount === 'function') {
+            window.updateNavbarWishlistCount(explicitCount);
+        }
+    });
+
+    window.addEventListener('cart-updated', function () {
+        if (typeof window.updateNavbarCartCount === 'function') {
+            window.updateNavbarCartCount();
+        }
+    });
+
+    // Render navbar immediately if DOM ready, or when DOM loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderNavbar);
+    } else {
+        renderNavbar();
+    }
 
 })();

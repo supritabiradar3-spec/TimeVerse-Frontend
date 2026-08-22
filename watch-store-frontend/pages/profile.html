@@ -11,6 +11,7 @@
     <!-- Style Sheets -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/responsive.css">
     <style>
         .profile-container {
             max-width: 700px;
@@ -62,12 +63,11 @@
         .profile-hero .role-tag {
             background: rgba(197, 160, 89, 0.12);
             color: var(--gold-light);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             padding: 4px 14px;
             border-radius: 30px;
-            text-transform: uppercase;
             border: 1px solid rgba(197, 160, 89, 0.2);
         }
 
@@ -93,11 +93,11 @@
 
         .profile-field-group label {
             font-family: var(--font-title);
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: var(--gold);
             margin-bottom: 8px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
         }
 
         .profile-field-group input {
@@ -251,43 +251,82 @@
         /* My Profile - Bookmarked Timepieces (Wishlist) Sizing & Layout */
         #profile-wishlist-grid {
             display: grid !important;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
-            gap: 25px !important;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+            gap: 24px !important;
+            justify-content: flex-start !important;
             margin-top: 0 !important;
         }
 
-        #profile-wishlist-grid .product-card {
-            background-color: var(--dark-gray);
-            border: var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            transition: var(--transition);
+        #profile-wishlist-grid .wishlist-card {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 460px !important;
+            background: #FFFFFF !important;
+            border: 1px solid #E5E7EB !important;
+            border-radius: 8px !important;
+            padding: 16px !important;
+            text-align: left !important;
+            position: relative !important;
+            transition: all 0.2s ease !important;
             display: flex !important;
             flex-direction: column !important;
-            height: 460px !important;
-            box-sizing: border-box;
+            justify-content: space-between !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
         }
 
-        #profile-wishlist-grid .product-card:hover {
-            border-color: var(--gold);
-            box-shadow: var(--border-glow);
-            transform: translateY(-4px);
+        #profile-wishlist-grid .wishlist-card:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+            border-color: #C5A059 !important;
         }
 
-        #profile-wishlist-grid .product-card-img-container {
-            position: relative;
-            height: 200px !important;
-            width: 100% !important;
-            overflow: hidden !important;
-            background-color: #151515 !important;
+        #profile-wishlist-grid .wishlist-remove-btn {
+            position: absolute !important;
+            top: 10px !important;
+            right: 10px !important;
+            width: 28px !important;
+            height: 28px !important;
+            padding: 0 !important;
+            background: #FFFFFF !important;
+            color: #1F3A5F !important;
+            border: 1px solid rgba(31, 58, 95, 0.25) !important;
+            border-radius: 50% !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            z-index: 5 !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            flex-shrink: 0 !important;
+            line-height: 1 !important;
         }
 
-        #profile-wishlist-grid .product-card-img-container a {
+        #profile-wishlist-grid .wishlist-remove-btn:hover {
+            background: #E63946 !important;
+            border-color: #E63946 !important;
+            color: #FFFFFF !important;
+        }
+
+        #profile-wishlist-grid .wishlist-img-wrap {
+            width: 100% !important;
+            height: 280px !important;
+            min-height: 280px !important;
+            max-height: 280px !important;
+            margin-bottom: 12px !important;
+            background: #F9FAFB !important;
+            border-radius: 6px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            padding: 8px !important;
+            box-sizing: border-box !important;
+        }
+
+        #profile-wishlist-grid .wishlist-img-wrap a {
             width: 100% !important;
             height: 100% !important;
             display: flex !important;
@@ -295,137 +334,262 @@
             justify-content: center !important;
         }
 
-        #profile-wishlist-grid .product-card-img {
+        #profile-wishlist-grid .wishlist-img {
+            width: 100% !important;
+            height: 100% !important;
             max-width: 100% !important;
             max-height: 100% !important;
-            width: 100% !important;
-            height: 100% !important;
             object-fit: contain !important;
             object-position: center !important;
-            padding: 0 !important;
-            box-sizing: border-box !important;
             display: block !important;
-            transform: scale(1.08) !important;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            transition: transform 0.3s ease !important;
         }
 
-        #profile-wishlist-grid .product-card:hover .product-card-img {
-            transform: scale(1.12) !important;
+        #profile-wishlist-grid .wishlist-card:hover .wishlist-img {
+            transform: scale(1.05) !important;
         }
 
-        #profile-wishlist-grid .product-card-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            z-index: 2;
-            font-size: 0.65rem;
-            padding: 3px 8px;
-        }
-
-        #profile-wishlist-grid .wishlist-toggle-icon-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            z-index: 10;
-        }
-
-        #profile-wishlist-grid .product-card-details {
-            padding: 14px !important;
+        #profile-wishlist-grid .wishlist-details {
             display: flex !important;
             flex-direction: column !important;
-            flex-grow: 1 !important;
-            box-sizing: border-box !important;
-            text-align: left !important;
+            flex: 1 !important;
         }
 
-        #profile-wishlist-grid .product-card-category {
-            font-size: 0.72rem !important;
-            color: var(--gold) !important;
-            text-transform: uppercase !important;
-            letter-spacing: 1px !important;
-            margin-bottom: 4px !important;
-            font-weight: 500 !important;
-            display: block !important;
-        }
-
-        #profile-wishlist-grid .product-card-name {
-            font-size: 1rem !important;
-            font-weight: 600 !important;
-            margin-bottom: 6px !important;
-            color: var(--white) !important;
-            display: -webkit-box !important;
-            -webkit-line-clamp: 1 !important;
-            -webkit-box-orient: vertical !important;
+        #profile-wishlist-grid .wishlist-name {
+            font-family: inherit !important;
+            font-size: 0.95rem !important; /* 15-16px */
+            font-weight: 700 !important;
+            color: #111827 !important;
+            margin: 0 0 2px 0 !important;
+            line-height: 1.25 !important;
+            white-space: nowrap !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
-            line-height: 1.3 !important;
-            height: 1.3em !important;
         }
 
-        #profile-wishlist-grid .product-card-name a {
-            color: var(--white) !important;
+        #profile-wishlist-grid .wishlist-name a {
+            color: #111827 !important;
             text-decoration: none !important;
         }
 
-        #profile-wishlist-grid .product-card-rating {
+        #profile-wishlist-grid .wishlist-name a:hover {
+            color: #C5A059 !important;
+        }
+
+        #profile-wishlist-grid .wishlist-price {
+            color: #1F3A5F !important;
+            font-weight: 700 !important;
+            font-size: 0.98rem !important; /* 15-16px */
+            margin-bottom: 2px !important;
+            line-height: 1.2 !important;
+        }
+
+        #profile-wishlist-grid .wishlist-rating {
             display: flex !important;
             align-items: center !important;
-            gap: 5px !important;
-            font-size: 0.8rem !important;
+            gap: 4px !important;
+            font-size: 0.82rem !important; /* 13-14px */
+            font-weight: 600 !important;
+            color: #4B5563 !important;
             margin-bottom: 6px !important;
         }
 
-        #profile-wishlist-grid .product-card-details p {
-            color: var(--light-gray) !important;
-            font-size: 0.8rem !important;
-            margin-bottom: 10px !important;
+        #profile-wishlist-grid .wishlist-rating .rating-star {
+            color: #F59E0B !important;
+            font-size: 0.85rem !important;
+        }
+
+        #profile-wishlist-grid .wishlist-desc {
+            font-size: 0.78rem !important; /* 12-13px */
+            color: #6B7280 !important;
+            line-height: 1.35 !important;
+            margin: 0 0 8px 0 !important;
             display: -webkit-box !important;
             -webkit-line-clamp: 2 !important;
             -webkit-box-orient: vertical !important;
             overflow: hidden !important;
-            line-height: 1.4 !important;
-            height: 2.8em !important;
+            text-overflow: ellipsis !important;
+            min-height: 2.7em !important;
         }
 
-        #profile-wishlist-grid .product-card-price {
-            font-size: 1.15rem !important;
-            font-weight: 600 !important;
-            color: var(--gold-light) !important;
-            margin-bottom: 12px !important;
-            letter-spacing: 0.5px !important;
-        }
-
-        #profile-wishlist-grid .product-card-actions {
-            margin-top: auto !important;
+        #profile-wishlist-grid .wishlist-actions {
             display: flex !important;
             gap: 8px !important;
+            margin-top: auto !important;
             align-items: center !important;
         }
 
-        #profile-wishlist-grid .product-card-actions .btn-luxury {
+        #profile-wishlist-grid .btn-wishlist-view {
             flex: 1 !important;
-            padding: 8px 10px !important;
-            font-size: 0.75rem !important;
+            padding: 7px 10px !important;
+            font-size: 0.78rem !important; /* 12-13px */
+            font-weight: 600 !important;
             text-align: center !important;
-            white-space: nowrap !important;
-            box-sizing: border-box !important;
-        }
-
-        #profile-wishlist-grid .product-card-actions .quick-add-cart-btn {
-            flex: 1.2 !important;
-        }
-
-        /* Light Theme Overrides for Wishlist Cards */
-        body.light-theme #profile-wishlist-grid .product-card {
             background-color: #FFFFFF !important;
-            border: 1px solid #E6DEC9 !important;
+            color: #1F3A5F !important;
+            border: 1px solid #1F3A5F !important;
+            border-radius: 4px !important;
+            text-decoration: none !important;
+            transition: all 0.2s ease !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
-        body.light-theme #profile-wishlist-grid .product-card-img-container {
-            background-color: #F8F7F4 !important;
+
+        #profile-wishlist-grid .btn-wishlist-view:hover {
+            background-color: #F3F4F6 !important;
         }
-        body.light-theme #profile-wishlist-grid .product-card-name,
-        body.light-theme #profile-wishlist-grid .product-card-name a {
-            color: #1C1A17 !important;
+
+        #profile-wishlist-grid .btn-wishlist-add {
+            flex: 1.2 !important;
+            padding: 7px 10px !important;
+            font-size: 0.78rem !important; /* 12-13px */
+            font-weight: 600 !important;
+            text-align: center !important;
+            background-color: #1F3A5F !important;
+            color: #FFFFFF !important;
+            border: 1px solid #1F3A5F !important;
+            border-radius: 4px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+        }
+
+        #profile-wishlist-grid .btn-wishlist-add:hover {
+            background-color: #152840 !important;
+        }
+
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-card {
+            background: #111113 !important;
+            border-color: rgba(197, 160, 89, 0.2) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        }
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-img-wrap {
+            background: #18181B !important;
+        }
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-name,
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-name a {
+            color: #FFFFFF !important;
+        }
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-price {
+            color: #E8D7B3 !important;
+        }
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-rating,
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-desc {
+            color: #9CA3AF !important;
+        }
+        body:not(.light-theme) #profile-wishlist-grid .btn-wishlist-view {
+            background: transparent !important;
+            color: #C5A059 !important;
+            border-color: #C5A059 !important;
+        }
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-remove-btn {
+            background: #18181B !important;
+            color: #9CA3AF !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-remove-btn:hover {
+            background: #E63946 !important;
+            color: #FFFFFF !important;
+        }
+
+        #profile-wishlist-grid .product-btn-buynow:hover {
+            background-color: #152840 !important;
+        }
+
+        #profile-wishlist-grid .product-btn-cart {
+            display: none !important;
+        }
+
+        /* Dark Theme Support for Wishlist Cards */
+        body:not(.light-theme) #profile-wishlist-grid .product-card {
+            background-color: #111113 !important;
+            border-color: rgba(197, 160, 89, 0.2) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body:not(.light-theme) #profile-wishlist-grid .product-card:hover {
+            border-color: #C5A059 !important;
+        }
+
+        body:not(.light-theme) #profile-wishlist-grid .product-card-img-container {
+            background-color: #18181B !important;
+        }
+
+        body:not(.light-theme) #profile-wishlist-grid .product-card-category {
+            color: #C5A059 !important;
+        }
+
+        body:not(.light-theme) #profile-wishlist-grid .product-card-name,
+        body:not(.light-theme) #profile-wishlist-grid .product-card-name a {
+            color: #FFFFFF !important;
+        }
+
+        body:not(.light-theme) #profile-wishlist-grid .product-card-price {
+            color: #E8D7B3 !important;
+        }
+
+        body:not(.light-theme) #profile-wishlist-grid .wishlist-toggle-icon-btn {
+            background: rgba(24, 24, 27, 0.95) !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+
+        body:not(.light-theme) .collector-info-box {
+            background-color: #111113 !important;
+            border-color: rgba(197, 160, 89, 0.2) !important;
+        }
+
+        body:not(.light-theme) .collector-info-box input {
+            background-color: #18181B !important;
+            color: #FFFFFF !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        body:not(.light-theme) .collector-info-box label {
+            color: #9CA3AF !important;
+        }
+
+        body:not(.light-theme) .collector-photo-box {
+            background-color: #111113 !important;
+            border-color: rgba(197, 160, 89, 0.2) !important;
+        }
+
+        body:not(.light-theme) .collector-photo-box h4 {
+            color: #E8D7B3 !important;
+        }
+
+        body:not(.light-theme) .collector-photo-box span {
+            color: #9CA3AF !important;
+        }
+
+        body:not(.light-theme) #btn-remove-photo {
+            color: #EF4444 !important;
+            border-color: rgba(239, 68, 68, 0.4) !important;
+            background: transparent !important;
+        }
+
+        body:not(.light-theme) #change-pw-modal .glass-card {
+            background-color: #111113 !important;
+            border-color: rgba(197, 160, 89, 0.25) !important;
+        }
+
+        body:not(.light-theme) #change-pw-modal h3 {
+            color: #E8D7B3 !important;
+        }
+
+        body:not(.light-theme) #change-pw-modal input {
+            background-color: #18181B !important;
+            color: #FFFFFF !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+
+        body:not(.light-theme) #change-pw-modal label {
+            color: #9CA3AF !important;
         }
     </style>
 </head>
@@ -440,15 +604,15 @@
             <!-- Left Sidebar -->
             <aside class="glass-card" style="width: 280px; flex-shrink: 0; padding: 30px; text-align: center; border-radius: 12px; box-shadow: var(--border-glow);">
                 <div class="profile-avatar-large" id="profile-avatar" style="margin: 0 auto 15px auto;">--</div>
-                <h2 id="profile-display-name" style="font-family: var(--font-title); font-size: 1.3rem; margin-bottom: 5px;">Collector</h2>
-                <span class="role-tag" id="profile-role" style="font-size: 0.75rem; padding: 4px 12px; background: rgba(197,160,89,0.15); color: var(--gold); border-radius: 20px; text-transform: uppercase;">CUSTOMER</span>
+                <h2 id="profile-display-name" style="font-family: var(--font-title); font-size: 1.3rem; margin-bottom: 5px; font-weight: 700;">Collector</h2>
+                <span class="role-tag" id="profile-role" style="font-size: 0.75rem; padding: 4px 12px; background: rgba(197,160,89,0.15); color: var(--gold); border-radius: 20px; font-weight: 600;">Customer</span>
                 
                 <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px;">
-                    <button class="sidebar-btn active" id="tab-profile-btn" style="text-align: left; font-size: 0.9rem;">👤 My Details</button>
-                    <button class="sidebar-btn" id="tab-orders-btn" style="text-align: left; font-size: 0.9rem;">📦 My Orders</button>
-                    <button class="sidebar-btn" id="tab-wishlist-btn" style="text-align: left; font-size: 0.9rem;">❤️ My Wishlist</button>
-                    <button class="sidebar-btn" id="tab-reviews-btn" style="text-align: left; font-size: 0.9rem;">★ My Reviews</button>
-                    <button class="sidebar-btn" id="tab-address-btn" style="text-align: left; font-size: 0.9rem;">📍 My Addresses</button>
+                    <button class="sidebar-btn active" id="tab-profile-btn" style="text-align: left; font-size: 0.9rem;">My Details</button>
+                    <button class="sidebar-btn" id="tab-orders-btn" style="text-align: left; font-size: 0.9rem;">My Orders</button>
+                    <button class="sidebar-btn" id="tab-wishlist-btn" style="text-align: left; font-size: 0.9rem;">My Wishlist</button>
+                    <button class="sidebar-btn" id="tab-reviews-btn" style="text-align: left; font-size: 0.9rem;">My Reviews</button>
+                    <button class="sidebar-btn" id="tab-address-btn" style="text-align: left; font-size: 0.9rem;">My Addresses</button>
                 </div>
             </aside>
 
@@ -457,40 +621,62 @@
                 
                 <!-- Tab: Profile Details -->
                 <div id="sect-profile" style="display: block;">
-                    <h3 class="luxury-text" style="color: var(--gold); margin-bottom: 25px; font-size: 1.25rem;">My Collector Details</h3>
-                    <form id="profile-form">
-                        <div class="profile-fields-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                            <div class="profile-field-group">
-                                <label for="profile-username" class="form-label">Username</label>
-                                <input type="text" id="profile-username" class="form-control" disabled>
+                    <!-- Top Area: Heading Left, Change Password Top-Right -->
+                    <div class="collector-details-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+                        <h3 class="luxury-text" style="color: var(--gold); margin: 0; font-size: 1.25rem; font-weight: 700;">My Collector Details</h3>
+                        <button type="button" class="btn-luxury" id="btn-change-password" style="padding: 7px 18px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Change Password</button>
+                    </div>
+
+                    <!-- 1. Information Box: ONLY Customer Details -->
+                    <div class="collector-info-box" style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03); margin-bottom: 12px;">
+                        <form id="profile-form">
+                            <div class="profile-fields-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 24px;">
+                                <div class="profile-field-group">
+                                    <label for="profile-username" class="form-label" style="font-size: 0.78rem; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: block;">Username</label>
+                                    <input type="text" id="profile-username" class="form-control" disabled style="width: 100%; padding: 9px 12px; font-size: 0.9rem; font-weight: 600; color: #111827; background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; box-sizing: border-box;">
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="profile-email" class="form-label" style="font-size: 0.78rem; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: block;">Email Address</label>
+                                    <input type="email" id="profile-email" class="form-control" disabled style="width: 100%; padding: 9px 12px; font-size: 0.9rem; font-weight: 600; color: #111827; background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; box-sizing: border-box;">
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="profile-fullname" class="form-label" style="font-size: 0.78rem; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: block;">Full Name</label>
+                                    <input type="text" id="profile-fullname" class="form-control" placeholder="Provide your full name" required disabled style="width: 100%; padding: 9px 12px; font-size: 0.9rem; font-weight: 600; color: #111827; background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; box-sizing: border-box;">
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="profile-mobile" class="form-label" style="font-size: 0.78rem; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: block;">Mobile Number</label>
+                                    <input type="tel" id="profile-mobile" class="form-control" placeholder="Provide mobile number" disabled style="width: 100%; padding: 9px 12px; font-size: 0.9rem; font-weight: 600; color: #111827; background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; box-sizing: border-box;">
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="profile-member-since" class="form-label" style="font-size: 0.78rem; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: block;">Member Since</label>
+                                    <input type="text" id="profile-member-since" class="form-control" disabled style="width: 100%; padding: 9px 12px; font-size: 0.9rem; font-weight: 600; color: #111827; background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; box-sizing: border-box;">
+                                </div>
+                                <div class="profile-field-group">
+                                    <label for="profile-status" class="form-label" style="font-size: 0.78rem; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: block;">Account Level</label>
+                                    <input type="text" id="profile-status" class="form-control" value="Premium Collector" disabled style="width: 100%; padding: 9px 12px; font-size: 0.9rem; font-weight: 600; color: #111827; background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; box-sizing: border-box;">
+                                </div>
                             </div>
-                            <div class="profile-field-group">
-                                <label for="profile-email" class="form-label">Email Address</label>
-                                <input type="email" id="profile-email" class="form-control" disabled>
-                            </div>
-                            <div class="profile-field-group">
-                                <label for="profile-fullname" class="form-label">Full Name</label>
-                                <input type="text" id="profile-fullname" class="form-control" placeholder="Provide your full name" required disabled>
-                            </div>
-                            <div class="profile-field-group">
-                                <label for="profile-mobile" class="form-label">Mobile Number</label>
-                                <input type="tel" id="profile-mobile" class="form-control" placeholder="Provide mobile number" disabled>
-                            </div>
-                            <div class="profile-field-group">
-                                <label for="profile-member-since" class="form-label">Member Since</label>
-                                <input type="text" id="profile-member-since" class="form-control" disabled>
-                            </div>
-                            <div class="profile-field-group">
-                                <label for="profile-status" class="form-label">Account Level</label>
-                                <input type="text" id="profile-status" class="form-control" value="Premium Collector" disabled>
-                            </div>
+                        </form>
+                    </div>
+
+                    <!-- 2. Edit Profile / Save Changes Button: Outside box, aligned to the RIGHT side -->
+                    <div class="collector-edit-actions" style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 22px; gap: 10px;">
+                        <button type="button" class="btn-luxury" id="btn-edit-profile" style="padding: 8px 22px; font-size: 0.82rem; font-weight: 600; cursor: pointer;">Edit Profile</button>
+                        <button type="button" class="btn-luxury btn-luxury-solid" id="btn-save-profile" style="display: none; padding: 8px 22px; font-size: 0.82rem; font-weight: 600; cursor: pointer;">Save Changes</button>
+                    </div>
+
+                    <!-- 3. Photo Upload Section: Separate small wide box -->
+                    <div class="collector-photo-box" style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 18px 22px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);">
+                        <div style="margin-bottom: 12px;">
+                            <h4 style="font-family: var(--font-title); font-size: 0.98rem; font-weight: 700; color: #1F3A5F; margin: 0 0 3px 0;">Upload Profile Photo</h4>
+                            <span style="font-size: 0.76rem; color: #6B7280;">JPG, JPEG or PNG • Max size: 5 MB</span>
                         </div>
-                        <div class="profile-actions-row" style="display: flex; gap: 15px; margin-top: 30px;">
-                            <button type="button" class="btn-luxury" id="btn-edit-profile">✏️ Edit Profile</button>
-                            <button type="submit" class="btn-luxury btn-luxury-solid" id="btn-save-profile" style="display: none;">💾 Save Changes</button>
-                            <button type="button" class="btn-luxury" id="btn-change-password">🔒 Change Password</button>
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <input type="file" id="profile-photo-input" accept="image/jpeg,image/jpg,image/png" style="display: none;">
+                            <button type="button" class="btn-luxury" id="btn-upload-photo" style="padding: 7px 18px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Upload Photo</button>
+                            <button type="button" class="btn-luxury" id="btn-remove-photo" style="padding: 7px 18px; font-size: 0.8rem; font-weight: 600; cursor: pointer; color: #DC2626; border-color: rgba(220, 38, 38, 0.3);">Remove Photo</button>
                         </div>
-                    </form>
+                    </div>
                 </div>
 
                 <!-- Tab: My Orders -->
@@ -521,7 +707,7 @@
                 <div id="sect-address" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                         <h3 class="luxury-text" style="color: var(--gold); font-size: 1.25rem; margin: 0;">My Address Book</h3>
-                        <button class="btn-luxury" id="btn-add-address">➕ Add New Address</button>
+                        <button class="btn-luxury" id="btn-add-address">Add New Address</button>
                     </div>
                     
                     <!-- Address List Container -->
@@ -580,6 +766,34 @@
         </div>
     </main>
 
+    <!-- Change Password Modal -->
+    <div id="change-pw-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div class="glass-card" style="background: #FFFFFF; width: 90%; max-width: 420px; border-radius: 10px; padding: 25px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); border: 1px solid #E5E7EB; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #F3F4F6; padding-bottom: 10px;">
+                <h3 style="font-family: var(--font-title); color: #1F3A5F; margin: 0; font-size: 1.15rem; font-weight: 700;">Change Password</h3>
+                <button type="button" id="btn-close-pw-modal" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #6B7280; line-height: 1;">&times;</button>
+            </div>
+            <form id="change-pw-form">
+                <div style="margin-bottom: 14px;">
+                    <label for="old-pw-input" style="display: block; font-size: 0.78rem; font-weight: 600; color: #4B5563; margin-bottom: 5px;">Current Password</label>
+                    <input type="password" id="old-pw-input" required class="form-control" style="width: 100%; padding: 8px 12px; font-size: 0.88rem; border: 1px solid #D1D5DB; border-radius: 6px; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <label for="new-pw-input" style="display: block; font-size: 0.78rem; font-weight: 600; color: #4B5563; margin-bottom: 5px;">New Password</label>
+                    <input type="password" id="new-pw-input" required minlength="6" class="form-control" style="width: 100%; padding: 8px 12px; font-size: 0.88rem; border: 1px solid #D1D5DB; border-radius: 6px; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label for="confirm-pw-input" style="display: block; font-size: 0.78rem; font-weight: 600; color: #4B5563; margin-bottom: 5px;">Confirm New Password</label>
+                    <input type="password" id="confirm-pw-input" required minlength="6" class="form-control" style="width: 100%; padding: 8px 12px; font-size: 0.88rem; border: 1px solid #D1D5DB; border-radius: 6px; box-sizing: border-box;">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" id="btn-cancel-pw" class="btn-luxury" style="padding: 7px 16px; font-size: 0.8rem;">Cancel</button>
+                    <button type="submit" class="btn-luxury btn-luxury-solid" style="padding: 7px 18px; font-size: 0.8rem;">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer Holder -->
     <footer></footer>
 
@@ -589,6 +803,7 @@
     <script src="../js/auth.js"></script>
     <script src="../components/alert.js"></script>
     <script src="../components/product-card.js"></script>
+    <script src="../components/cancel-order-modal.js"></script>
     <script src="../js/category.js"></script>
     <script src="../components/footer.js"></script>
     <script src="../components/navbar.js"></script>
@@ -602,10 +817,14 @@
                 return;
             }
 
-            const userId = auth.getUserId();
+            const userId = (window.auth && typeof window.auth.getUserId === 'function')
+                ? window.auth.getUserId()
+                : (localStorage.getItem('userId') || null);
             const editBtn = document.getElementById('btn-edit-profile');
             const saveBtn = document.getElementById('btn-save-profile');
             const changePwBtn = document.getElementById('btn-change-password');
+            const uploadPhotoBtn = document.getElementById('btn-upload-photo');
+            const photoInput = document.getElementById('profile-photo-input');
             const form = document.getElementById('profile-form');
 
             const fullNameInput = document.getElementById('profile-fullname');
@@ -617,6 +836,15 @@
             const avatarEl = document.getElementById('profile-avatar');
             const displayNameEl = document.getElementById('profile-display-name');
             const roleEl = document.getElementById('profile-role');
+
+            // Restore custom uploaded avatar if present
+            const savedAvatar = localStorage.getItem(`profile_avatar_${userId}`);
+            if (savedAvatar && avatarEl) {
+                avatarEl.style.backgroundImage = `url('${savedAvatar}')`;
+                avatarEl.style.backgroundSize = 'cover';
+                avatarEl.style.backgroundPosition = 'center';
+                avatarEl.textContent = '';
+            }
 
             // Load profile data from API
             async function loadProfile() {
@@ -658,17 +886,19 @@
                             memberSinceInput.value = 'N/A';
                         }
 
-                        // Generate initials for large avatar display
-                        let initials = '';
-                        if (displayName) {
-                            const parts = displayName.split(' ');
-                            if (parts.length > 1 && parts[0][0] && parts[1][0]) {
-                                initials = parts[0][0] + parts[1][0];
-                            } else {
-                                initials = displayName[0] + (displayName[1] || '');
+                        // Generate initials for large avatar display if no custom photo
+                        if (!savedAvatar && avatarEl) {
+                            let initials = '';
+                            if (displayName) {
+                                const parts = displayName.split(' ');
+                                if (parts.length > 1 && parts[0][0] && parts[1][0]) {
+                                    initials = parts[0][0] + parts[1][0];
+                                } else {
+                                    initials = displayName[0] + (displayName[1] || '');
+                                }
                             }
+                            avatarEl.textContent = initials.toUpperCase();
                         }
-                        avatarEl.textContent = initials.toUpperCase();
 
                         // Cache in localStorage to ensure sync with navigation bar
                         localStorage.setItem('fullName', user.fullName || '');
@@ -689,16 +919,25 @@
             }
 
             // Edit Profile click handler
-            editBtn.addEventListener('click', () => {
-                fullNameInput.disabled = false;
-                mobileInput.disabled = false;
-                fullNameInput.focus();
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    fullNameInput.disabled = false;
+                    mobileInput.disabled = false;
+                    fullNameInput.focus();
 
-                editBtn.style.display = 'none';
-                saveBtn.style.display = 'inline-block';
-            });
+                    editBtn.style.display = 'none';
+                    if (saveBtn) saveBtn.style.display = 'inline-block';
+                });
+            }
 
-            // Form Submit / Save click handler
+            // Save Changes button click handler
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => {
+                    form.requestSubmit();
+                });
+            }
+
+            // Form Submit / Save handler
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
@@ -716,8 +955,8 @@
                         fullNameInput.disabled = true;
                         mobileInput.disabled = true;
                         
-                        editBtn.style.display = 'inline-block';
-                        saveBtn.style.display = 'none';
+                        if (editBtn) editBtn.style.display = 'inline-block';
+                        if (saveBtn) saveBtn.style.display = 'none';
 
                         // Reload data
                         await loadProfile();
@@ -730,11 +969,114 @@
                 }
             });
 
-            // Change Password click handler
-            changePwBtn.addEventListener('click', () => {
-                const modal = document.getElementById('change-pw-modal');
-                if (modal) modal.style.display = 'flex';
-            });
+            // Upload & Remove Photo handlers
+            const removePhotoBtn = document.getElementById('btn-remove-photo');
+            
+            if (uploadPhotoBtn && photoInput) {
+                uploadPhotoBtn.addEventListener('click', () => {
+                    photoInput.click();
+                });
+                photoInput.addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    if (file) {
+                        if (file.size > 5 * 1024 * 1024) {
+                            showAlert('File size exceeds 5 MB limit. Please select a smaller photo.', 'error');
+                            photoInput.value = '';
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = function(evt) {
+                            const dataUrl = evt.target.result;
+                            if (avatarEl) {
+                                avatarEl.style.backgroundImage = `url('${dataUrl}')`;
+                                avatarEl.style.backgroundSize = 'cover';
+                                avatarEl.style.backgroundPosition = 'center';
+                                avatarEl.textContent = '';
+                            }
+                            localStorage.setItem(`profile_avatar_${userId}`, dataUrl);
+                            showAlert('Profile photo uploaded successfully!', 'success');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            if (removePhotoBtn) {
+                removePhotoBtn.addEventListener('click', () => {
+                    const saved = localStorage.getItem(`profile_avatar_${userId}`);
+                    if (!saved && (!avatarEl || !avatarEl.style.backgroundImage || avatarEl.style.backgroundImage === 'none')) {
+                        showAlert('No custom profile photo to remove.', 'info');
+                        return;
+                    }
+                    localStorage.removeItem(`profile_avatar_${userId}`);
+                    if (avatarEl) {
+                        avatarEl.style.backgroundImage = 'none';
+                        const displayName = fullNameInput.value.trim() || usernameInput.value.trim() || 'Collector';
+                        let initials = '';
+                        if (displayName) {
+                            const parts = displayName.split(' ');
+                            if (parts.length > 1 && parts[0][0] && parts[1][0]) {
+                                initials = parts[0][0] + parts[1][0];
+                            } else {
+                                initials = displayName[0] + (displayName[1] || '');
+                            }
+                        }
+                        avatarEl.textContent = initials.toUpperCase();
+                    }
+                    if (photoInput) photoInput.value = '';
+                    showAlert('Profile photo removed successfully.', 'success');
+                });
+            }
+
+            // Change Password Modal and Submit handlers
+            const pwModal = document.getElementById('change-pw-modal');
+            const pwForm = document.getElementById('change-pw-form');
+            const closePwBtn = document.getElementById('btn-close-pw-modal');
+            const cancelPwBtn = document.getElementById('btn-cancel-pw');
+
+            if (changePwBtn) {
+                changePwBtn.addEventListener('click', () => {
+                    if (pwModal) pwModal.style.display = 'flex';
+                });
+            }
+            if (closePwBtn) {
+                closePwBtn.addEventListener('click', () => {
+                    if (pwModal) pwModal.style.display = 'none';
+                });
+            }
+            if (cancelPwBtn) {
+                cancelPwBtn.addEventListener('click', () => {
+                    if (pwModal) pwModal.style.display = 'none';
+                });
+            }
+
+            if (pwForm) {
+                pwForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const oldPw = document.getElementById('old-pw-input').value;
+                    const newPw = document.getElementById('new-pw-input').value;
+                    const confirmPw = document.getElementById('confirm-pw-input').value;
+
+                    if (newPw !== confirmPw) {
+                        showAlert('New passwords do not match.', 'error');
+                        return;
+                    }
+
+                    try {
+                        const res = await api.changePassword(oldPw, newPw);
+                        if (res.success) {
+                            showAlert('Password changed successfully!', 'success');
+                            pwForm.reset();
+                            if (pwModal) pwModal.style.display = 'none';
+                        } else {
+                            showAlert(res.message || 'Failed to change password.', 'error');
+                        }
+                    } catch (err) {
+                        console.error('Password change error:', err);
+                        showAlert('Failed to change password. Please check your current password.', 'error');
+                    }
+                });
+            }
 
             // Sidebar Tabs switching
             const tabs = [
@@ -770,11 +1112,7 @@
                 list.innerHTML = '<p style="color:var(--light-gray);">Loading orders...</p>';
                 try {
                     const response = await api.getUserOrders(userId);
-                    const visibleOrders = (response || []).filter(order => {
-                        if (!order || !order.status) return false;
-                        const s = String(order.status).toUpperCase().trim();
-                        return s !== 'PLACED' && s !== 'PENDING' && s !== 'CREATED';
-                    });
+                    const visibleOrders = (response || []).filter(order => Boolean(order && order.status));
                     if (visibleOrders.length === 0) {
                         list.innerHTML = '<p style="color:var(--light-gray);">No orders placed yet.</p>';
                         return;
@@ -788,6 +1126,47 @@
                         if (order.items) {
                             items = order.items.map(it => `${it.productName} <strong style="color:var(--gold)">x${it.quantity}</strong>`).join(', ');
                         }
+                        const rawPay = (order.paymentStatus || '').toUpperCase();
+                        const isCanc = (order.status || '').toUpperCase() === 'CANCELLED';
+                        const isPaid = (rawPay === 'SUCCESS' || rawPay === 'PAID' || rawPay === 'COMPLETED') || (!isCanc && order.status && order.status.toUpperCase() !== 'PLACED');
+                        const isPending = !isPaid && !isCanc;
+                        
+                        let badgeText = order.status || 'PLACED';
+                        let badgeClass = 'badge-gold';
+                        if (isCanc) {
+                            badgeText = 'CANCELLED';
+                            badgeClass = 'badge-danger';
+                        } else if (isPending) {
+                            badgeText = 'PAYMENT PENDING';
+                            badgeClass = 'badge-gold';
+                        } else if (order.status === 'DELIVERED' || order.status === 'SHIPPED') {
+                            badgeClass = 'badge-success';
+                        }
+                        
+                        const isCancellable = typeof window.isOrderCancellable === 'function'
+                            ? window.isOrderCancellable(order)
+                            : (!isCanc && order.status !== 'DELIVERED' && order.status !== 'SHIPPED' && order.status !== 'OUT_FOR_DELIVERY' && order.status !== 'REFUNDED');
+
+                        let cancelDetailsBlock = '';
+                        if (isCanc) {
+                            const reason = order.cancellationReason || 'Changed my mind';
+                            const refundStatus = (order.refundStatus && order.refundStatus.toUpperCase() === 'REFUNDED') ? 'Refund Initiated' : (order.refundStatus || 'Refund Initiated');
+                            const refundAmountVal = order.refundAmount ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(order.refundAmount) : total;
+                            cancelDetailsBlock = `
+                                <div style="margin-top: 10px; padding: 10px 14px; background: rgba(220, 53, 69, 0.08); border: 1px solid rgba(220, 53, 69, 0.2); border-radius: 6px; font-size: 0.8rem;">
+                                    <div style="color: #EF4444; font-weight: 700; margin-bottom: 2px;">Order Cancelled</div>
+                                    <div style="color: var(--light-gray);"><strong style="color: var(--white);">Reason:</strong> ${reason}</div>
+                                    ${isPaid ? `
+                                        <div style="margin-top: 4px; color: var(--light-gray);">
+                                            <strong style="color: var(--white);">Payment Status:</strong> Paid &nbsp;•&nbsp;
+                                            <strong style="color: var(--white);">Refund Status:</strong> <span style="color: #F59E0B; font-weight: 600;">${refundStatus}</span> &nbsp;•&nbsp;
+                                            <strong style="color: var(--white);">Refund Amount:</strong> <span style="color: var(--gold-light); font-weight: 700;">${refundAmountVal}</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }
+
                         html += `
                             <div class="glass-card" style="padding: 20px; border-color: rgba(197, 160, 89, 0.15);">
                                 <div style="display:flex; justify-content:space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
@@ -795,19 +1174,38 @@
                                         <span style="font-size:0.75rem; color:var(--gold);">Ref: #TV-ORD-${order.orderId}</span>
                                         <div style="font-size:0.95rem; color:var(--white); margin-top:2px;">${items}</div>
                                     </div>
-                                    <span class="badge ${order.status === 'DELIVERED' || order.status === 'SHIPPED' ? 'badge-success' : 'badge-gold'}">${order.status}</span>
+                                    <span class="badge ${badgeClass}">${badgeText}</span>
                                 </div>
-                                <div style="display:flex; justify-content:space-between; align-items: center; font-size:0.85rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 10px; flex-wrap: wrap; gap: 10px;">
+                                ${cancelDetailsBlock}
+                                <div style="display:flex; justify-content:space-between; align-items: center; font-size:0.85rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 10px; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
                                     <span style="color:var(--light-gray);">Placed: ${date}</span>
-                                    <div style="display:flex; align-items: center; gap: 15px;">
-                                        <span style="color:var(--gold-light); font-weight:600; font-size: 1.05rem;">${total}</span>
-                                        <a href="./order-details.html?orderId=${order.orderId}" class="btn-luxury" style="padding: 4px 10px; font-size: 0.75rem;">Tracking &rarr;</a>
+                                    <div style="display:flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                        <span style="color:var(--gold-light); font-weight:600; font-size: 1.05rem; margin-right: 4px;">${total}</span>
+                                        <a href="./order-details.html?orderId=${order.orderId}" class="btn-luxury" style="padding: 5px 12px; font-size: 0.75rem; text-decoration: none;">View Details</a>
+                                        ${isCancellable ? `
+                                            <button type="button" class="btn-luxury btn-cancel-order-profile" data-order-id="${order.orderId}" style="padding: 5px 12px; font-size: 0.75rem; cursor: pointer; color: #DC2626; border-color: rgba(220,38,38,0.35);">
+                                                Cancel Order
+                                            </button>
+                                        ` : ''}
                                     </div>
                                 </div>
                             </div>
                         `;
                     });
                     list.innerHTML = html;
+
+                    // Bind cancel order buttons
+                    list.querySelectorAll('.btn-cancel-order-profile').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const oId = parseInt(btn.dataset.orderId);
+                            const targetOrder = visibleOrders.find(o => o && o.orderId === oId);
+                            if (targetOrder && typeof window.openCancelOrderModal === 'function') {
+                                window.openCancelOrderModal(targetOrder, () => {
+                                    loadOrdersTab();
+                                });
+                            }
+                        });
+                    });
                 } catch (e) {
                     list.innerHTML = '<p style="color:var(--error);">Failed to load order logs.</p>';
                 }
@@ -818,18 +1216,98 @@
                 if (!grid) return;
                 grid.innerHTML = '<p style="color:var(--light-gray); grid-column:1/-1; text-align:center;">Loading bookmarks...</p>';
                 try {
-                    const response = await api.getWishlist();
-                    const wishlist = Array.isArray(response) ? response : (response && (response.data || response.content) ? (response.data || response.content) : []);
+                    const [wishlistRes, productsRes] = await Promise.all([
+                        api.getWishlist().catch(() => []),
+                        api.getAllProducts().catch(() => [])
+                    ]);
+                    const wishlist = Array.isArray(wishlistRes) ? wishlistRes : (wishlistRes && (wishlistRes.data || wishlistRes.content) ? (wishlistRes.data || wishlistRes.content) : []);
+                    const allProducts = Array.isArray(productsRes) ? productsRes : (productsRes && (productsRes.data || productsRes.content) ? (productsRes.data || productsRes.content) : []);
+
+                    const productMap = {};
+                    allProducts.forEach(p => {
+                        if (p.productId) productMap[p.productId] = p;
+                    });
+
                     if (!wishlist || wishlist.length === 0) {
+                        if (typeof window.updateNavbarWishlistCount === 'function') {
+                            window.updateNavbarWishlistCount(0);
+                        }
                         grid.innerHTML = '<p style="color:var(--light-gray); grid-column:1/-1; text-align:center;">No bookmarked timepieces.</p>';
                         return;
                     }
+
+                    if (typeof window.updateNavbarWishlistCount === 'function') {
+                        window.updateNavbarWishlistCount(wishlist.length);
+                    }
                     let html = '';
                     wishlist.forEach(item => {
-                        html += createProductCardHtml(item);
+                        const prod = productMap[item.productId] || {};
+                        const formattedPrice = new Intl.NumberFormat('en-IN', {
+                            style: 'currency',
+                            currency: 'INR',
+                            maximumFractionDigits: 0
+                        }).format(item.price !== undefined ? item.price : (prod.price || 0));
+
+                        const fallbackImg = 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=600';
+                        let rawImg = item.imageUrl || prod.imageUrl || (prod.images && prod.images[0] && (prod.images[0].imageUrl || prod.images[0])) || (prod.imageUrls && prod.imageUrls[0]);
+                        const img = rawImg ? (window.resolveImageUrl ? window.resolveImageUrl(rawImg) : rawImg) : fallbackImg;
+                        const productName = window.resolveProductName ? window.resolveProductName(item.productName || prod.name, item.productId) : (item.productName || prod.name || 'Luxury Timepiece');
+                        const ratingScore = window.getProductDisplayRating ? window.getProductDisplayRating(prod.productId ? prod : item) : '4.8';
+                        const rawDesc = prod.description || item.description || 'Elegant precision timepiece with refined horological craft.';
+                        const description = rawDesc.length > 55 ? rawDesc.substring(0, 52) + '...' : rawDesc;
+
+                        html += `
+                            <div class="wishlist-card" data-product-id="${item.productId}">
+                                <button class="wishlist-remove-btn" data-id="${item.productId}" title="Remove from Wishlist" aria-label="Remove from Wishlist">X</button>
+                                <div class="wishlist-img-wrap">
+                                    <a href="./product-details.html?id=${item.productId}">
+                                        <img src="${img}" alt="${productName}" class="wishlist-img" onerror="this.src='${fallbackImg}'">
+                                    </a>
+                                </div>
+                                <div class="wishlist-details">
+                                    <h3 class="wishlist-name" title="${productName}">
+                                        <a href="./product-details.html?id=${item.productId}">${productName}</a>
+                                    </h3>
+                                    <div class="wishlist-price">${formattedPrice}</div>
+                                    <div class="wishlist-rating">
+                                        <span class="rating-star">★</span> <span class="rating-value">${ratingScore}</span>
+                                    </div>
+                                    <p class="wishlist-desc">${description}</p>
+                                    <div class="wishlist-actions">
+                                        <a href="./product-details.html?id=${item.productId}" class="btn-wishlist-view">View</a>
+                                        <button class="btn-wishlist-add quick-add-cart-btn" data-id="${item.productId}">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                     });
                     grid.innerHTML = html;
+
+                    // Bind Remove handlers
+                    grid.querySelectorAll('.wishlist-remove-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const productId = e.target.getAttribute('data-id');
+                            try {
+                                await api.removeFromWishlist(productId);
+                                const card = grid.querySelector(`.wishlist-card[data-product-id="${productId}"]`);
+                                if (card) card.remove();
+
+                                if (window.wishlistProductIds) {
+                                    window.wishlistProductIds.delete(parseInt(productId));
+                                }
+                                if (typeof window.updateNavbarWishlistCount === 'function') {
+                                    window.updateNavbarWishlistCount();
+                                }
+                                if (grid.querySelectorAll('.wishlist-card').length === 0) {
+                                    grid.innerHTML = '<p style="color:var(--light-gray); grid-column:1/-1; text-align:center;">No bookmarked timepieces.</p>';
+                                }
+                            } catch (err) {
+                                console.error('Failed to remove from bookmarks:', err);
+                            }
+                        });
+                    });
                 } catch (e) {
+                    console.error("Failed to load wishlist:", e);
                     grid.innerHTML = '<p style="color:var(--error); grid-column:1/-1; text-align:center;">Failed to load wishlist.</p>';
                 }
             }
@@ -976,25 +1454,25 @@
                                 <div style="flex-grow: 1; text-align: left;">
                                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                                         <strong style="color: var(--white); font-size: 1.05rem;">${addr.fullName}</strong>
-                                        ${addr.default ? '<span class="badge badge-success" style="font-size: 0.65rem; padding: 2px 8px; text-transform: uppercase;">Default</span>' : ''}
+                                        ${addr.default ? '<span class="badge badge-success" style="font-size: 0.65rem; padding: 2px 8px; font-weight: 600;">Default</span>' : ''}
                                     </div>
                                     <div style="color: var(--light-gray); font-size: 0.9rem; line-height: 1.5;">
                                         <div>${addr.street}</div>
                                         <div>${addr.city}, ${addr.state} - ${addr.zipCode}</div>
                                         <div>${addr.country}</div>
-                                        <div style="margin-top: 5px; font-size: 0.85rem; color: var(--gold-light);">📞 Phone: ${addr.phone}</div>
+                                        <div style="margin-top: 5px; font-size: 0.85rem; color: var(--gold-light);">Phone: ${addr.phone}</div>
                                     </div>
                                 </div>
-                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                                     ${!addr.default ? `
-                                        <button class="btn-luxury set-default-address-btn" data-id="${addr.addressId}" style="padding: 6px 12px; font-size: 0.75rem;">
+                                        <button class="btn-luxury set-default-address-btn" data-id="${addr.addressId}" style="padding: 4px 10px; font-size: 0.75rem;">
                                             Set Default
                                         </button>
                                     ` : ''}
-                                    <button class="btn-luxury edit-address-btn" data-id='${escapeHtml(JSON.stringify(addr))}' style="padding: 6px 12px; font-size: 0.75rem; color: var(--gold);">
+                                    <button class="btn-luxury edit-address-btn" data-id='${escapeHtml(JSON.stringify(addr))}' style="padding: 4px 10px; font-size: 0.75rem; background: #0B1F3A; color: #FFFFFF; border: 1px solid #0B1F3A;">
                                         Edit
                                     </button>
-                                    <button class="btn-luxury delete-address-btn" data-id="${addr.addressId}" style="padding: 6px 12px; font-size: 0.75rem; color: var(--error); border-color: rgba(220,53,69,0.3);">
+                                    <button class="btn-luxury delete-address-btn" data-id="${addr.addressId}" style="padding: 4px 10px; font-size: 0.75rem; background: #0B1F3A; color: #FFFFFF; border: 1px solid #0B1F3A;">
                                         Delete
                                     </button>
                                 </div>
