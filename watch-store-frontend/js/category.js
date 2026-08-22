@@ -5,7 +5,7 @@
         "Analog Watches": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2",
         "Digital Watches": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=600&cb=2",
         "Luxury Watches": "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&cb=2",
-        "Sports Watches": "https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?q=80&w=600&cb=2"
+        "Sports Watches": "../sports-watch.jpg"
     };
 
     const CATEGORY_ORDER = {

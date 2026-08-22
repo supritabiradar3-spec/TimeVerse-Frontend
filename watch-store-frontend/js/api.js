@@ -1,7 +1,7 @@
-// Centralized API Client for TimeVerse Backend
-
 (function () {
-    const BASE_URL = "https://timeverse-backend.onrender.com";
+    const BASE_URL = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+        ? "http://localhost:8080"
+        : "https://timeverse-backend.onrender.com";
 
 
     function clearStoredSession() {
@@ -230,6 +230,10 @@
         },
 
         getWishlist: () => {
+            const token = localStorage.getItem('token');
+            if (!token || isJwtExpired(token)) {
+                return Promise.resolve([]);
+            }
             return request('/api/wishlist');
         },
 
@@ -246,6 +250,10 @@
         },
 
         getWishlistCount: () => {
+            const token = localStorage.getItem('token');
+            if (!token || isJwtExpired(token)) {
+                return Promise.resolve(0);
+            }
             return request('/api/wishlist/count');
         },
 
@@ -314,10 +322,18 @@
 
         // --- Cart ---
         getCart: () => {
+            const token = localStorage.getItem('token');
+            if (!token || isJwtExpired(token)) {
+                return Promise.resolve({ items: [], total: 0 });
+            }
             return request('/api/cart');
         },
 
         getCartCount: () => {
+            const token = localStorage.getItem('token');
+            if (!token || isJwtExpired(token)) {
+                return Promise.resolve(0);
+            }
             return request('/api/cart/count');
         },
 
@@ -421,6 +437,13 @@
 
         getAllOrders: () => request('/api/orders/all', { cache: 'no-store' }),
 
+        cancelOrder: (orderId, reason) => {
+            return request(`/api/orders/${orderId}/cancel`, {
+                method: 'POST',
+                body: JSON.stringify({ reason: reason, cancellationReason: reason })
+            });
+        },
+
         updateOrderStatus: (orderId, status) => {
             return request(`/api/orders/${orderId}/status`, {
                 method: 'PUT',
@@ -454,22 +477,26 @@
             });
         },
 
-        // --- Super Admin ---
+        getPaymentByOrderId: (orderId) => {
+            return request(`/api/payments/order/${orderId}`);
+        },
+
+        // --- Admin Management ---
         createAdmin: (adminData) => {
-            return request('/api/super-admin/admins', {
+            return request('/api/admin/admins', {
                 method: 'POST',
                 body: JSON.stringify(adminData)
             });
         },
 
         getAdmins: () => {
-            return request('/api/super-admin/admins', {
+            return request('/api/admin/admins', {
                 cache: 'no-store'
             });
         },
 
         getTodayEarnings: () => {
-            return request('/api/super-admin/today-earnings', {
+            return request('/api/admin/today-earnings', {
                 cache: 'no-store'
             });
         }

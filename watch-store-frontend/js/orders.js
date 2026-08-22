@@ -10,7 +10,7 @@
             const username = localStorage.getItem('username');
             const role = localStorage.getItem('role') || 'CUSTOMER';
             const fullName = localStorage.getItem('fullName') || username || 'Collector';
-            customerBanner.innerHTML = `Welcome back, <strong style="color: var(--white);">${fullName}</strong> &nbsp;|&nbsp; Status: <span class="badge badge-gold" style="font-size: 0.75rem; text-transform: uppercase;">${role}</span>`;
+            customerBanner.innerHTML = `Welcome back, <strong style="color: var(--white);">${fullName}</strong> &nbsp;|&nbsp; Status: <span class="badge badge-gold" style="font-size: 0.75rem; font-weight: 600;">${role === 'ADMIN' ? 'Admin' : 'Customer'}</span>`;
         }
     });
 
@@ -45,11 +45,7 @@
 
             const response = await api.getUserOrders(userId);
 
-            const visibleOrders = (response || []).filter(order => {
-                if (!order || !order.status) return false;
-                const s = String(order.status).toUpperCase().trim();
-                return s !== 'PLACED' && s !== 'PENDING' && s !== 'CREATED';
-            });
+            const visibleOrders = (response || []).filter(order => Boolean(order && order.status));
 
             if (visibleOrders.length === 0) {
                 renderEmptyOrders(ordersContainer);
@@ -87,20 +83,44 @@
 
                 const statusClass = getStatusBadgeClass(order.status);
 
-                let paymentStatusText = "UNPAID";
-                let paymentStatusClass = "badge-danger";
-
+                const rawPaymentStatus = (order.paymentStatus || '').toUpperCase();
                 const orderStatusUpper = order.status ? order.status.toUpperCase() : "PLACED";
-                if (orderStatusUpper !== "PLACED" && orderStatusUpper !== "CANCELLED") {
-                    paymentStatusText = "PAID";
+
+                let isPaid = false;
+                let isPendingPayment = false;
+                let isFailedPayment = false;
+                let paymentStatusText = "Pending";
+                let paymentStatusClass = "badge-gold";
+
+                if (rawPaymentStatus === 'SUCCESS' || rawPaymentStatus === 'PAID' || rawPaymentStatus === 'COMPLETED') {
+                    isPaid = true;
+                    paymentStatusText = "Paid";
                     paymentStatusClass = "badge-success";
-                } else if (orderStatusUpper === "CANCELLED") {
-                    if (order.refundStatus && order.refundStatus.toUpperCase() === "REFUNDED") {
-                        paymentStatusText = "REFUNDED";
-                        paymentStatusClass = "badge-gold";
+                } else if (rawPaymentStatus === 'FAILED') {
+                    isFailedPayment = true;
+                    paymentStatusText = "Failed";
+                    paymentStatusClass = "badge-danger";
+                } else if (rawPaymentStatus === 'PENDING' || rawPaymentStatus === 'CREATED' || rawPaymentStatus === 'UNPAID') {
+                    isPendingPayment = true;
+                    paymentStatusText = "Pending";
+                    paymentStatusClass = "badge-gold";
+                } else {
+                    if (orderStatusUpper !== "PLACED" && orderStatusUpper !== "CANCELLED") {
+                        isPaid = true;
+                        paymentStatusText = "Paid";
+                        paymentStatusClass = "badge-success";
+                    } else if (orderStatusUpper === "CANCELLED") {
+                        if (order.refundStatus && order.refundStatus.toUpperCase() === "REFUNDED") {
+                            paymentStatusText = "Refunded";
+                            paymentStatusClass = "badge-gold";
+                        } else {
+                            paymentStatusText = "Cancelled";
+                            paymentStatusClass = "badge-danger";
+                        }
                     } else {
-                        paymentStatusText = "UNPAID";
-                        paymentStatusClass = "badge-danger";
+                        isPendingPayment = true;
+                        paymentStatusText = "Pending";
+                        paymentStatusClass = "badge-gold";
                     }
                 }
 
@@ -113,10 +133,10 @@
                             currency: 'INR',
                             maximumFractionDigits: 0
                         }).format(item.price);
-                        
+
                         const fallbackImg = 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=150';
                         const imgSrc = productMap[item.productId] || fallbackImg;
-                        
+
                         itemsHTML += `
                             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 12px 0; font-size: 0.95rem;">
                                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -134,7 +154,7 @@
                     itemsHTML = `<p style="color: var(--light-gray); font-style: italic;">No items found in this order.</p>`;
                 }
 
-                // Generate timeline
+                // Generate timeline / status display
                 const steps = ["PLACED", "CONFIRMED", "PACKED", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED"];
                 let currentStatus = order.status ? order.status.toUpperCase() : "PLACED";
                 if (currentStatus === "PENDING" || currentStatus === "CREATED") currentStatus = "PLACED";
@@ -142,9 +162,38 @@
 
                 let timelineHTML = '';
                 if (currentStatus === 'CANCELLED') {
+                    const cancelReason = order.cancellationReason || 'Changed my mind';
+                    let refundBlock = '';
+                    if (isPaid) {
+                        const refundStatus = (order.refundStatus && order.refundStatus.toUpperCase() === 'REFUNDED') ? 'Refund Initiated' : (order.refundStatus || 'Refund Initiated');
+                        const refundAmountVal = order.refundAmount ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(order.refundAmount) : formattedTotal;
+                        refundBlock = `
+                            <div style="font-size: 0.82rem; color: var(--light-gray); margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(220, 53, 69, 0.2);">
+                                <div><strong style="color: var(--white);">Payment Status:</strong> Paid</div>
+                                <div style="margin-top: 2px;"><strong style="color: var(--white);">Refund Status:</strong> <span style="color: #F59E0B; font-weight: 600;">${refundStatus}</span></div>
+                                <div style="margin-top: 2px;"><strong style="color: var(--white);">Refund Amount:</strong> <span style="color: var(--gold-light); font-weight: 700;">${refundAmountVal}</span></div>
+                            </div>
+                        `;
+                    }
+                    timelineHTML = `
+                        <div style="padding: 14px 18px; background: rgba(220, 53, 69, 0.08); border: 1px solid rgba(220, 53, 69, 0.25); text-align: left; border-radius: 8px; margin: 15px 0;">
+                            <div style="font-weight: 700; color: #EF4444; font-size: 0.95rem; margin-bottom: 4px;">Order Cancelled</div>
+                            <div style="font-size: 0.84rem; color: var(--light-gray);">
+                                <strong style="color: var(--white);">Cancellation reason:</strong> ${cancelReason}
+                            </div>
+                            ${refundBlock}
+                        </div>
+                    `;
+                } else if (isPendingPayment) {
+                    timelineHTML = `
+                        <div style="padding: 15px; background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--gold-light); text-align: center; border-radius: 6px; font-weight: 500; letter-spacing: 0.5px; margin-top: 15px; margin-bottom: 15px;">
+                            Payment Pending — Tracking will be available after payment confirmation.
+                        </div>
+                    `;
+                } else if (isFailedPayment) {
                     timelineHTML = `
                         <div style="padding: 15px; background: rgba(220, 53, 69, 0.08); border: 1px solid rgba(220, 53, 69, 0.2); color: var(--error); text-align: center; border-radius: 6px; font-weight: 500; letter-spacing: 0.5px; margin-top: 15px; margin-bottom: 15px;">
-                            This order has been CANCELLED. No tracking progress is available.
+                            Payment Failed — Tracking is unavailable for this order.
                         </div>
                     `;
                 } else {
@@ -159,17 +208,18 @@
                         } else if (currentStatus === "DELIVERED") {
                             color = "var(--success)"; // If delivered, all are green
                         }
-                        
-                        const stepLabel = step.replace('_', ' ');
+
+                        let stepName = step.toLowerCase().replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+                        if (step === 'OUT_FOR_DELIVERY') stepName = 'Out for Delivery';
                         timelineHTML += `
                             <div class="timeline-step" style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; min-width: 90px;">
                                 <div class="step-icon" style="width: 26px; height: 26px; border-radius: 50%; border: 2px solid ${color}; display: flex; align-items: center; justify-content: center; color: ${color}; font-weight: bold; font-size: 0.75rem; margin-bottom: 8px; background: rgba(0,0,0,0.5);">
                                     ${idx < currentIndex || currentStatus === "DELIVERED" ? '✔' : idx + 1}
                                 </div>
-                                <span style="font-size: 0.7rem; color: ${color}; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">${stepLabel}</span>
+                                <span style="font-size: 0.72rem; color: ${color}; letter-spacing: 0.3px; font-weight: 600;">${stepName}</span>
                             </div>
                         `;
-                        
+
                         if (idx < steps.length - 1) {
                             let connectorColor = (idx < currentIndex || currentStatus === "DELIVERED") ? "var(--success)" : "rgba(255,255,255,0.08)";
                             timelineHTML += `
@@ -180,12 +230,22 @@
                     timelineHTML += '</div>';
                 }
 
+                const isCancellable = typeof window.isOrderCancellable === 'function'
+                    ? window.isOrderCancellable(order)
+                    : (currentStatus !== 'DELIVERED' && currentStatus !== 'CANCELLED' && currentStatus !== 'SHIPPED' && currentStatus !== 'OUT_FOR_DELIVERY' && currentStatus !== 'REFUNDED');
+
+                const cancelButtonHTML = isCancellable ? `
+                    <button type="button" class="btn-luxury btn-cancel-order-trigger" data-order-id="${order.orderId}" style="padding: 6px 14px; font-size: 0.75rem; white-space: nowrap; cursor: pointer; color: #DC2626; border-color: rgba(220,38,38,0.35);">
+                        Cancel Order
+                    </button>
+                ` : '';
+
                 ordersHTML += `
                     <div class="glass-card order-card-item" style="margin-bottom: 30px; padding: 25px; border-radius: 12px; box-shadow: var(--border-glow); transition: all 0.3s ease; border: 1px solid rgba(212, 175, 55, 0.25);" onmouseover="this.style.borderColor='var(--gold)';" onmouseout="this.style.borderColor='rgba(212, 175, 55, 0.25)';">
                         <div class="flex-between" style="border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                             <div>
-                                <span style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;">Order Reference</span>
-                                <h3 style="font-size: 1.15rem; color: var(--white); margin-top: 3px;">#TV-ORD-${order.orderId}</h3>
+                                <span style="font-size: 0.8rem; color: var(--gold); font-weight: 600; letter-spacing: 0.5px;">Order Reference</span>
+                                <h3 style="font-size: 1.15rem; color: var(--white); margin-top: 3px; font-weight: 700;">#TV-ORD-${order.orderId}</h3>
                             </div>
                             <div style="text-align: right;">
                                 <span style="font-size: 0.8rem; color: var(--light-gray); display: block;">Ordered On</span>
@@ -194,13 +254,13 @@
                         </div>
 
                         <div style="margin-bottom: 25px;">
-                            <span style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 10px;">Purchased Items</span>
+                            <span style="font-size: 0.8rem; color: var(--gold); font-weight: 600; letter-spacing: 0.5px; display: block; margin-bottom: 10px;">Purchased Items</span>
                             ${itemsHTML}
                         </div>
 
-                        <!-- Tracking Timeline -->
+                        <!-- Tracking / Status Timeline -->
                         <div style="margin-bottom: 25px;">
-                            <span style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: block;">Tracking Timeline</span>
+                            <span style="font-size: 0.8rem; color: var(--gold); font-weight: 600; letter-spacing: 0.5px; display: block;">${isPaid ? 'Tracking Timeline' : 'Order Status'}</span>
                             ${timelineHTML}
                         </div>
 
@@ -211,14 +271,15 @@
                                 <span style="font-size: 0.85rem; color: var(--light-gray); margin-left: 15px; margin-right: 5px;">Est. Delivery:</span>
                                 <span style="font-size: 0.9rem; color: var(--white); font-weight: 500;">${formattedDelivery}</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 18px;">
-                                <div style="display: flex; align-items: baseline; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: baseline; gap: 8px; margin-right: 6px;">
                                     <span style="font-size: 0.85rem; color: var(--light-gray);">Total:</span>
-                                    <span style="font-size: 1.3rem; color: var(--gold-light); font-weight: 600;">${formattedTotal}</span>
+                                    <span style="font-size: 1.25rem; color: var(--gold-light); font-weight: 600;">${formattedTotal}</span>
                                 </div>
-                                <a href="./order-details.html?orderId=${order.orderId}" class="btn-luxury" style="padding: 7px 15px; font-size: 0.75rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
-                                    View Details & Tracking &rarr;
+                                <a href="./order-details.html?orderId=${order.orderId}" class="btn-luxury" style="padding: 6px 14px; font-size: 0.75rem; white-space: nowrap; text-decoration: none;">
+                                    View Details
                                 </a>
+                                ${cancelButtonHTML}
                             </div>
                         </div>
                     </div>
@@ -226,6 +287,19 @@
             });
 
             ordersContainer.innerHTML = ordersHTML;
+
+            // Bind Cancel Order Buttons
+            ordersContainer.querySelectorAll('.btn-cancel-order-trigger').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const oId = parseInt(btn.dataset.orderId);
+                    const targetOrder = visibleOrders.find(o => o && o.orderId === oId);
+                    if (targetOrder && typeof window.openCancelOrderModal === 'function') {
+                        window.openCancelOrderModal(targetOrder, () => {
+                            loadOrders();
+                        });
+                    }
+                });
+            });
         } catch (err) {
             console.error('Failed to load user orders:', err);
             ordersContainer.innerHTML = `<p style="color: var(--error); text-align: center; padding: 40px 0;">Error loading order logs. Please try again later.</p>`;

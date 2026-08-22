@@ -33,7 +33,7 @@
         .auth-card h2 {
             font-size: 2rem;
             margin-bottom: 10px;
-            text-transform: uppercase;
+            font-weight: 700;
         }
 
         .auth-subtitle {
@@ -89,7 +89,7 @@
                         <input type="password" id="password" class="form-control"
                             placeholder="Create password (min 6 characters)" required minlength="6"
                             autocomplete="new-password" style="padding-right: 45px;">
-                        <span id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;">👁️</span>
+                        <span id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 0.75rem; font-weight: 600; color: var(--gold-light);">Show</span>
                     </div>
                     <!-- Strength meter -->
                     <div class="password-strength-container">
@@ -104,7 +104,7 @@
                         <input type="password" id="confirm-password" class="form-control"
                             placeholder="Confirm your password" required minlength="6"
                             autocomplete="new-password" style="padding-right: 45px;">
-                        <span id="toggleConfirmPassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;">👁️</span>
+                        <span id="toggleConfirmPassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 0.75rem; font-weight: 600; color: var(--gold-light);">Show</span>
                     </div>
                 </div>
 
@@ -158,25 +158,27 @@
             const strengthText = document.getElementById("strength-text");
 
             if (togglePassword && password) {
+                togglePassword.textContent = 'Show';
                 togglePassword.addEventListener("click", function () {
                     if (password.type === "password") {
                         password.type = "text";
-                        this.textContent = "🚫";
+                        this.textContent = 'Hide';
                     } else {
                         password.type = "password";
-                        this.textContent = "👁️";
+                        this.textContent = 'Show';
                     }
                 });
             }
 
             if (toggleConfirmPassword && confirmPassword) {
+                toggleConfirmPassword.textContent = 'Show';
                 toggleConfirmPassword.addEventListener("click", function () {
                     if (confirmPassword.type === "password") {
                         confirmPassword.type = "text";
-                        this.textContent = "🚫";
+                        this.textContent = 'Hide';
                     } else {
                         confirmPassword.type = "password";
-                        this.textContent = "👁️";
+                        this.textContent = 'Show';
                     }
                 });
             }

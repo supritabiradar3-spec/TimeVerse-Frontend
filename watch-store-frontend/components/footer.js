@@ -42,8 +42,8 @@
             font-size: 0.95rem;
             color: var(--gold, #D4AF37);
             margin-bottom: 20px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
         }
 
         .footer-links {
@@ -80,8 +80,7 @@
             text-align: center;
             color: var(--light-gray, #888888);
             font-size: 0.8rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         @media (max-width: 992px) {
@@ -107,17 +106,9 @@
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
-                        <h3 style="display: flex; align-items: center; gap: 8px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--gold); display: block;">
-                              <path d="M9 3.5L10 6h4l1-2.5M9 20.5l1-2.5h4l1 2.5" />
-                              <circle cx="12" cy="12" r="7.5" />
-                              <circle cx="12" cy="12" r="5.5" stroke-dasharray="1 2" opacity="0.6" />
-                              <path d="M12 12l-2-2" stroke-width="2" />
-                              <path d="M12 12l3-0.5" stroke-width="2" />
-                              <circle cx="12" cy="12" r="0.8" fill="currentColor" />
-                              <path d="M19.5 11h1v2h-1z" fill="currentColor" />
-                            </svg>
-                            <span>Time</span> Verse
+                        <h3 style="display: flex; align-items: center; gap: 10px;">
+                            <img src="./logo.jpg" alt="TimeVerse" class="footer-logo-img" style="height: 32px; width: auto; object-fit: contain; display: inline-block; border-radius: 4px;" onerror="if(!this.dataset.retried){this.dataset.retried=true; this.src=(window.location.pathname.includes('/pages/') ? './logo.jpg' : './pages/logo.jpg');}">
+                            <span>Time</span>Verse
                         </h3>
                         <p>TimeVerse is a premium luxury horology platform. We offer handpicked, authenticated watches from the world's most prestigious manufactures. Experience mechanical perfection and timeless luxury.</p>
                     </div>

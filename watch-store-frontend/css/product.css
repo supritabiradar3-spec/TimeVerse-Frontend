@@ -8,7 +8,6 @@
     margin-top: 30px;
 }
 
-/* Card Styling */
 .product-card {
     background-color: var(--dark-gray);
     border: var(--border);
@@ -17,7 +16,10 @@
     transition: var(--transition);
     display: flex;
     flex-direction: column;
-    height: 100%;
+    justify-content: space-between;
+    height: auto;
+    min-height: 440px;
+    box-sizing: border-box;
 }
 
 .product-card:hover {
@@ -28,13 +30,17 @@
 
 .product-card-img-container {
     position: relative;
-    height: 250px;
+    height: 280px;
+    min-height: 280px;
+    max-height: 280px;
     width: 100%;
     overflow: hidden;
     background-color: #151515;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 8px;
+    box-sizing: border-box;
 }
 
 .product-card-img-container a {
@@ -55,49 +61,11 @@
     padding: 0;
     box-sizing: border-box;
     display: block;
-    transform: scale(1.35);
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Aspect-ratio normalized visual scaling for consistent watch sizes */
-.product-card-img.img-landscape {
-    transform: scale(1.42);
-}
-.product-card:hover .product-card-img.img-landscape {
-    transform: scale(1.45);
-}
-
-.product-card-img.img-portrait {
-    transform: scale(1.30);
-}
-.product-card:hover .product-card-img.img-portrait {
-    transform: scale(1.33);
-}
-
-.product-card-img.img-square {
-    transform: scale(1.35);
-}
-.product-card:hover .product-card-img.img-square {
-    transform: scale(1.38);
-}
-
-.product-card:hover .product-card-img:not(.img-landscape):not(.img-portrait):not(.img-square) {
-    transform: scale(1.38);
-}
-
-/* Targeted Horizontal/Landscape Image Size Optimization for Titan Neo & Uniquest */
-.product-card[data-id="1"] .product-card-img,
-.product-card[data-id="2"] .product-card-img,
-.product-card[data-name*="Titan Neo"] .product-card-img,
-.product-card[data-name*="Uniquest"] .product-card-img {
-    transform: scale(1.48) !important;
-}
-
-.product-card[data-id="1"]:hover .product-card-img,
-.product-card[data-id="2"]:hover .product-card-img,
-.product-card[data-name*="Titan Neo"]:hover .product-card-img,
-.product-card[data-name*="Uniquest"]:hover .product-card-img {
-    transform: scale(1.52) !important;
+.product-card:hover .product-card-img {
+    transform: scale(1.05);
 }
 
 .product-card-badge {
@@ -170,9 +138,9 @@ body:not(.light-theme) .product-stock-indicator {
     width: 38px !important;
     height: 38px !important;
     min-width: 38px !important;
-    padding: 8px !important;
-    background-color: #FFFFFF !important;
-    color: #1F3A5F !important;
+    padding: 0 !important;
+    background-color: #1F3A5F !important;
+    color: #FFFFFF !important;
     border: 1px solid #1F3A5F !important;
     border-radius: 4px !important;
     display: flex !important;
@@ -187,18 +155,19 @@ body:not(.light-theme) .product-stock-indicator {
 .product-card-actions .product-btn-cart:hover,
 .product-card-actions .quick-add-cart-btn:hover,
 .product-card .product-btn-cart:hover {
-    background-color: #F0F4F8 !important;
-    color: #152840 !important;
+    background-color: #152840 !important;
+    color: #FFFFFF !important;
     border-color: #152840 !important;
 }
 
 .product-card-actions .product-btn-cart svg,
 .product-card-actions .quick-add-cart-btn svg,
 .product-card .product-btn-cart svg {
-    width: 14px !important;
-    height: 14px !important;
-    color: #1F3A5F !important;
-    fill: #1F3A5F !important;
+    width: 17px !important;
+    height: 17px !important;
+    color: #FFFFFF !important;
+    stroke: #FFFFFF !important;
+    fill: none !important;
 }
 
 /* High Contrast Opaque In Stock Badge */
@@ -246,14 +215,16 @@ body:not(.light-theme) .product-card .badge.badge-gold {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
 }
 
-.wishlist-toggle-icon-btn svg {
+.wishlist-toggle-icon-btn svg:not(.bi-heart-fill) {
     color: #1F3A5F !important;
-    fill: #1F3A5F !important;
+    stroke: #1F3A5F !important;
+    fill: none !important;
 }
 
 .wishlist-toggle-icon-btn .bi-heart-fill {
     color: #E63946 !important;
     fill: #E63946 !important;
+    stroke: #E63946 !important;
 }
 
 .wishlist-toggle-icon-btn:hover {
@@ -268,14 +239,16 @@ body:not(.light-theme) .wishlist-toggle-icon-btn {
     border: 1px solid rgba(212, 175, 55, 0.35) !important;
 }
 
-body:not(.light-theme) .wishlist-toggle-icon-btn svg {
+body:not(.light-theme) .wishlist-toggle-icon-btn svg:not(.bi-heart-fill) {
     color: #F4E0A5 !important;
-    fill: #F4E0A5 !important;
+    stroke: #F4E0A5 !important;
+    fill: none !important;
 }
 
 body:not(.light-theme) .wishlist-toggle-icon-btn .bi-heart-fill {
     color: #E63946 !important;
     fill: #E63946 !important;
+    stroke: #E63946 !important;
 }
 
 .product-card-details {
@@ -295,10 +268,9 @@ body:not(.light-theme) .wishlist-toggle-icon-btn .bi-heart-fill {
 .product-card-category {
     font-size: 0.75rem;
     color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.5px;
     margin-bottom: 2px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .product-card-name {
@@ -369,10 +341,10 @@ body:not(.light-theme) .wishlist-toggle-icon-btn .bi-heart-fill {
 }
 
 .filter-widget-title {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.5px;
+    font-weight: 700;
     color: var(--gold-light);
 }
 
@@ -502,8 +474,8 @@ body:not(.light-theme) .wishlist-toggle-icon-btn .bi-heart-fill {
 .details-category {
     font-size: 0.85rem;
     color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
     margin-bottom: 15px;
 }
 
@@ -643,14 +615,25 @@ body:not(.light-theme) .wishlist-toggle-icon-btn .bi-heart-fill {
 }
 
 .rating-count,
-.rating-score {
+.rating-score,
+.rating-value {
     color: #666666 !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+}
+
+body:not(.light-theme) .rating-value,
+body:not(.light-theme) .rating-score {
+    color: #FAF9F6 !important;
 }
 
 /* Star icons color */
+.rating-star,
 .stars-gold,
 .stars-gold * {
     color: #FFD700 !important;
+    font-size: 0.95rem !important;
+    line-height: 1 !important;
 }
 
 /* Luxury Watch Price Accent on White card details */

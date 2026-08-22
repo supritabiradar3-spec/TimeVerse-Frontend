@@ -58,8 +58,8 @@
                     </div>
 
                     <div style="display: flex; gap: 15px; margin-top: 15px; max-width: 350px;">
-                        <button class="btn-luxury btn-luxury-solid" id="add-to-cart-btn" style="flex: 1; padding: 15px;">Add to Bag</button>
-                        <button class="btn-luxury" id="buy-now-btn" style="flex: 1; padding: 15px;">Buy Now</button>
+                        <button class="btn-luxury btn-luxury-solid" id="add-to-cart-btn" style="flex: 1; padding: 14px; font-size: 0.85rem; font-weight: 600;">Add to Cart</button>
+                        <button class="btn-luxury" id="buy-now-btn" style="flex: 1; padding: 14px; font-size: 0.85rem; font-weight: 600;">Buy Now</button>
                     </div>
                 </div>
 
@@ -68,8 +68,8 @@
             <!-- Tabs for Specifications & Reviews -->
             <div style="margin-top: 80px; border-top: 1px solid rgba(197, 160, 89, 0.1); padding-top: 50px;">
                 <div style="display: flex; gap: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 15px; margin-bottom: 30px; justify-content: center;">
-                    <button id="tab-specs-btn" class="admin-nav-tab btn-luxury-solid" style="background: transparent; border: none; color: var(--gold); border-bottom: 2px solid var(--gold); padding: 10px 20px; font-family: var(--font-title); font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Specifications</button>
-                    <button id="tab-reviews-btn" class="admin-nav-tab" style="background: transparent; border: none; color: var(--light-gray); padding: 10px 20px; font-family: var(--font-title); font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Customer Reviews</button>
+                    <button id="tab-specs-btn" class="admin-nav-tab btn-luxury-solid" style="background: transparent; border: none; color: var(--gold); border-bottom: 2px solid var(--gold); padding: 10px 20px; font-family: var(--font-title); font-size: 1rem; cursor: pointer; font-weight: 600; letter-spacing: 0.5px;">Specifications</button>
+                    <button id="tab-reviews-btn" class="admin-nav-tab" style="background: transparent; border: none; color: var(--light-gray); padding: 10px 20px; font-family: var(--font-title); font-size: 1rem; cursor: pointer; font-weight: 600; letter-spacing: 0.5px;">Customer Reviews</button>
                 </div>
 
                 <!-- Tab content: Specifications -->
@@ -221,44 +221,66 @@
                     maximumFractionDigits: 0
                 }).format(product.price);
 
-                // Render rating stars
-                const rating = window.getProductRating ? window.getProductRating(product.productId) : { score: "4.8", count: 126 };
-                const starsHtml = window.getStarsHtml ? window.getStarsHtml(rating.score) : "★★★★★";
-                const ratingContainer = document.getElementById('detail-rating-container');
-                if (ratingContainer) {
-                    ratingContainer.innerHTML = `
-                        ${starsHtml}
-                        <span class="rating-score">${rating.score}</span>
-                        <span class="rating-count">(${rating.count} reviews)</span>
-                    `;
+                // Fetch real product reviews from API
+                let productReviews = [];
+                try {
+                    const revRes = await api.getProductReviews(productId);
+                    productReviews = Array.isArray(revRes) ? revRes : (revRes && revRes.data ? revRes.data : []);
+                } catch (e) {
+                    console.warn("Could not load product reviews:", e);
                 }
 
-                // Render mock reviews list
+                // Render real rating if available, otherwise show clean empty state
+                const ratingContainer = document.getElementById('detail-rating-container');
+                if (ratingContainer) {
+                    if (productReviews && productReviews.length > 0) {
+                        const totalScore = productReviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0);
+                        const avgScore = (totalScore / productReviews.length).toFixed(1);
+                        ratingContainer.innerHTML = `
+                            <span class="rating-star">★</span> <span class="rating-value">${avgScore}</span>
+                            <span class="rating-count" style="margin-left: 6px;">(${productReviews.length} ${productReviews.length === 1 ? 'review' : 'reviews'})</span>
+                        `;
+                    } else {
+                        ratingContainer.innerHTML = `
+                            <span class="rating-count" style="color: var(--light-gray); font-size: 0.85rem;">No reviews yet</span>
+                        `;
+                    }
+                }
+
+                // Render real reviews list or clean empty state
                 const reviewsContainer = document.getElementById('detail-reviews-list');
                 if (reviewsContainer) {
-                    const mockReviews = [
-                        { name: "Johnathan D.", date: "July 22, 2026", rating: 5, text: "Absolutely stunning watch. The self-winding calibre is incredibly precise, and the dial has a beautiful satin gold luster." },
-                        { name: "Vikram R.", date: "June 15, 2026", rating: 4, text: "Excellent craftsmanship. The sapphire glass is clean and completely scratch-resistant. Very happy with the concierge service." },
-                        { name: "Clara M.", date: "May 08, 2026", rating: 5, text: "A masterpiece. It feels heavy and solid on the wrist, which indicates genuine metal quality. The power reserve easily lasts the entire weekend." }
-                    ];
-                    let revHtml = '';
-                    mockReviews.forEach(rev => {
-                        let stars = '';
-                        for(let i=1; i<=5; i++) stars += i<=rev.rating ? '★' : '☆';
-                        revHtml += `
-                            <div class="glass-card" style="padding: 20px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <strong>${rev.name}</strong>
-                                    <span style="color: var(--light-gray); font-size: 0.8rem;">${rev.date}</span>
+                    if (productReviews && productReviews.length > 0) {
+                        let revHtml = '';
+                        productReviews.forEach(rev => {
+                            const revRating = Math.min(5, Math.max(1, Number(rev.rating) || 5));
+                            let stars = '';
+                            for (let i = 1; i <= 5; i++) stars += i <= revRating ? '★' : '☆';
+                            const revDate = rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-IN', {
+                                day: 'numeric', month: 'short', year: 'numeric'
+                            }) : '';
+                            const reviewerName = rev.username || `Customer #${rev.userId}`;
+                            revHtml += `
+                                <div class="glass-card" style="padding: 20px; margin-bottom: 12px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <strong>${reviewerName}</strong>
+                                        ${revDate ? `<span style="color: var(--light-gray); font-size: 0.8rem;">${revDate}</span>` : ''}
+                                    </div>
+                                    <div class="product-card-rating" style="margin-bottom: 8px;">
+                                        <span class="stars-gold" style="color: #f59e0b;">${stars}</span>
+                                    </div>
+                                    <p style="color: var(--light-gray); font-size: 0.9rem; line-height: 1.5; margin: 0;">${rev.comment || ''}</p>
                                 </div>
-                                <div class="product-card-rating" style="margin-bottom: 10px;">
-                                    <span class="stars-gold">${stars}</span>
-                                </div>
-                                <p style="color: var(--light-gray); font-size: 0.9rem; line-height: 1.5;">${rev.text}</p>
+                            `;
+                        });
+                        reviewsContainer.innerHTML = revHtml;
+                    } else {
+                        reviewsContainer.innerHTML = `
+                            <div class="glass-card" style="padding: 30px; text-align: center; color: var(--light-gray); font-style: italic;">
+                                No reviews yet
                             </div>
                         `;
-                    });
-                    reviewsContainer.innerHTML = revHtml;
+                    }
                 }
 
                 // Specs & Reviews tab toggle click events

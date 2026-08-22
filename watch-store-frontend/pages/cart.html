@@ -47,8 +47,7 @@
             font-family: 'Cinzel', serif !important;
             font-size: 2.3rem !important;
             font-weight: 700 !important;
-            letter-spacing: 3px !important;
-            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
             color: #121212 !important;
             margin: 0 0 10px 0 !important;
             line-height: 1.2 !important;
@@ -61,10 +60,9 @@
         .cart-page-header .breadcrumbs {
             font-family: 'Poppins', sans-serif !important;
             font-size: 0.85rem !important;
-            letter-spacing: 1.5px !important;
+            letter-spacing: 0.5px !important;
             color: #6B6862 !important;
             margin-top: 0 !important;
-            text-transform: uppercase !important;
             font-weight: 500 !important;
             display: flex;
             align-items: center;
@@ -152,11 +150,46 @@
 
         .cart-table th {
             font-family: var(--font-title);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 500;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .remove-cart-item-btn {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: #FFFFFF;
+            color: #1F3A5F;
+            border: 1px solid rgba(31, 58, 95, 0.25);
+            border-radius: 50%;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .remove-cart-item-btn:hover {
+            background: #E63946 !important;
+            border-color: #E63946 !important;
+            color: #FFFFFF !important;
+        }
+
+        body:not(.light-theme) .remove-cart-item-btn {
+            background: rgba(30, 30, 35, 0.9);
+            color: var(--light-gray);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        body:not(.light-theme) .remove-cart-item-btn:hover {
+            background: #E63946 !important;
+            color: #FFFFFF !important;
         }
 
         .summary-row {
@@ -216,7 +249,7 @@
     <!-- Page Header Hero (Compact Luxury Breadcrumb Banner) -->
     <section class="cart-page-header">
         <div class="container">
-            <h1>SHOPPING BAG</h1>
+            <h1>Shopping Bag</h1>
             <div class="breadcrumbs">
                 <a href="./index.html">Home</a> <span class="sep">/</span> <span class="current">Cart</span>
             </div>
@@ -252,7 +285,7 @@
 
             <!-- Right: Totals summary -->
             <aside class="cart-summary" style="border-radius: 12px; box-shadow: var(--border-glow);">
-                <h3 class="luxury-text" style="font-size: 1.15rem; margin-bottom: 25px; color: var(--gold); text-transform: uppercase;">Order Summary</h3>
+                <h3 class="luxury-text" style="font-size: 1.15rem; margin-bottom: 25px; color: var(--gold); font-weight: 700;">Order Summary</h3>
                 
                 <div class="summary-row">
                     <span>Bag Subtotal</span>

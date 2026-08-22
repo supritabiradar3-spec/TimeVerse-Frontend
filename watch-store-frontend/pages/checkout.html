@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TimeVerse | Checkout & Payment</title>
-    
+
     <!-- Link Stylesheets -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/responsive.css">
-    
+
     <style>
         .checkout-wrapper {
             display: flex;
@@ -37,8 +38,8 @@
             font-family: var(--font-title);
             font-size: 1.15rem;
             color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
             border-bottom: 1px solid rgba(212, 175, 55, 0.2);
             padding-bottom: 15px;
             margin-bottom: 20px;
@@ -65,12 +66,14 @@
             .checkout-wrapper {
                 flex-direction: column;
             }
+
             .checkout-summary-sidebar {
                 width: 100%;
             }
         }
     </style>
 </head>
+
 <body>
 
     <!-- Header Holder -->
@@ -81,7 +84,8 @@
         <div class="container">
             <h1>Secure Checkout</h1>
             <div class="breadcrumbs">
-                <a href="./index.html">Home</a> &nbsp;/&nbsp; <a href="./cart.html">Cart</a> &nbsp;/&nbsp; <span>Checkout</span>
+                <a href="./index.html">Home</a> &nbsp;/&nbsp; <a href="./cart.html">Cart</a> &nbsp;/&nbsp;
+                <span>Checkout</span>
             </div>
         </div>
     </section>
@@ -89,48 +93,60 @@
     <!-- Checkout Content -->
     <div class="container">
         <div class="checkout-wrapper" id="checkout-page-container">
-            
+
             <!-- Left: Address Form -->
             <main class="checkout-form-container">
-                <h3 class="luxury-text" style="font-size: 1.25rem; margin-bottom: 30px; color: var(--gold); text-transform: uppercase;">Concierge Shipping Address</h3>
-                
+                <h3 class="luxury-text"
+                    style="font-size: 1.25rem; margin-bottom: 30px; color: var(--gold); font-weight: 700;">
+                    Concierge Shipping Address</h3>
+
                 <form id="checkout-shipping-form">
                     <div class="form-group">
                         <label for="shipping-name" class="form-label">Full Name</label>
-                        <input type="text" id="shipping-name" class="form-control" placeholder="Recipient's full name" required autocomplete="name">
+                        <input type="text" id="shipping-name" class="form-control" placeholder="Recipient's full name"
+                            required autocomplete="name">
                     </div>
 
                     <div class="d-grid grid-cols-2 gap-20">
                         <div class="form-group">
                             <label for="shipping-email" class="form-label">Email Address</label>
-                            <input type="email" id="shipping-email" class="form-control" placeholder="username@example.com" required autocomplete="email">
+                            <input type="email" id="shipping-email" class="form-control"
+                                placeholder="username@example.com" required autocomplete="email">
                         </div>
                         <div class="form-group">
                             <label for="shipping-phone" class="form-label">Mobile Number</label>
-                            <input type="tel" id="shipping-phone" class="form-control" placeholder="10-digit number" pattern="[6-9][0-9]{9}" required autocomplete="tel">
+                            <input type="tel" id="shipping-phone" class="form-control" placeholder="10-digit number"
+                                pattern="[6-9][0-9]{9}" required autocomplete="tel">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="shipping-address" class="form-label">Street Address</label>
-                        <input type="text" id="shipping-address" class="form-control" placeholder="Apartment, suite, unit, building, street, etc." required autocomplete="street-address">
+                        <input type="text" id="shipping-address" class="form-control"
+                            placeholder="Apartment, suite, unit, building, street, etc." required
+                            autocomplete="street-address">
                     </div>
 
                     <div class="d-grid grid-cols-2 gap-20">
                         <div class="form-group">
                             <label for="shipping-city" class="form-label">City / Region</label>
-                            <input type="text" id="shipping-city" class="form-control" placeholder="Enter City" required autocomplete="address-level2">
-                        <input type="text" id="shipping-state" class="form-control" placeholder="State" required autocomplete="address-level1">
-                        <input type="text" id="shipping-country" class="form-control" placeholder="Country" value="India" required autocomplete="country">
+                            <input type="text" id="shipping-city" class="form-control" placeholder="Enter City" required
+                                autocomplete="address-level2">
+                            <input type="text" id="shipping-state" class="form-control" placeholder="State" required
+                                autocomplete="address-level1">
+                            <input type="text" id="shipping-country" class="form-control" placeholder="Country"
+                                value="India" required autocomplete="country">
                         </div>
                         <div class="form-group">
                             <label for="shipping-zipcode" class="form-label">Zip/Postal Code</label>
-                            <input type="text" id="shipping-zipcode" class="form-control" placeholder="6-digit ZIP code" pattern="[0-9]{6}" required autocomplete="postal-code">
+                            <input type="text" id="shipping-zipcode" class="form-control" placeholder="6-digit ZIP code"
+                                pattern="[0-9]{6}" required autocomplete="postal-code">
                         </div>
                     </div>
 
                     <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 25px;">
-                        <button type="submit" class="btn-luxury btn-luxury-solid" style="width: 100%; padding: 15px; font-size: 1rem;">Complete Premium Payment</button>
+                        <button type="submit" class="btn-luxury btn-luxury-solid"
+                            style="width: 100%; padding: 15px; font-size: 1rem; font-weight: 600;">Pay Now</button>
                     </div>
                 </form>
             </main>
@@ -138,7 +154,7 @@
             <!-- Right: Checkout Sidebar Summary -->
             <aside class="checkout-summary-sidebar">
                 <h3 class="summary-title">Order Showroom</h3>
-                
+
                 <!-- Brief list of watches being checked out -->
                 <div id="checkout-items-summary" style="margin-bottom: 25px; max-height: 250px; overflow-y: auto;">
                     <p style="color: var(--light-gray); font-style: italic;">Loading list...</p>
@@ -148,20 +164,23 @@
                     <span>Bag Subtotal</span>
                     <span id="checkout-subtotal">₹0.00</span>
                 </div>
-                
+
                 <div class="summary-row" id="checkout-coupon-row" style="display: none;">
                     <span style="color: var(--gold-light);">Promo (TIMEVERSE10)</span>
                     <span id="checkout-discount" style="color: #39FF14;">-₹0</span>
                 </div>
-                
+
                 <div class="summary-row summary-total">
                     <span>Grand Total</span>
                     <span id="checkout-grandtotal" style="color: var(--gold-light);">₹0.00</span>
                 </div>
 
-                <div style="margin-top: 25px; text-align: center; font-size: 0.8rem; color: var(--light-gray); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="var(--gold)" viewBox="0 0 16 16">
-                      <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                <div
+                    style="margin-top: 25px; text-align: center; font-size: 0.8rem; color: var(--light-gray); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="var(--gold)"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
                     </svg>
                     256-Bit SSL Encrypted Transaction via Razorpay
                 </div>
@@ -185,8 +204,9 @@
     <script src="../js/category.js"></script>
     <script src="../components/footer.js"></script>
     <script src="../components/navbar.js"></script>
-    
+
     <!-- Page Specific Script -->
     <script src="../js/payment.js"></script>
 </body>
+
 </html>

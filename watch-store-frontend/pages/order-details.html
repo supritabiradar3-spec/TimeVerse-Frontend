@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TimeVerse | Order Details & Tracking</title>
+    <title>TimeVerse | Order Details</title>
 
     <!-- Link Stylesheets -->
     <link rel="stylesheet" href="../css/style.css">
@@ -12,199 +12,609 @@
     <link rel="stylesheet" href="../css/responsive.css">
 
     <style>
-        .order-details-container {
-            max-width: 850px;
-            margin: 40px auto;
+        .order-details-wrapper {
+            max-width: 880px;
+            width: 92%;
+            margin: 20px auto 40px auto;
             padding: 0 15px;
+            box-sizing: border-box;
         }
 
-        .details-top-bar {
+        /* Top Navigation Bar */
+        .order-top-nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.2);
         }
 
-        .back-link {
+        .back-to-orders-link {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            color: var(--gold-light);
-            font-size: 0.95rem;
+            gap: 6px;
+            color: #1F3A5F;
+            font-size: 0.84rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-to-orders-link:hover {
+            color: #C5A059;
+            transform: translateX(-2px);
+        }
+
+        .order-page-heading {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1F3A5F;
+            margin: 0;
+            letter-spacing: 0.2px;
+        }
+
+        /* Universal Order Card */
+        .order-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+            transition: var(--transition, all 0.2s ease);
+        }
+
+        .card-section-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #1F3A5F;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .back-link:hover {
-            color: var(--white);
-            transform: translateX(-4px);
+        /* Top Header Card */
+        .order-header-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
         }
 
-        .status-hero-card {
-            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
-            border: var(--border);
-            border-radius: 12px;
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            box-shadow: var(--border-glow);
+        .order-ref-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #C5A059;
+            letter-spacing: 0.6px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .order-headline-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .status-icon-box {
-            width: 54px;
-            height: 54px;
-            border-radius: 12px;
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            display: flex;
+        .order-headline-text {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+            line-height: 1.25;
+        }
+
+        .order-payment-pill {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            color: var(--gold);
+            padding: 3px 10px;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
         }
 
-        .stepper-container {
-            background: var(--dark-gray);
-            border: var(--border);
-            border-radius: 12px;
-            padding: 30px 25px;
-            margin-bottom: 25px;
-            box-shadow: var(--border-glow);
+        .pill-paid {
+            background-color: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
         }
 
-        .stepper-progress-bar {
+        .pill-pending {
+            background-color: #FFFBEB;
+            color: #92400E;
+            border: 1px solid #FDE68A;
+        }
+
+        .pill-danger {
+            background-color: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        .order-dates-meta {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.82rem;
+            color: #4B5563;
+        }
+
+        .order-dates-meta span strong {
+            color: #1F3A5F;
+            font-weight: 600;
+        }
+
+        /* Order Status Stepper */
+        .stepper-track-wrap {
+            position: relative;
+            padding: 8px 8px 4px 8px;
+            margin: 4px 0 6px 0;
+        }
+
+        .stepper-line-bg {
+            position: absolute;
+            top: 18px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background-color: #E5E7EB;
+            z-index: 1;
+        }
+
+        .stepper-line-fill {
+            position: absolute;
+            top: 18px;
+            left: 10%;
+            height: 2px;
+            background-color: #1F3A5F;
+            z-index: 2;
+            transition: width 0.4s ease;
+        }
+
+        .stepper-nodes {
+            display: flex;
             justify-content: space-between;
             position: relative;
-            margin: 25px 0 10px 0;
+            z-index: 3;
         }
 
-        .stepper-step {
+        .stepper-node {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            position: relative;
-            z-index: 2;
             flex: 1;
-            min-width: 75px;
         }
 
-        .step-circle {
-            width: 32px;
-            height: 32px;
+        .stepper-dot {
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: #111;
-            border: 2px solid var(--light-gray);
-            color: var(--light-gray);
+            background-color: #FFFFFF;
+            border: 2px solid #D1D5DB;
+            margin-bottom: 5px;
             transition: all 0.3s ease;
         }
 
-        .step-circle.active {
-            border-color: var(--gold);
-            color: var(--gold);
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
-            background: rgba(212, 175, 55, 0.15);
+        .stepper-node.completed .stepper-dot {
+            background-color: #1F3A5F;
+            border-color: #1F3A5F;
+            box-shadow: 0 0 0 2px rgba(31, 58, 95, 0.15);
         }
 
-        .step-circle.completed {
-            border-color: var(--success);
-            background: var(--success);
-            color: var(--black);
+        .stepper-node.active .stepper-dot {
+            background-color: #1F3A5F;
+            border-color: #C5A059;
+            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.25);
         }
 
-        .step-title {
+        .stepper-node.inactive .stepper-dot {
+            background-color: #FFFFFF;
+            border-color: #D1D5DB;
+        }
+
+        .stepper-label {
             font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             font-weight: 600;
-            color: var(--light-gray);
+            color: #1F3A5F;
             margin-bottom: 2px;
         }
 
-        .step-date {
-            font-size: 0.72rem;
-            color: var(--gold-light);
+        .stepper-node.inactive .stepper-label {
+            color: #9CA3AF;
         }
 
-        .stepper-connector {
-            position: absolute;
-            top: 16px;
-            left: 12%;
-            right: 12%;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.08);
-            z-index: 1;
+        .stepper-sub {
+            font-size: 0.7rem;
+            color: #6B7280;
         }
 
-        .stepper-connector-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--success) 0%, var(--gold) 100%);
-            transition: width 0.5s ease;
+        .stepper-sub.pending {
+            color: #9CA3AF;
+            font-style: italic;
         }
 
-        .active-hub-pill {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--gold);
-            border-radius: 20px;
-            padding: 6px 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.8rem;
-            color: var(--gold-light);
-            margin-top: 15px;
+        /* 2-Column Desktop Grid */
+        .order-two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
-        .section-card {
-            background: var(--dark-gray);
-            border: var(--border);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: var(--border-glow);
+        /* Product Card Item - Horizontal Row Layout */
+        .timepiece-item-card {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 14px !important;
         }
 
-        .card-header-title {
-            font-size: 1rem;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .timepiece-img-container {
+            width: 88px !important;
+            height: 88px !important;
+            min-width: 88px !important;
+            max-width: 88px !important;
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 10px;
+            justify-content: center;
+            padding: 6px;
+            overflow: hidden;
+            flex-shrink: 0 !important;
+            box-sizing: border-box;
         }
 
-        /* Concierge Modal */
-        .concierge-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 9999;
+        .timepiece-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .timepiece-info-col {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .timepiece-name {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 3px 0;
+            line-height: 1.25;
+        }
+
+        .timepiece-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: #4B5563;
+            margin-bottom: 3px;
+        }
+
+        .timepiece-price-tag {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1F3A5F;
+            margin-bottom: 3px;
+        }
+
+        .timepiece-badge-auth {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #C5A059;
+            letter-spacing: 0.2px;
+        }
+
+        /* Delivery Info Card */
+        .delivery-courier-header {
+            margin-bottom: 8px;
+        }
+
+        .delivery-courier-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1px;
+        }
+
+        .delivery-courier-sub {
+            font-size: 0.76rem;
+            color: #6B7280;
+        }
+
+        .delivery-info-row {
+            margin-bottom: 5px;
+        }
+
+        .delivery-field-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 1px;
+        }
+
+        .delivery-field-val {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: #1F3A5F;
+        }
+
+        .delivery-address-details {
+            font-size: 0.8rem;
+            color: #4B5563;
+            line-height: 1.4;
+            padding-top: 6px;
+            border-top: 1px solid #F3F4F6;
+            margin-top: 6px;
+        }
+
+        /* Payment Breakdown Card */
+        .payment-breakdown-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .breakdown-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.84rem;
+            color: #4B5563;
+        }
+
+        .breakdown-row.grand-total {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #111827;
+            padding-top: 8px;
+            border-top: 1px solid #E5E7EB;
+            margin-top: 2px;
+        }
+
+        .grand-total-amount {
+            color: #1F3A5F;
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+
+        .payment-gateway-note {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 5px;
+            font-size: 0.76rem;
+            color: #4B5563;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Authenticity Card */
+        .authenticity-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .auth-check-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #1F3A5F;
+        }
+
+        .auth-check-item svg {
+            color: #C5A059;
+            flex-shrink: 0;
+        }
+
+        .authenticity-note {
+            font-size: 0.74rem;
+            color: #6B7280;
+            padding-top: 6px;
+            border-top: 1px solid #F3F4F6;
+        }
+
+        /* Bottom Action Buttons Row - Outside & Directly Below Order Details Box */
+        .order-bottom-actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            margin-bottom: 20px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-order-action {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
+            padding: 9px 22px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border-radius: 4px;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            height: 38px;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(31, 58, 95, 0.12);
+        }
+
+        .btn-continue-shopping {
+            background-color: #FFFFFF;
+            color: #1F3A5F;
+            border: 1px solid #1F3A5F;
+        }
+
+        .btn-continue-shopping:hover {
+            background-color: #F3F4F6;
+            color: #152840;
+            transform: translateY(-1px);
+        }
+
+        .btn-download-invoice {
+            background-color: #1F3A5F;
+            color: #FFFFFF;
+            border: 1px solid #1F3A5F;
+        }
+
+        .btn-download-invoice:hover {
+            background-color: #152840;
+            color: #FFFFFF;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 600px) {
+            .order-bottom-actions-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .order-bottom-actions-row .btn-order-action,
+            .order-bottom-actions-row .order-invoice-download-col {
+                width: 100%;
+            }
+
+            .btn-download-invoice {
+                width: 100%;
+            }
+        }
+
+        /* Dark Mode Overrides */
+        body:not(.light-theme) .order-header-card,
+        body:not(.light-theme) .order-card {
+            background-color: #111113 !important;
+            border-color: rgba(197, 160, 89, 0.2) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body:not(.light-theme) .btn-continue-shopping {
+            background-color: transparent !important;
+            color: #C5A059 !important;
+            border-color: #C5A059 !important;
+        }
+
+        body:not(.light-theme) .btn-continue-shopping:hover {
+            background-color: rgba(197, 160, 89, 0.15) !important;
+            color: #FFFFFF !important;
+        }
+
+        body:not(.light-theme) .back-to-orders-link,
+        body:not(.light-theme) .order-page-heading {
+            color: #C5A059 !important;
+        }
+
+        body:not(.light-theme) .order-headline-text,
+        body:not(.light-theme) .timepiece-name,
+        body:not(.light-theme) .card-section-title,
+        body:not(.light-theme) .delivery-courier-title,
+        body:not(.light-theme) .breakdown-row.grand-total,
+        body:not(.light-theme) .auth-check-item {
+            color: #FFFFFF !important;
+        }
+
+        body:not(.light-theme) .order-dates-meta,
+        body:not(.light-theme) .timepiece-meta-row,
+        body:not(.light-theme) .breakdown-row,
+        body:not(.light-theme) .delivery-address-details,
+        body:not(.light-theme) .authenticity-note {
+            color: #9CA3AF !important;
+        }
+
+        body:not(.light-theme) .timepiece-img-container,
+        body:not(.light-theme) .payment-gateway-note {
+            background-color: #18181B !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        body:not(.light-theme) .timepiece-price-tag,
+        body:not(.light-theme) .grand-total-amount,
+        body:not(.light-theme) .delivery-field-val {
+            color: #E8D7B3 !important;
+        }
+
+        body:not(.light-theme) .stepper-label {
+            color: #E8D7B3 !important;
+        }
+
+        body:not(.light-theme) .stepper-node.completed .stepper-dot,
+        body:not(.light-theme) .stepper-node.active .stepper-dot {
+            background-color: #C5A059 !important;
+            border-color: #C5A059 !important;
+        }
+
+        body:not(.light-theme) .stepper-line-fill {
+            background-color: #C5A059 !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .order-details-wrapper {
+                width: 95%;
+                padding: 0 10px;
+                margin: 15px auto 30px auto;
+            }
+
+            .order-two-col-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timepiece-item-card {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+
+            .timepiece-img-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 105px !important;
+            }
+
+            .order-header-card,
+            .order-card {
+                padding: 12px 14px;
+            }
+
+            .stepper-line-bg,
+            .stepper-line-fill {
+                left: 6%;
+                right: 6%;
+            }
+
+            .authenticity-items-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
@@ -214,51 +624,26 @@
     <!-- Header Holder -->
     <header></header>
 
-    <!-- Main Order Details Content -->
-    <div class="order-details-container">
-        
-        <!-- Top Action Bar -->
-        <div class="details-top-bar">
-            <a href="./orders.html" class="back-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    <!-- Main Order Details Content Wrapper -->
+    <div class="order-details-wrapper">
+
+        <!-- Top Navigation -->
+        <div class="order-top-nav">
+            <a href="./orders.html" class="back-to-orders-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                My Orders
+                Back to Orders
             </a>
-            <button id="btn-help-concierge" class="btn-luxury" style="padding: 6px 16px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12V6a5 5 0 0 0-5-5z"/>
-                </svg>
-                Concierge Help
-            </button>
+            <h2 class="order-page-heading">Order Details</h2>
         </div>
 
-        <!-- Dynamic Content Holder -->
+        <!-- Dynamic Content Root -->
         <div id="order-details-root">
-            <p style="text-align: center; color: var(--light-gray); padding: 50px 0;">Loading bespoke order details...</p>
+            <p style="text-align: center; color: var(--light-gray); padding: 50px 0;">Loading order details...</p>
         </div>
 
-    </div>
-
-    <!-- Concierge Support Modal -->
-    <div id="concierge-modal" class="concierge-modal">
-        <div class="glass-card" style="max-width: 480px; width: 90%; padding: 30px; border-radius: 12px; position: relative;">
-            <button id="close-concierge-modal" style="position: absolute; top: 15px; right: 20px; background: none; border: none; color: var(--light-gray); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h3 class="luxury-text" style="font-size: 1.3rem; color: var(--gold); margin-bottom: 10px;">TimeVerse Concierge</h3>
-            <p style="color: var(--light-gray); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.6;">Our horology specialists are available 24/7 to assist you with order tracking, adjustments, or delivery queries.</p>
-            
-            <div style="background: rgba(0,0,0,0.4); border: var(--border); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                <div style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase;">Direct Line</div>
-                <div style="color: var(--white); font-size: 1rem; margin-top: 3px; font-weight: 500;">+91 1800 200 8989 (Toll Free)</div>
-            </div>
-            
-            <div style="background: rgba(0,0,0,0.4); border: var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <div style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase;">Email Inquiries</div>
-                <div style="color: var(--white); font-size: 1rem; margin-top: 3px; font-weight: 500;">concierge@timeverse.com</div>
-            </div>
-
-            <button id="btn-concierge-done" class="btn-luxury btn-luxury-solid" style="width: 100%; padding: 12px;">Close</button>
-        </div>
     </div>
 
     <!-- Footer Holder -->
@@ -270,11 +655,14 @@
     <script src="../js/auth.js"></script>
     <script src="../components/alert.js"></script>
     <script src="../components/product-card.js"></script>
+    <script src="../components/cancel-order-modal.js"></script>
     <script src="../js/category.js"></script>
     <script src="../components/footer.js"></script>
     <script src="../components/navbar.js"></script>
+    <!-- PDF Generator CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    <!-- Page Controller -->
+    <!-- Order Details Logic -->
     <script src="../js/order-details.js"></script>
 </body>
 

@@ -118,7 +118,7 @@
                             <input type="password" id="password" class="form-control" placeholder="Enter your password"
                                 required>
 
-                            <span id="togglePassword">👁</span>
+                            <span id="togglePassword" style="cursor: pointer; font-size: 0.75rem; font-weight: 600; color: var(--gold-light);">Show</span>
 
                         </div>
 
@@ -185,14 +185,15 @@
 
                     </div>
 
-                    <button type="submit" class="btn-luxury btn-luxury-solid" style="width:100%;">
-
+                    <button type="submit" class="btn-luxury btn-luxury-solid" style="width:100%; margin-top: 15px;">
                         Verify & Login
-
                     </button>
 
+                    <p class="auth-redirect" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                        <a href="#" id="resend-otp-btn" style="color: var(--gold); text-decoration: none; font-weight: 500;">Resend OTP</a>
+                        <a href="./admin-login.html" style="color: var(--light-gray);">Back to Credentials</a>
+                    </p>
                 </form>
-
             </div>
 
         </div>
@@ -213,21 +214,18 @@
         const togglePassword = document.getElementById("togglePassword");
         const password = document.getElementById("password");
 
-        togglePassword.addEventListener("click", function () {
-
-            if (password.type === "password") {
-
-                password.type = "text";
-                this.textContent = "🚫";
-
-            } else {
-
-                password.type = "password";
-                this.textContent = "👁";
-
-            }
-
-        });
+        if (togglePassword && password) {
+            togglePassword.textContent = 'Show';
+            togglePassword.addEventListener("click", function () {
+                if (password.type === "password") {
+                    password.type = "text";
+                    this.textContent = 'Hide';
+                } else {
+                    password.type = "password";
+                    this.textContent = 'Show';
+                }
+            });
+        }
 
     </script>
 

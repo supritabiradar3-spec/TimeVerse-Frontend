@@ -294,34 +294,36 @@
                     </a>
 
                     <ul class="nav-menu" id="nav-menu">
-                        ${navLinksHTML}
-                        <div class="nav-actions mobile-only-actions">
-                            <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-top:15px; flex-wrap:wrap; width:100%;">
-                                <div style="width: 100%; margin-bottom: 8px;">${searchHTML}</div>
-                                ${themeToggleHTML}
-                                ${wishlistHTML}
-                                ${cartHTML}
-                                ${profileMenuHTML}
-                            </div>
+                        <div class="nav-drawer-header">
+                            <a href="${homeHref}" class="nav-drawer-brand">
+                                <img src="${logoSrc}" alt="TimeVerse Logo" class="brand-logo-img" onerror="if(!this.dataset.retried){this.dataset.retried=true; this.src=(window.location.pathname.includes('/pages/') ? '../logo.jpg' : './logo.jpg');}">
+                                <span class="logo-title">TimeVerse</span>
+                            </a>
+                            <button type="button" class="nav-drawer-close-btn" id="nav-drawer-close" aria-label="Close Navigation Menu" title="Close Menu">&times;</button>
                         </div>
+                        <div class="nav-drawer-search">
+                            ${searchHTML}
+                        </div>
+                        ${navLinksHTML}
                     </ul>
                 </div>
 
-                <div class="nav-actions desktop-only-actions">
-                    ${searchHTML}
+                <div class="nav-actions">
+                    <div class="desktop-search-wrap">
+                        ${searchHTML}
+                    </div>
                     ${themeToggleHTML}
                     ${wishlistHTML}
                     ${cartHTML}
                     ${profileMenuHTML}
+                    <button class="mobile-nav-toggle" id="mobile-toggle" aria-label="Toggle Menu" title="Menu" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
                 </div>
-
-                <button class="mobile-nav-toggle" id="mobile-toggle" aria-label="Toggle Menu">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                </button>
             </div>
         `;
 
@@ -398,11 +400,20 @@
         // Handle Mobile menu toggles
         const mobileToggle = document.getElementById('mobile-toggle');
         const navMenu = document.getElementById('nav-menu');
+        const navDrawerClose = document.getElementById('nav-drawer-close');
+
         if (mobileToggle && navMenu) {
             mobileToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 navMenu.classList.toggle('open');
             });
+
+            if (navDrawerClose) {
+                navDrawerClose.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    navMenu.classList.remove('open');
+                });
+            }
 
             // Close mobile menu when clicking outside
             document.addEventListener('click', (e) => {

@@ -181,6 +181,9 @@
 
             if (wishlistRes && Array.isArray(wishlistRes)) {
                 window.wishlistProductIds = new Set(wishlistRes.map(item => item.productId));
+                if (typeof window.updateNavbarWishlistCount === 'function') {
+                    window.updateNavbarWishlistCount(wishlistRes.length);
+                }
             }
 
             // Note: Spring Boot Page contains: content, number, totalPages, totalElements

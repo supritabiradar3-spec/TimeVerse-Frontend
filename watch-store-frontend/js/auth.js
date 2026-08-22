@@ -5,7 +5,7 @@
         const role = String(rawRole || '').trim();
         if (!role) return null;
         const normalized = role.toUpperCase().replace(/^ROLE_/, '');
-        return normalized === 'ADMIN' || normalized === 'CUSTOMER' || normalized === 'SUPER_ADMIN' ? normalized : null;
+        return normalized === 'ADMIN' || normalized === 'CUSTOMER' ? normalized : null;
     }
 
     function getJwtClaims() {
@@ -28,45 +28,62 @@
 
     function restoreRoleFromToken() {
         const claims = getJwtClaims();
-        const roleFromToken = claims && claims.role ? normalizeRole(claims.role) : null;
-        if (roleFromToken) {
-            localStorage.setItem('role', roleFromToken);
+        if (!claims) return;
+        const rawRole = claims.role || claims.roles || claims.authorities;
+        const extracted = Array.isArray(rawRole) ? rawRole[0] : rawRole;
+        const normalized = normalizeRole(extracted);
+        if (normalized) {
+            localStorage.setItem('role', normalized);
         }
-        return roleFromToken;
     }
 
     window.auth = {
-        isAuthenticated: () => {
-            return !!localStorage.getItem('token');
-        },
-
+        getToken: () => localStorage.getItem('token'),
         getUserId: () => {
             const claims = getJwtClaims();
-            return claims ? claims.userId : null;
+            if (claims && (claims.userId !== undefined && claims.userId !== null)) {
+                return claims.userId;
+            }
+            if (claims && (claims.id !== undefined && claims.id !== null)) {
+                return claims.id;
+            }
+            const stored = localStorage.getItem('userId');
+            return stored ? parseInt(stored, 10) : null;
         },
-
         getUserRole: () => {
-            const storedRole = normalizeRole(localStorage.getItem('role'));
-            if (storedRole) return storedRole;
-            return restoreRoleFromToken();
+            const role = normalizeRole(localStorage.getItem('role'));
+            if (role) return role;
+            restoreRoleFromToken();
+            return normalizeRole(localStorage.getItem('role')) || 'CUSTOMER';
         },
-
-        getUsername: () => {
-            return localStorage.getItem('username') || null;
+        getUser: () => ({
+            userId: window.auth.getUserId(),
+            username: localStorage.getItem('username'),
+            email: localStorage.getItem('email'),
+            role: window.auth.getUserRole()
+        }),
+        isAuthenticated: () => !!localStorage.getItem('token'),
+        isAdmin: () => window.auth.getUserRole() === 'ADMIN',
+        logout: () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('user');
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('role');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('user_role');
+            sessionStorage.clear();
+            window.location.href = './login.html';
         },
-
-        getEmail: () => {
-            return localStorage.getItem('email') || null;
-        },
-
         checkRouteGuard: () => {
-            const path = window.location.pathname;
             const token = localStorage.getItem('token');
             const role = window.auth.getUserRole();
+            const path = window.location.pathname.toLowerCase();
 
             const isCart = path.includes('cart.html');
             const isCheckout = path.includes('checkout.html');
-            const isOrders = path.includes('orders.html');
+            const isOrders = path.includes('orders.html') || path.includes('order-details.html');
             const isAdmin = path.includes('admin.html');
             const isCustomerProtected = path.includes('wishlist.html') || path.includes('profile.html') || path.includes('settings.html');
             const isAuthPage = path.includes('login.html') || path.includes('register.html') || path.includes('admin-login.html');
@@ -80,7 +97,7 @@
             }
 
             if (isAuthPage) {
-                if (role === 'ADMIN' || role === 'SUPER_ADMIN') {
+                if (role === 'ADMIN') {
                     window.location.href = './admin.html';
                     return;
                 }
@@ -88,7 +105,7 @@
                 return;
             }
 
-            if (isAdmin && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
+            if (isAdmin && role !== 'ADMIN') {
                 if (typeof window.showAlert === 'function') {
                     window.showAlert('Access Denied: Admins Only', 'error');
                 }
@@ -98,7 +115,7 @@
                 return;
             }
 
-            if ((isCart || isCheckout || isOrders || isCustomerProtected) && (role === 'ADMIN' || role === 'SUPER_ADMIN')) {
+            if ((isCart || isCheckout || isOrders || isCustomerProtected) && role === 'ADMIN') {
                 if (typeof window.showAlert === 'function') {
                     window.showAlert('Admins are redirected to the dashboard.', 'error');
                 }
@@ -145,6 +162,7 @@
             const otpSection = document.getElementById('otp-section');
             const otpInput = document.getElementById('otp');
             const otpForm = document.getElementById('otp-form');
+            const resendOtpBtn = document.getElementById('resend-otp-btn');
             const devOtpIndicator = document.getElementById('dev-otp-indicator');
 
             let sessionEmail = '';
@@ -152,90 +170,136 @@
             // Handle credential submit
             loginForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                const email = emailInput.value.trim();
-                const password = passwordInput.value;
-
-                console.log("LOGIN SUBMIT - email:", email, "role determined by path:", window.location.pathname);
+                const email = emailInput ? emailInput.value.trim() : '';
+                const password = passwordInput ? passwordInput.value : '';
 
                 if (!email || !password) {
-                    showAlert('Please enter both email and password.', 'error');
+                    if (window.showToast) {
+                        window.showToast.error('Login failed', 'Please enter both email and password.');
+                    } else {
+                        showAlert('Please enter both email and password.', 'error');
+                    }
                     return;
+                }
+
+                // 1. Immediately show loading toast
+                if (window.showToast) {
+                    window.showToast.loading('Signing you in...');
                 }
 
                 try {
                     const isAdminLogin = window.location.pathname.toLowerCase().includes("admin-login.html");
-
                     const role = isAdminLogin ? "ADMIN" : "CUSTOMER";
 
-                    console.log("LOGIN REQUEST - sending role:", role);
-
                     const response = await api.login(email, password, role);
-                    console.log("LOGIN RESPONSE - raw response:", response);
 
-                    if (!response.success || !response.data) {
-                        showAlert(response.message || 'Login failed.', 'error');
+                    if (!response || !response.success || !response.data) {
+                        // 2. Invalid Credentials
+                        if (window.showToast) {
+                            window.showToast.error('Login failed', 'Invalid email or password. Please try again.');
+                        } else {
+                            showAlert('Invalid email or password. Please try again.', 'error');
+                        }
                         return;
                     }
 
                     sessionEmail = email;
 
-                    // Customers are verified at registration, so they log in directly.
+                    // Customers direct login flow
                     if (role === 'CUSTOMER') {
-                        console.log("LOGIN SUCCESS - customer flow, token exists:", !!response.data.token);
                         if (response.data.role !== 'CUSTOMER' || !response.data.token) {
-                            showAlert('Customer login could not be completed.', 'error');
+                            if (window.showToast) {
+                                window.showToast.error('Login failed', 'Invalid email or password. Please try again.');
+                            } else {
+                                showAlert('Customer login could not be completed.', 'error');
+                            }
                             return;
                         }
 
                         localStorage.setItem('token', response.data.token);
-                        localStorage.setItem('username', response.data.username);
-                        localStorage.setItem('email', response.data.email);
+                        localStorage.setItem('username', response.data.username || '');
+                        localStorage.setItem('email', response.data.email || '');
                         localStorage.setItem('role', response.data.role);
 
-                        showAlert('Login successful!', 'success');
+                        const claims = getJwtClaims();
+                        if (claims && (claims.userId !== undefined && claims.userId !== null)) {
+                            localStorage.setItem('userId', String(claims.userId));
+                        } else if (claims && (claims.id !== undefined && claims.id !== null)) {
+                            localStorage.setItem('userId', String(claims.id));
+                        } else if (response.data.userId || response.data.id) {
+                            localStorage.setItem('userId', String(response.data.userId || response.data.id));
+                        }
+
+                        // 3 & 9. Final Welcome Back Toast (No customer name)
+                        if (window.showToast) {
+                            window.showToast.success('Welcome back!', 'Login successful. Redirecting you to TimeVerse...');
+                        } else {
+                            showAlert('Login successful!', 'success');
+                        }
+
                         setTimeout(() => {
                             window.location.href = './index.html';
-                        }, 150);
+                        }, 1000);
                         return;
                     }
 
                     if (role === 'ADMIN') {
-                        console.log("LOGIN SUCCESS - admin flow, token exists:", !!response.data.token);
-
-                        if ((response.data.role !== 'ADMIN' && response.data.role !== 'SUPER_ADMIN') || !response.data.token) {
-                            showAlert('Admin login could not be completed.', 'error');
+                        if (response.data.role !== 'ADMIN' || !response.data.token) {
+                            if (window.showToast) {
+                                window.showToast.error('Login failed', 'Invalid email or password. Please try again.');
+                            } else {
+                                showAlert('Admin login could not be completed.', 'error');
+                            }
                             return;
                         }
 
                         localStorage.setItem('token', response.data.token);
-                        localStorage.setItem('username', response.data.username);
-                        localStorage.setItem('email', response.data.email);
+                        localStorage.setItem('username', response.data.username || '');
+                        localStorage.setItem('email', response.data.email || '');
                         localStorage.setItem('role', response.data.role);
 
-                        showAlert(response.data.role === 'SUPER_ADMIN' ? 'Super Admin login successful!' : 'Admin login successful!', 'success');
+                        const claims = getJwtClaims();
+                        if (claims && (claims.userId !== undefined && claims.userId !== null)) {
+                            localStorage.setItem('userId', String(claims.userId));
+                        } else if (claims && (claims.id !== undefined && claims.id !== null)) {
+                            localStorage.setItem('userId', String(claims.id));
+                        } else if (response.data.userId || response.data.id) {
+                            localStorage.setItem('userId', String(response.data.userId || response.data.id));
+                        }
+
+                        if (window.showToast) {
+                            window.showToast.success('Welcome back!', 'Login successful. Redirecting to Admin Dashboard...');
+                        } else {
+                            showAlert('Admin login successful!', 'success');
+                        }
 
                         setTimeout(() => {
                             window.location.href = './admin.html';
-                        }, 150);
-
+                        }, 1000);
                         return;
                     }
 
-
-
-                    console.log("LOGIN FALLBACK - showing OTP section");
-                    // Fallback for other roles that might require a login OTP.
-                    showAlert('Verification code sent to your email.', 'success');
-                    credentialsSection.style.display = 'none';
-                    otpSection.style.display = 'block';
+                    // 4. Fallback OTP Screen if required by backend
+                    if (window.showToast) {
+                        window.showToast.info('OTP sent successfully!', 'Please check your email and enter the OTP.');
+                    } else {
+                        showAlert('OTP sent successfully! Please check your email.', 'success');
+                    }
+                    if (credentialsSection) credentialsSection.style.display = 'none';
+                    if (otpSection) otpSection.style.display = 'block';
 
                     if (devOtpIndicator) {
                         devOtpIndicator.style.display = 'none';
                     }
-                    otpInput.value = '';
+                    if (otpInput) otpInput.value = '';
                 } catch (err) {
                     console.error("LOGIN ERROR - caught error:", err);
-                    showAlert(err.message || 'Invalid credentials or connection error.', 'error');
+                    // 2. Clean error message without technical API jargon
+                    if (window.showToast) {
+                        window.showToast.error('Login failed', 'Invalid email or password. Please try again.');
+                    } else {
+                        showAlert('Invalid email or password. Please try again.', 'error');
+                    }
                 }
             });
 
@@ -243,69 +307,149 @@
             if (otpForm) {
                 otpForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
-                    const otp = otpInput.value.trim();
+                    const otp = otpInput ? otpInput.value.trim() : '';
 
                     if (!otp) {
-                        showAlert('Please enter the 6-digit verification code.', 'error');
+                        if (window.showToast) {
+                            window.showToast.error('Invalid OTP', 'Please enter the 6-digit verification code.');
+                        } else {
+                            showAlert('Please enter the 6-digit verification code.', 'error');
+                        }
                         return;
+                    }
+
+                    // 4. Verifying OTP loading toast
+                    if (window.showToast) {
+                        window.showToast.loading('Verifying OTP...');
                     }
 
                     try {
                         const response = await api.verifyLoginOtp(sessionEmail, otp);
-                        if (response.success && response.data) {
-                            showAlert('Login Successful!', 'success');
+                        if (response && response.success && response.data) {
+                            // 5. Correct OTP
+                            if (window.showToast) {
+                                window.showToast.success('OTP verified successfully!');
+                            }
 
                             // Save details to localStorage
                             localStorage.setItem('token', response.data.token);
-                            localStorage.setItem('username', response.data.username);
-                            localStorage.setItem('email', response.data.email);
+                            localStorage.setItem('username', response.data.username || '');
+                            localStorage.setItem('email', response.data.email || '');
                             localStorage.setItem('role', response.data.role);
+
+                            const claims = getJwtClaims();
+                            if (claims && (claims.userId !== undefined && claims.userId !== null)) {
+                                localStorage.setItem('userId', String(claims.userId));
+                            } else if (claims && (claims.id !== undefined && claims.id !== null)) {
+                                localStorage.setItem('userId', String(claims.id));
+                            }
 
                             setTimeout(() => {
                                 const isAdminLogin = window.location.pathname.includes("admin-login.html");
 
                                 if (isAdminLogin) {
-
-                                    // Admin login page
                                     if (response.data.role !== "ADMIN") {
-                                        showAlert("Only Admin can login here.", "error");
-
+                                        if (window.showToast) {
+                                            window.showToast.error('Access denied', 'Only Admin can login here.');
+                                        }
                                         localStorage.clear();
-
                                         setTimeout(() => {
                                             window.location.href = "./login.html";
-                                        }, 1500);
-
+                                        }, 1200);
                                         return;
                                     }
-
-                                    window.location.href = "./admin.html";
-
+                                    if (window.showToast) {
+                                        window.showToast.success('Welcome back!', 'Login successful. Redirecting to Admin Dashboard...');
+                                    }
+                                    setTimeout(() => {
+                                        window.location.href = "./admin.html";
+                                    }, 1000);
                                 } else {
-
-                                    // Customer login page
                                     if (response.data.role !== "CUSTOMER") {
-
-                                        showAlert("Please use admin login page for admin account.", "error");
-
+                                        if (window.showToast) {
+                                            window.showToast.error('Access denied', 'Please use admin login page for admin account.');
+                                        }
                                         localStorage.clear();
-
                                         setTimeout(() => {
                                             window.location.href = "./login.html";
-                                        }, 1500);
-
+                                        }, 1200);
                                         return;
                                     }
-
-                                    window.location.href = "./index.html";
-
+                                    // 9. Final Welcome Back Toast
+                                    if (window.showToast) {
+                                        window.showToast.success('Welcome back!', 'Login successful. Redirecting you to TimeVerse...');
+                                    }
+                                    setTimeout(() => {
+                                        window.location.href = "./index.html";
+                                    }, 1000);
                                 }
-                            }, 1000);
+                            }, 600);
                         } else {
-                            showAlert(response.message || 'OTP verification failed.', 'error');
+                            const errorMsg = (response && response.message) ? response.message.toLowerCase() : '';
+                            if (errorMsg.includes('expired') || errorMsg.includes('expire')) {
+                                if (window.showToast) {
+                                    window.showToast.error('OTP expired', 'Please request a new OTP.');
+                                }
+                            } else {
+                                if (window.showToast) {
+                                    window.showToast.error('Invalid OTP', 'Please check the OTP and try again.');
+                                }
+                            }
                         }
                     } catch (err) {
-                        showAlert(err.message || 'Invalid OTP code.', 'error');
+                        const errMsg = (err && err.message) ? err.message.toLowerCase() : '';
+                        if (errMsg.includes('expired') || errMsg.includes('expire')) {
+                            if (window.showToast) {
+                                window.showToast.error('OTP expired', 'Please request a new OTP.');
+                            } else {
+                                showAlert('OTP expired. Please request a new OTP.', 'error');
+                            }
+                        } else {
+                            if (window.showToast) {
+                                window.showToast.error('Invalid OTP', 'Please check the OTP and try again.');
+                            } else {
+                                showAlert('Invalid OTP. Please check the OTP and try again.', 'error');
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Handle Resend OTP
+            if (resendOtpBtn) {
+                resendOtpBtn.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    if (!sessionEmail) {
+                        if (window.showToast) {
+                            window.showToast.error('Resend failed', 'Please return to login and re-enter your credentials.');
+                        }
+                        return;
+                    }
+
+                    // 8. Resend OTP Loading
+                    if (window.showToast) {
+                        window.showToast.loading('Sending a new OTP...');
+                    }
+
+                    try {
+                        if (window.api && typeof window.api.resendRegistrationOtp === 'function') {
+                            await window.api.resendRegistrationOtp(sessionEmail);
+                        }
+                        // 8. Successful Resend
+                        if (window.showToast) {
+                            window.showToast.success('New OTP sent successfully!', 'Please check your email for the new code.');
+                        }
+                    } catch (err) {
+                        const errMsg = (err && err.message) ? err.message.toLowerCase() : '';
+                        if (errMsg.includes('expired')) {
+                            if (window.showToast) {
+                                window.showToast.error('OTP expired', 'Please request a new OTP.');
+                            }
+                        } else {
+                            if (window.showToast) {
+                                window.showToast.error('Resend failed', 'Unable to send a new OTP. Please try again.');
+                            }
+                        }
                     }
                 });
             }
