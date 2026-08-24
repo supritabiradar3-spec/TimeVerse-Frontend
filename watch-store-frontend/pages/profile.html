@@ -1430,6 +1430,39 @@
                 }
             }
 
+            function isSameAddressData(a1, a2) {
+                if (!a1 || !a2) return false;
+                const normalize = s => (s || '').toString().trim().toLowerCase();
+                const normalizePhone = p => (p || '').toString().replace(/\D/g, '');
+                const normCountry = c => {
+                    const v = normalize(c);
+                    return (!v || v === 'india') ? 'india' : v;
+                };
+                return normalize(a1.fullName) === normalize(a2.fullName) &&
+                    normalizePhone(a1.phone) === normalizePhone(a2.phone) &&
+                    normalize(a1.street) === normalize(a2.street) &&
+                    normalize(a1.city) === normalize(a2.city) &&
+                    normalize(a1.state) === normalize(a2.state) &&
+                    normalize(a1.zipCode) === normalize(a2.zipCode) &&
+                    normCountry(a1.country) === normCountry(a2.country);
+            }
+
+            function deduplicateAddressList(list) {
+                if (!Array.isArray(list)) return [];
+                const result = [];
+                list.forEach(addr => {
+                    if (!addr) return;
+                    const isDefault = Boolean(addr.default || addr.isDefault);
+                    const idx = result.findIndex(existing => isSameAddressData(existing, addr));
+                    if (idx === -1) {
+                        result.push(addr);
+                    } else if (isDefault && !(result[idx].default || result[idx].isDefault)) {
+                        result[idx] = addr;
+                    }
+                });
+                return result;
+            }
+
             async function loadAddressesTab() {
                 const list = document.getElementById('profile-address-list');
                 const formSec = document.getElementById('address-form-section');
@@ -1441,7 +1474,8 @@
                 list.innerHTML = '<p style="color:var(--light-gray);">Loading addresses...</p>';
 
                 try {
-                    const addresses = await api.getAddresses();
+                    const rawAddresses = await api.getAddresses();
+                    const addresses = deduplicateAddressList(rawAddresses);
                     if (!addresses || addresses.length === 0) {
                         list.innerHTML = '<p style="color:var(--light-gray);">No addresses saved yet.</p>';
                         return;
