@@ -150,12 +150,16 @@
                 if (actionsDiv) actionsDiv.style.display = 'none';
             }
 
-            const CATEGORY_MAP = {
-                1: 'Analog Watches',
-                2: 'Digital Watches',
-                3: 'Luxury Watches',
-                4: 'Sports Watches'
-            };
+            let categoryNameMap = {};
+            try {
+                const catRes = await api.getCategories();
+                const catList = Array.isArray(catRes) ? catRes : (catRes && catRes.data && Array.isArray(catRes.data) ? catRes.data : []);
+                catList.forEach(c => {
+                    categoryNameMap[c.categoryId] = c.categoryName;
+                });
+            } catch (e) {
+                console.warn('Could not prefetch categories for details:', e);
+            }
 
             const params = new URLSearchParams(window.location.search);
             const productId = params.get('id');
@@ -212,7 +216,7 @@
                 watchName.textContent = displayName;
                 document.title = `TimeVerse | ${displayName}`;
                 refId.textContent = `#TV-PROD-${product.productId}`;
-                categoryLabel.textContent = CATEGORY_MAP[product.categoryId] || 'Curated Timepiece';
+                categoryLabel.textContent = categoryNameMap[product.categoryId] || 'Curated Timepiece';
                 watchDesc.textContent = product.description || 'No description available for this timepiece.';
                 
                 watchPrice.textContent = new Intl.NumberFormat('en-IN', {

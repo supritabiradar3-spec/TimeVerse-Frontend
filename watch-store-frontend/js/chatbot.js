@@ -5,11 +5,12 @@
     let isCatalogLoading = false;
 
     const DEFAULT_CATEGORY_MAP = {
-        1: 'Analog Watches',
-        2: 'Digital Watches',
-        3: 'Luxury Watches',
-        4: 'Sports Watches'
+        1: 'Women',
+        2: 'Men',
+        3: 'Kids',
+        4: 'Couples'
     };
+
 
     // Ensure the chat widget exists or inject it dynamically
     function ensureChatWidget() {

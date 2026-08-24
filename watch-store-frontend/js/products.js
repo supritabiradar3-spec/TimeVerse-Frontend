@@ -14,7 +14,8 @@
         direction: 'asc'
     };
 
-    // Load categories list and insert in sidebar
+    let allLoadedCategories = [];
+
     // Load categories list and insert in sidebar
     async function loadCategories() {
         const categoriesContainer = document.getElementById('categories-list');
@@ -22,67 +23,97 @@
 
         try {
             const response = await api.getCategories();
+            let categoryList = [];
 
-            if (response && response.data && Array.isArray(response.data)) {
-                // Check URL parameter for category
-                const params = new URLSearchParams(window.location.search);
-                const urlCatId = params.get('categoryId');
-                const urlCategoryName = params.get('category');
+            if (response) {
+                if (Array.isArray(response)) {
+                    categoryList = response;
+                } else if (response.data && Array.isArray(response.data)) {
+                    categoryList = response.data;
+                } else if (response.content && Array.isArray(response.content)) {
+                    categoryList = response.content;
+                }
+            }
 
-                if (urlCatId) {
-                    const parsedId = parseInt(urlCatId, 10);
-                    if (!isNaN(parsedId) && parsedId > 0) {
-                        state.categoryId = parsedId;
-                    }
-                } else if (urlCategoryName) {
-                    const matchedCat = response.data.find(cat =>
-                        cat.categoryName && cat.categoryName.toLowerCase() === urlCategoryName.toLowerCase().trim()
-                    );
-                    if (matchedCat) {
-                        state.categoryId = matchedCat.categoryId;
+            allLoadedCategories = categoryList;
+
+            // Check URL parameter for category
+            const params = new URLSearchParams(window.location.search);
+            const urlCatId = params.get('categoryId');
+            const urlCategoryName = params.get('category') || params.get('mainCategory');
+
+            if (urlCatId) {
+                const parsedId = parseInt(urlCatId, 10);
+                if (!isNaN(parsedId) && parsedId > 0) {
+                    state.categoryId = parsedId;
+                }
+            } else if (urlCategoryName) {
+                const cleanName = urlCategoryName.toLowerCase().trim();
+                const matchedCat = categoryList.find(cat =>
+                    cat.categoryName && cat.categoryName.toLowerCase().trim() === cleanName
+                );
+                if (matchedCat) {
+                    state.categoryId = matchedCat.categoryId;
+                } else {
+                    // Fallback map
+                    const catMap = { 'women': 1, 'men': 2, 'kids': 3, 'couples': 4 };
+                    if (catMap[cleanName]) {
+                        state.categoryId = catMap[cleanName];
                     }
                 }
+            }
 
-                let categoriesHTML = `
-                <li class="filter-category-item">
-                    <span class="filter-category-link ${!state.categoryId ? 'active' : ''}" data-id="">
-                        All Watches
+            const isAllActive = !state.categoryId;
+
+            let categoriesHTML = `
+                <li class="filter-category-item" style="margin-bottom: 10px;">
+                    <span class="filter-category-link ${isAllActive ? 'active' : ''}" data-id="" style="font-weight: 600; cursor: pointer;">
+                        All Timepieces
                     </span>
                 </li>
             `;
 
-                response.data.forEach(cat => {
-                    const isActive = state.categoryId === cat.categoryId ? 'active' : '';
-                    categoriesHTML += `
-                    <li class="filter-category-item">
-                        <span
-                            class="filter-category-link ${isActive}"
-                            data-id="${cat.categoryId}">
-                            ${cat.categoryName}
+            // Render 4 main categories
+            const mainNames = ["Women", "Men", "Kids", "Couples"];
+            mainNames.forEach((mainName, idx) => {
+                const catObj = categoryList.find(c => (c.categoryName || '').toLowerCase() === mainName.toLowerCase());
+                const catId = catObj ? catObj.categoryId : (idx + 1);
+                const isActive = state.categoryId === catId;
+
+                categoriesHTML += `
+                    <li class="filter-category-item" style="margin: 6px 0;">
+                        <span class="filter-category-link ${isActive ? 'active' : ''}"
+                              data-id="${catId}"
+                              style="font-size: 0.92rem; padding: 6px 10px; display: block; border-radius: 4px; cursor: pointer; transition: all 0.2s ease;">
+                            ${mainName}
                         </span>
                     </li>
                 `;
+            });
+
+            categoriesContainer.innerHTML = categoriesHTML;
+
+            // Bind click handlers for category links
+            const links = categoriesContainer.querySelectorAll('.filter-category-link');
+            links.forEach(link => {
+                link.addEventListener('click', function () {
+                    links.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const rawId = this.dataset.id;
+                    const parsedId = parseInt(rawId, 10);
+                    if (!isNaN(parsedId) && parsedId > 0) {
+                        state.categoryId = parsedId;
+                    } else {
+                        state.categoryId = null;
+                    }
+                    state.page = 0;
+                    loadProducts();
                 });
+            });
 
-                categoriesContainer.innerHTML = categoriesHTML;
-
-                const links = categoriesContainer.querySelectorAll('.filter-category-link');
-                links.forEach(link => {
-                    link.addEventListener('click', function () {
-                        links.forEach(l => l.classList.remove('active'));
-                        this.classList.add('active');
-
-                        const rawId = this.dataset.id;
-                        const parsedId = parseInt(rawId, 10);
-                        state.categoryId = (!isNaN(parsedId) && parsedId > 0) ? parsedId : null;
-                        state.page = 0;
-
-                        loadProducts();
-                    });
-                });
-            }
         } catch (err) {
-            console.error("Failed to load categories:", err);
+            console.error("Failed to load categories in sidebar:", err);
         }
     }
 
@@ -127,12 +158,33 @@
                 cleanFilters.inStock = true;
             }
 
-            const fetchPagePromise = api.filterProducts(cleanFilters).catch(async (filterErr) => {
-                console.warn('Filter API request encountered an issue, falling back to getAllProducts:', filterErr);
+            let products = [];
+            let totalPages = 1;
+            let totalElements = 0;
+
+            try {
+                const res = await api.filterProducts(cleanFilters);
+                if (res && res.content) {
+                    products = res.content;
+                    totalPages = res.totalPages || 1;
+                    totalElements = res.totalElements || products.length;
+                } else if (Array.isArray(res)) {
+                    products = res;
+                    totalElements = res.length;
+                    totalPages = 1;
+                } else if (res && res.data) {
+                    products = Array.isArray(res.data) ? res.data : (res.data.content || []);
+                    totalPages = res.data.totalPages || 1;
+                    totalElements = res.data.totalElements || products.length;
+                }
+            } catch (filterErr) {
+                console.warn('Filter API fallback to getAllProducts:', filterErr);
                 const allRes = await api.getAllProducts();
                 let allList = Array.isArray(allRes) ? allRes : (allRes && allRes.data && Array.isArray(allRes.data) ? allRes.data : []);
 
-                // Client-side filtering
+                // Filter out any integration test products
+                allList = allList.filter(p => p.name && !p.name.includes("Integration Test") && p.productId < 109);
+
                 if (cleanFilters.categoryId) {
                     allList = allList.filter(p => p.categoryId === cleanFilters.categoryId);
                 }
@@ -143,159 +195,207 @@
                         (p.description && p.description.toLowerCase().includes(kw))
                     );
                 }
-                if (typeof cleanFilters.minPrice === 'number') {
+                if (cleanFilters.minPrice !== undefined) {
                     allList = allList.filter(p => p.price >= cleanFilters.minPrice);
                 }
-                if (typeof cleanFilters.maxPrice === 'number') {
+                if (cleanFilters.maxPrice !== undefined) {
                     allList = allList.filter(p => p.price <= cleanFilters.maxPrice);
                 }
-                if (cleanFilters.inStock === true) {
+                if (cleanFilters.inStock) {
                     allList = allList.filter(p => p.stock > 0);
                 }
 
-                // Client-side sorting
-                if (cleanFilters.sortBy === 'price') {
-                    allList.sort((a, b) => cleanFilters.direction === 'desc' ? b.price - a.price : a.price - b.price);
-                } else if (cleanFilters.sortBy === 'name') {
-                    allList.sort((a, b) => cleanFilters.direction === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name));
-                } else {
-                    allList.sort((a, b) => cleanFilters.direction === 'desc' ? b.productId - a.productId : a.productId - b.productId);
-                }
-
-                const pageSize = cleanFilters.size || 9;
-                const totalElements = allList.length;
-                const totalPages = Math.max(1, Math.ceil(totalElements / pageSize));
-                const pageNum = Math.min(cleanFilters.page || 0, totalPages - 1);
-                const sliceStart = pageNum * pageSize;
-                const pagedSlice = allList.slice(sliceStart, sliceStart + pageSize);
-
-                return {
-                    content: pagedSlice,
-                    number: pageNum,
-                    totalPages: totalPages,
-                    totalElements: totalElements
-                };
-            });
-
-            const [wishlistRes, pageData] = await Promise.all([wishlistPromise, fetchPagePromise]);
-
-            if (wishlistRes && Array.isArray(wishlistRes)) {
-                window.wishlistProductIds = new Set(wishlistRes.map(item => item.productId));
-                if (typeof window.updateNavbarWishlistCount === 'function') {
-                    window.updateNavbarWishlistCount(wishlistRes.length);
-                }
+                totalElements = allList.length;
+                totalPages = Math.ceil(totalElements / cleanFilters.size) || 1;
+                const startIdx = cleanFilters.page * cleanFilters.size;
+                products = allList.slice(startIdx, startIdx + cleanFilters.size);
             }
 
-            // Note: Spring Boot Page contains: content, number, totalPages, totalElements
-            let products = [];
-            let currentPage = 0;
-            let totalPages = 1;
+            // Filter out any integration test products if present
+            products = (products || []).filter(p => p.name && !p.name.includes("Integration Test") && p.productId < 109);
 
-            if (Array.isArray(pageData)) {
-                products = pageData;
-                currentPage = 0;
-                totalPages = 1;
-            } else if (pageData && Array.isArray(pageData.content)) {
-                products = pageData.content;
-                currentPage = typeof pageData.number === 'number' ? pageData.number : 0;
-                totalPages = typeof pageData.totalPages === 'number' ? pageData.totalPages : 1;
-            } else if (pageData && pageData.data) {
-                if (Array.isArray(pageData.data)) {
-                    products = pageData.data;
-                } else if (pageData.data.content && Array.isArray(pageData.data.content)) {
-                    products = pageData.data.content;
-                    currentPage = typeof pageData.data.number === 'number' ? pageData.data.number : 0;
-                    totalPages = typeof pageData.data.totalPages === 'number' ? pageData.data.totalPages : 1;
-                }
+            // Await wishlist to resolve active states
+            const wishlistItems = await wishlistPromise;
+            if (wishlistItems && Array.isArray(wishlistItems)) {
+                window.wishlistProductIds = new Set(wishlistItems.map(item => item.productId));
             }
 
-            if (products.length === 0) {
+            // Render products
+            if (!products || products.length === 0) {
                 productGrid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; border: var(--border); background-color: var(--dark-gray);">
-                        <h3 class="luxury-text" style="font-size: 1.3rem; margin-bottom: 10px; color: var(--gold);">No Timepieces Found</h3>
-                        <p style="color: var(--light-gray);">We couldn't find any watches matching your filters. Try widening your selection.</p>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                        <h3 style="color: var(--white); font-family: var(--font-title); margin-bottom: 10px;">No Timepieces Found</h3>
+                        <p style="color: var(--gray); font-size: 0.9rem;">Try adjusting your search criteria or explore other categories.</p>
                     </div>
                 `;
                 if (paginationContainer) paginationContainer.innerHTML = '';
                 return;
             }
 
-            // Render cards
-            let gridHTML = '';
-            products.forEach(prod => {
-                gridHTML += createProductCardHtml(prod);
-            });
-            productGrid.innerHTML = gridHTML;
+            productGrid.innerHTML = products.map(p => {
+                const mainImage = (p.images && p.images.length > 0)
+                    ? p.images[0].imageUrl
+                    : 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&auto=format&fit=crop';
 
-            // Render pagination controls
+                const inWishlist = window.wishlistProductIds ? window.wishlistProductIds.has(p.productId) : false;
+                const wishlistClass = inWishlist ? 'active' : '';
+                const stock = Number(p.stock || 0);
+                const outOfStock = stock <= 0;
+
+                const displayName = window.resolveProductName ? window.resolveProductName(p.name, p.productId) : (p.name && p.name.trim().toLowerCase() === 'titan neo updated' ? 'Titan Neo' : p.name);
+                const displayRating = (typeof window.getProductDisplayRating === 'function')
+                    ? window.getProductDisplayRating(p)
+                    : (p.rating ? Number(p.rating).toFixed(1) : '4.8');
+
+                const ratingBadge = `
+                    <div class="product-card-rating" style="position: absolute; bottom: 10px; left: 10px; z-index: 5; background: rgba(14, 13, 11, 0.85); backdrop-filter: blur(4px); border: 1px solid rgba(168, 133, 72, 0.3); border-radius: 4px; padding: 3px 8px; display: flex; align-items: center; gap: 4px;">
+                        <span style="color: var(--gold, #A88548); font-size: 0.85rem;">★</span>
+                        <span style="color: #FFFFFF; font-size: 0.78rem; font-weight: 600; font-family: var(--font-body);">${displayRating}</span>
+                    </div>
+                `;
+
+                return `
+                    <div class="product-card" onclick="window.location.href='./product-details.html?id=${p.productId}'">
+                        <div class="product-img-wrapper" style="position: relative;">
+                            <img src="${mainImage}" alt="${displayName}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600'">
+                            ${ratingBadge}
+                            ${token && role !== 'ADMIN' ? `
+                                <button class="product-wishlist-btn ${wishlistClass}"
+                                        data-product-id="${p.productId}"
+                                        onclick="event.stopPropagation(); window.toggleWishlist(${p.productId}, this);"
+                                        title="${inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="${inWishlist ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title" title="${displayName}">${displayName}</h3>
+                            <div class="product-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
+                            <div class="product-actions" onclick="event.stopPropagation();">
+                                <button class="btn-product-action btn-add-cart"
+                                        data-product-id="${p.productId}"
+                                        ${outOfStock ? 'disabled' : ''}
+                                        onclick="window.addToCart(${p.productId});">
+                                    ${outOfStock ? 'Out of Stock' : 'Add to Cart'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Render Pagination
             if (paginationContainer) {
-                renderPagination(currentPage, totalPages);
+                if (totalPages <= 1) {
+                    paginationContainer.innerHTML = '';
+                } else {
+                    let pagHTML = `
+                        <button class="pagination-btn" ${state.page === 0 ? 'disabled' : ''} onclick="window.changeCatalogPage(${state.page - 1})">
+                            &larr; Prev
+                        </button>
+                    `;
+
+                    for (let i = 0; i < totalPages; i++) {
+                        pagHTML += `
+                            <button class="pagination-btn ${state.page === i ? 'active' : ''}" onclick="window.changeCatalogPage(${i})">
+                                ${i + 1}
+                            </button>
+                        `;
+                    }
+
+                    pagHTML += `
+                        <button class="pagination-btn ${state.page === totalPages - 1 ? 'disabled' : ''} onclick="window.changeCatalogPage(${state.page + 1})">
+                            Next &rarr;
+                        </button>
+                    `;
+                    paginationContainer.innerHTML = pagHTML;
+                }
             }
+
         } catch (err) {
-            console.error('Failed to load products:', err);
-            productGrid.innerHTML = `<p style="color: var(--error); text-align: center; grid-column: 1/-1;">Error loading collection. Please try again later.</p>`;
+            console.error("Failed to load catalog products:", err);
+            productGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <p style="color: var(--danger, #ff4d4f);">Failed to load products. Please try again later.</p>
+                </div>
+            `;
         }
     }
 
-    // Render pagination buttons
-    function renderPagination(current, total) {
-        const container = document.getElementById('catalog-pagination');
-        if (!container) return;
+    // Exposed pagination helper
+    window.changeCatalogPage = function (page) {
+        state.page = page;
+        loadProducts();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-        if (total <= 1) {
-            container.innerHTML = '';
+    // Global Add to Cart
+    window.addToCart = async function (productId) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            if (typeof showAlert === 'function') {
+                showAlert('Please sign in to add items to your cart.', 'error');
+            } else {
+                alert('Please sign in to add items to your cart.');
+            }
+            setTimeout(() => {
+                window.location.href = './login.html';
+            }, 1200);
             return;
         }
 
-        let html = '';
-        // Prev button
-        html += `<button class="btn-luxury" style="padding: 8px 15px; font-size: 0.75rem;" ${current === 0 ? 'disabled' : ''} id="pagination-prev">Prev</button>`;
+        try {
+            await api.addToCart({ productId: productId, quantity: 1 });
+            if (typeof showAlert === 'function') {
+                showAlert('Timepiece added to your cart.', 'success');
+            }
+            if (typeof updateCartCount === 'function') {
+                updateCartCount();
+            }
+        } catch (err) {
+            console.error("Add to cart error:", err);
+            if (typeof showAlert === 'function') {
+                showAlert(err.message || 'Failed to add item to cart.', 'error');
+            }
+        }
+    };
 
-        // Page numbers
-        for (let i = 0; i < total; i++) {
-            const isActive = i === current;
-            html += `
-                <button class="btn-luxury ${isActive ? 'btn-luxury-solid' : ''}" 
-                        style="padding: 8px 15px; font-size: 0.75rem; margin: 0 4px;" 
-                        data-page="${i}">
-                    ${i + 1}
-                </button>
-            `;
+    // Global Toggle Wishlist
+    window.toggleWishlist = async function (productId, btnElement) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            if (typeof showAlert === 'function') showAlert('Please sign in to save timepieces to wishlist.', 'error');
+            setTimeout(() => window.location.href = './login.html', 1200);
+            return;
         }
 
-        // Next button
-        html += `<button class="btn-luxury" style="padding: 8px 15px; font-size: 0.75rem;" ${current === total - 1 ? 'disabled' : ''} id="pagination-next">Next</button>`;
+        try {
+            if (!window.wishlistProductIds) window.wishlistProductIds = new Set();
 
-        container.innerHTML = html;
-
-        // Bind clicks
-        const buttons = container.querySelectorAll('button[data-page]');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                state.page = parseInt(this.getAttribute('data-page'));
-                loadProducts();
-                window.scrollTo({ top: 300, behavior: 'smooth' });
-            });
-        });
-
-        const prevBtn = document.getElementById('pagination-prev');
-        if (prevBtn && current > 0) {
-            prevBtn.addEventListener('click', function () {
-                state.page = current - 1;
-                loadProducts();
-                window.scrollTo({ top: 300, behavior: 'smooth' });
-            });
+            if (window.wishlistProductIds.has(productId)) {
+                await api.removeFromWishlist(productId);
+                window.wishlistProductIds.delete(productId);
+                if (btnElement) {
+                    btnElement.classList.remove('active');
+                    btnElement.querySelector('svg').setAttribute('fill', 'none');
+                }
+                if (typeof showAlert === 'function') showAlert('Removed from wishlist.', 'success');
+            } else {
+                await api.addToWishlist(productId);
+                window.wishlistProductIds.add(productId);
+                if (btnElement) {
+                    btnElement.classList.add('active');
+                    btnElement.querySelector('svg').setAttribute('fill', 'currentColor');
+                }
+                if (typeof showAlert === 'function') showAlert('Added to wishlist.', 'success');
+            }
+        } catch (err) {
+            console.error("Wishlist error:", err);
+            if (typeof showAlert === 'function') showAlert(err.message || 'Wishlist operation failed.', 'error');
         }
-
-        const nextBtn = document.getElementById('pagination-next');
-        if (nextBtn && current < total - 1) {
-            nextBtn.addEventListener('click', function () {
-                state.page = current + 1;
-                loadProducts();
-                window.scrollTo({ top: 300, behavior: 'smooth' });
-            });
-        }
-    }
+    };
 
     // DOM Setup and listeners binding
     document.addEventListener('DOMContentLoaded', async function () {
@@ -305,35 +405,11 @@
         const inStockCheckbox = document.getElementById('filter-instock');
         const sortSelect = document.getElementById('catalog-sort');
 
-        // Check query params for category filter (e.g. from footer links or category cards)
         const params = new URLSearchParams(window.location.search);
-        const urlCatId = params.get('categoryId');
-        const urlCategoryName = params.get('category');
-
-        if (urlCatId) {
-            const parsedId = parseInt(urlCatId, 10);
-            if (!isNaN(parsedId) && parsedId > 0) {
-                state.categoryId = parsedId;
-            }
-        } else if (urlCategoryName) {
-            const catMap = {
-                'analog': 1, 'analog watches': 1,
-                'digital': 2, 'digital watches': 2,
-                'luxury': 3, 'luxury watches': 3,
-                'sports': 4, 'sports watches': 4
-            };
-            const matchedId = catMap[urlCategoryName.toLowerCase().trim()];
-            if (matchedId) {
-                state.categoryId = matchedId;
-            }
-        }
-
         const urlKeyword = params.get('search') || params.get('q') || params.get('keyword');
         if (urlKeyword) {
             state.keyword = urlKeyword.trim();
-            if (searchInput) {
-                searchInput.value = state.keyword;
-            }
+            if (searchInput) searchInput.value = state.keyword;
         }
 
         // Search listener (Debounced)
@@ -355,7 +431,6 @@
             applyPriceBtn.addEventListener('click', function () {
                 const min = parseFloat(minPriceInput.value);
                 const max = parseFloat(maxPriceInput.value);
-
                 state.minPrice = isNaN(min) ? null : min;
                 state.maxPrice = isNaN(max) ? null : max;
                 state.page = 0;
@@ -391,16 +466,8 @@
 
         // Initial loadings
         if (document.getElementById('catalog-products-grid')) {
-            const params = new URLSearchParams(window.location.search);
-            const urlCategoryName = params.get('category');
-            if (urlCategoryName) {
-                // When filtering by named category from URL, resolve category list first
-                await loadCategories();
-                await loadProducts();
-            } else {
-                // Otherwise load categories and catalog products concurrently
-                await Promise.all([loadCategories(), loadProducts()]);
-            }
+            await loadCategories();
+            await loadProducts();
         }
     });
 })();

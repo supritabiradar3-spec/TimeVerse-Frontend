@@ -31,22 +31,23 @@
     }
 
     const CATEGORY_MAP = {
-        1: 'Analog Watches',
-        2: 'Digital Watches',
-        3: 'Luxury Watches',
-        4: 'Sports Watches'
+        1: 'Women',
+        2: 'Men',
+        3: 'Kids',
+        4: 'Couples'
     };
 
     const CATEGORY_IMAGES = {
-        "Analog Watches": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2",
-        "Digital Watches": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=600&cb=2",
-        "Luxury Watches": "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&cb=2",
-        "Sports Watches": "../sports-watch.jpg",
-        1: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2",
-        2: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=600&cb=2",
-        3: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&cb=2",
-        4: "../sports-watch.jpg"
+        "Women": "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?q=80&w=600&auto=format&fit=crop",
+        "Men": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&auto=format&fit=crop",
+        "Kids": "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=600&auto=format&fit=crop",
+        "Couples": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=600&auto=format&fit=crop",
+        1: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?q=80&w=600&auto=format&fit=crop",
+        2: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&auto=format&fit=crop",
+        3: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=600&auto=format&fit=crop",
+        4: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=600&auto=format&fit=crop"
     };
+
 
     let allCachedProducts = [];
     let allCachedOrders = [];
@@ -688,24 +689,8 @@
                 return;
             }
 
-            // Order mapping: 1. Analog Watches, 2. Digital Watches, 3. Luxury Watches, 4. Sports Watches
-            const CATEGORY_ORDER_MAP = {
-                "Analog Watches": 1,
-                "Digital Watches": 2,
-                "Luxury Watches": 3,
-                "Sports Watches": 4,
-                1: 1,
-                2: 2,
-                3: 3,
-                4: 4
-            };
-
             const sortedCategories = [...allCachedCategories].sort((a, b) => {
-                const nameA = a.categoryName || a.name || '';
-                const nameB = b.categoryName || b.name || '';
-                const orderA = CATEGORY_ORDER_MAP[nameA] || CATEGORY_ORDER_MAP[a.categoryId] || 99;
-                const orderB = CATEGORY_ORDER_MAP[nameB] || CATEGORY_ORDER_MAP[b.categoryId] || 99;
-                return orderA - orderB;
+                return (Number(a.categoryId) || 99) - (Number(b.categoryId) || 99);
             });
 
             let cardsHtml = '';
