@@ -38,14 +38,14 @@
     };
 
     const CATEGORY_IMAGES = {
-        "Women": "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?q=80&w=600&auto=format&fit=crop",
-        "Men": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&auto=format&fit=crop",
-        "Kids": "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=600&auto=format&fit=crop",
-        "Couples": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=600&auto=format&fit=crop",
-        1: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?q=80&w=600&auto=format&fit=crop",
-        2: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&auto=format&fit=crop",
-        3: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?q=80&w=600&auto=format&fit=crop",
-        4: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=600&auto=format&fit=crop"
+        "Women": "../women-watch.jpg",
+        "Men": "../men-watch.jpg",
+        "Kids": "../kids-watch.jpg",
+        "Couples": "../couples-watch.jpg",
+        1: "../women-watch.jpg",
+        2: "../men-watch.jpg",
+        3: "../kids-watch.jpg",
+        4: "../couples-watch.jpg"
     };
 
 
@@ -158,6 +158,7 @@
         const priceEl = document.getElementById('edit-price');
         const stockEl = document.getElementById('edit-stock');
         const catEl = document.getElementById('edit-category');
+        const subcatEl = document.getElementById('edit-subcategory');
         const imgEl = document.getElementById('edit-image');
 
         if (idEl) idEl.value = prod.productId;
@@ -166,6 +167,7 @@
         if (priceEl) priceEl.value = prod.price;
         if (stockEl) stockEl.value = prod.stock;
         if (catEl) catEl.value = prod.categoryId;
+        if (subcatEl) subcatEl.value = prod.subcategory || 'Analog';
         if (imgEl) imgEl.value = imgUrl;
 
         const editModal = document.getElementById('edit-product-modal');
@@ -700,8 +702,8 @@
                 const name = cat.categoryName || cat.name || 'Collection';
                 const catId = cat.categoryId;
                 const normalizedKey = Object.keys(CATEGORY_IMAGES).find(k => k.toLowerCase() === name.toLowerCase()) || name;
-                const catImg = CATEGORY_IMAGES[normalizedKey] || CATEGORY_IMAGES[catId] || (name.toLowerCase().includes('sport') ? '../sports-watch.jpg' : 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2');
-                const fallbackImg = name.toLowerCase().includes('sport') ? '../sports-watch.jpg' : 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&cb=2';
+                const catImg = CATEGORY_IMAGES[normalizedKey] || CATEGORY_IMAGES[catId] || '../women-watch.jpg';
+                const fallbackImg = '../women-watch.jpg';
                 const productCount = allCachedProducts.filter(p => Number(p.categoryId) === Number(catId)).length;
 
                 cardsHtml += `
@@ -830,10 +832,12 @@
             function renderFilteredProducts() {
                 const searchInput = document.getElementById('product-search-input');
                 const catFilter = document.getElementById('product-category-filter');
+                const subcatFilter = document.getElementById('product-subcategory-filter');
                 const stockFilter = document.getElementById('product-stock-filter');
 
                 const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
                 const selectedCat = catFilter ? catFilter.value : '';
+                const selectedSubcat = subcatFilter ? subcatFilter.value : '';
                 const selectedStock = stockFilter ? stockFilter.value : '';
 
                 let filtered = (allCachedProducts || []).filter(prod => {
@@ -841,14 +845,20 @@
                     const name = String(prod.name || '').toLowerCase();
                     const prodId = String(prod.productId || '');
                     const categoryName = String(dynamicCategoryMap[prod.categoryId] || CATEGORY_MAP[prod.categoryId] || '').toLowerCase();
+                    const subcategory = String(prod.subcategory || '').toLowerCase();
 
                     // Search match
-                    if (searchTerm && !name.includes(searchTerm) && !prodId.includes(searchTerm) && !categoryName.includes(searchTerm)) {
+                    if (searchTerm && !name.includes(searchTerm) && !prodId.includes(searchTerm) && !categoryName.includes(searchTerm) && !subcategory.includes(searchTerm)) {
                         return false;
                     }
 
                     // Category filter
                     if (selectedCat && String(prod.categoryId) !== String(selectedCat)) {
+                        return false;
+                    }
+
+                    // Subcategory filter
+                    if (selectedSubcat && subcategory !== selectedSubcat.toLowerCase()) {
                         return false;
                     }
 
@@ -862,13 +872,14 @@
                 });
 
                 if (filtered.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 30px; color: var(--light-gray);">No timepieces match the selected filters.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 30px; color: var(--light-gray);">No timepieces match the selected filters.</td></tr>`;
                     return;
                 }
 
                 let html = '';
                 filtered.forEach(prod => {
                     const categoryName = dynamicCategoryMap[prod.categoryId] || CATEGORY_MAP[prod.categoryId] || 'Collection';
+                    const subcatName = prod.subcategory || 'Analog';
                     const formattedPrice = new Intl.NumberFormat('en-IN', {
                         style: 'currency',
                         currency: 'INR',
@@ -896,6 +907,7 @@
                             </td>
                             <td><span style="color: #111111; font-weight: 600;">${prod.name}</span></td>
                             <td>${categoryName}</td>
+                            <td><span class="badge" style="background: rgba(168, 133, 72, 0.15); color: #1F3A5F; font-weight: 600; border: 1px solid rgba(168, 133, 72, 0.3); border-radius: 4px; padding: 2px 7px;">${subcatName}</span></td>
                             <td><span style="color: var(--gold-dark); font-weight: 600;">${formattedPrice}</span></td>
                             <td>
                                 <span style="color: ${prod.stock < 5 ? 'var(--error)' : 'var(--success)'}; font-weight: 600;">
@@ -935,16 +947,18 @@
                 productsFilterBound = true;
                 const searchInput = document.getElementById('product-search-input');
                 const catFilter = document.getElementById('product-category-filter');
+                const subcatFilter = document.getElementById('product-subcategory-filter');
                 const stockFilter = document.getElementById('product-stock-filter');
 
                 if (searchInput) searchInput.addEventListener('input', renderFilteredProducts);
                 if (catFilter) catFilter.addEventListener('change', renderFilteredProducts);
+                if (subcatFilter) subcatFilter.addEventListener('change', renderFilteredProducts);
                 if (stockFilter) stockFilter.addEventListener('change', renderFilteredProducts);
             }
 
         } catch (err) {
             console.error('Failed to load admin products:', err);
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--error); padding: 30px;">Error loading products list.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--error); padding: 30px;">Error loading products list.</td></tr>`;
         }
     }
 
@@ -1852,6 +1866,7 @@
                 const price = parseFloat(document.getElementById('add-price').value);
                 const stock = parseInt(document.getElementById('add-stock').value);
                 const categoryId = parseInt(document.getElementById('add-category').value);
+                const subcategory = (document.getElementById('add-subcategory') ? document.getElementById('add-subcategory').value.trim() : '') || 'Analog';
                 const imageUrl = document.getElementById('add-image').value.trim();
 
                 if (!name || isNaN(price) || isNaN(stock) || isNaN(categoryId)) {
@@ -1862,7 +1877,7 @@
                 const imageUrls = imageUrl ? [imageUrl] : [];
 
                 try {
-                    await api.createProduct({ name, description, price, stock, categoryId, imageUrls });
+                    await api.createProduct({ name, description, price, stock, categoryId, subcategory, imageUrls });
                     showAlert('Product created successfully!', 'success');
                     addProductForm.reset();
                     if (addProductModal) addProductModal.style.display = 'none';
@@ -1983,6 +1998,7 @@
                 const price = parseFloat(document.getElementById('edit-price').value);
                 const stock = parseInt(document.getElementById('edit-stock').value);
                 const categoryId = parseInt(document.getElementById('edit-category').value);
+                const subcategory = (document.getElementById('edit-subcategory') ? document.getElementById('edit-subcategory').value.trim() : '') || 'Analog';
                 const imageUrl = document.getElementById('edit-image').value.trim();
 
                 if (!name || isNaN(price) || isNaN(stock) || isNaN(categoryId)) {
@@ -1993,7 +2009,7 @@
                 const imageUrls = imageUrl ? [imageUrl] : [];
 
                 try {
-                    await api.updateProduct(id, { name, description, price, stock, categoryId, imageUrls });
+                    await api.updateProduct(id, { name, description, price, stock, categoryId, subcategory, imageUrls });
                     showAlert(`Watch #${id} updated successfully!`, 'success');
                     if (editProductModal) editProductModal.style.display = "none";
                     loadAdminProducts();

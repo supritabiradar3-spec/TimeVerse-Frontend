@@ -3,10 +3,14 @@ console.log("PRODUCT CARD FILE LOADED");
 
 (function () {
     const CATEGORY_MAP = {
-        1: 'Analog Watches',
-        2: 'Digital Watches',
-        3: 'Luxury Watches',
-        4: 'Sports Watches'
+        1: 'Women',
+        2: 'Men',
+        3: 'Kids',
+        4: 'Couples',
+        25: 'Women',
+        26: 'Men',
+        27: 'Kids',
+        28: 'Couples'
     };
 
     window.resolveImageUrl = function (url) {
@@ -234,7 +238,7 @@ console.log("PRODUCT CARD FILE LOADED");
 
         const imgUrl = window.resolveImageUrl ? window.resolveImageUrl(rawImgUrl) : rawImgUrl;
 
-        const categoryName = CATEGORY_MAP[categoryId] || 'Collection';
+        const categoryName = (window.getCategoryNameById && window.getCategoryNameById(categoryId)) || product.categoryName || CATEGORY_MAP[categoryId] || 'Collection';
         const formattedPrice = new Intl.NumberFormat('en-IN', {
             style: 'currency',
             currency: 'INR',
@@ -317,7 +321,7 @@ console.log("PRODUCT CARD FILE LOADED");
                     </a>
                 </div>
                 <div class="product-card-details">
-                    <span class="product-card-category">${categoryName}</span>
+                    <span class="product-card-category">${categoryName}${product.subcategory ? ` • ${product.subcategory}` : ''}</span>
                     <h3 class="product-card-name" title="${name}">
                         <a href="./product-details.html?id=${productId}">${name}</a>
                     </h3>

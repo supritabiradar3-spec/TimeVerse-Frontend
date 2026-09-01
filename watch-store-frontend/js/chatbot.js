@@ -147,7 +147,7 @@
                 return found.categoryName || found.name;
             }
         }
-        return DEFAULT_CATEGORY_MAP[Number(categoryId)] || 'Luxury Watches';
+        return DEFAULT_CATEGORY_MAP[Number(categoryId)] || 'Timepieces';
     }
 
     // Helper: build HTML product card (When customer asks to see/show product or image)
@@ -251,7 +251,7 @@
 
         // 3. Above / Over / More than / Min X
         const aboveMatch = raw.match(/(?:above|over|more than|greater than|exceeding|min|minimum|starting from|from)\s*(?:price|budget|rs\.?|inr|₹)?\s*(\d+(?:\.\d+)?k?|\d+(?:\.\d+)?lakh?)/i) ||
-                           raw.match(/(?:price|budget)\s*(?:above|over|more than|min)\s*(?:rs\.?|inr|₹)?\s*(\d+(?:\.\d+)?k?|\d+(?:\.\d+)?lakh?)/i);
+            raw.match(/(?:price|budget)\s*(?:above|over|more than|min)\s*(?:rs\.?|inr|₹)?\s*(\d+(?:\.\d+)?k?|\d+(?:\.\d+)?lakh?)/i);
         if (aboveMatch) {
             const target = parsePriceValue(aboveMatch[1]);
             if (target !== null) {
@@ -261,8 +261,8 @@
 
         // 4. Under / Below / Less than / Up to / Within / Max / Budget X
         const underMatch = raw.match(/(?:under|below|less than|within|up to|max|maximum|budget|cheaper than)\s*(?:price|budget|rs\.?|inr|₹)?\s*(\d+(?:\.\d+)?k?|\d+(?:\.\d+)?lakh?)/i) ||
-                           raw.match(/(?:price|budget)\s*(?:under|below|less than|within|up to|max)\s*(?:rs\.?|inr|₹)?\s*(\d+(?:\.\d+)?k?|\d+(?:\.\d+)?lakh?)/i) ||
-                           raw.match(/(\d+(?:\.\d+)?k?|\d+(?:\.\d+)?lakh?)\s*(?:and under|or below|or less|budget|max)/i);
+            raw.match(/(?:price|budget)\s*(?:under|below|less than|within|up to|max)\s*(?:rs\.?|inr|₹)?\s*(\d+(?:\.\d+)?k?|\d+(?:\.\d+)?lakh?)/i) ||
+            raw.match(/(\d+(?:\.\d+)?k?|\d+(?:\.\d+)?lakh?)\s*(?:and under|or below|or less|budget|max)/i);
         if (underMatch) {
             const target = parsePriceValue(underMatch[1]);
             if (target !== null) {
@@ -285,10 +285,10 @@
     // Helper: Extract watch category name from query
     function extractCategory(query) {
         const raw = (query || '').toLowerCase();
-        if (raw.includes('luxury')) return 'Luxury Watches';
-        if (raw.includes('analog')) return 'Analog Watches';
-        if (raw.includes('digital')) return 'Digital Watches';
-        if (raw.includes('sport')) return 'Sports Watches';
+        if (raw.includes('women') || raw.includes('lady') || raw.includes('ladies') || raw.includes('female')) return 'Women';
+        if (raw.includes('men') || raw.includes('gent') || raw.includes('gentleman') || raw.includes('male')) return 'Men';
+        if (raw.includes('kid') || raw.includes('child') || raw.includes('youth') || raw.includes('teen')) return 'Kids';
+        if (raw.includes('couple') || raw.includes('pair') || raw.includes('unisex') || raw.includes('duo')) return 'Couples';
         return null;
     }
 
@@ -296,7 +296,7 @@
     function isExplicitGenericWatchQuery(query) {
         const raw = (query || '').toLowerCase();
         return (raw.includes('all watch') || raw.includes('any watch') || raw.includes('watches') || raw.includes('collection') || raw.includes('models')) &&
-               !raw.includes('digital') && !raw.includes('luxury') && !raw.includes('analog') && !raw.includes('sport');
+            !raw.includes('women') && !raw.includes('men') && !raw.includes('kid') && !raw.includes('couple');
     }
 
     // Helper: Check if customer asks for a recommendation/suggestion
@@ -309,7 +309,7 @@
     function isImageOnlyIntent(query) {
         const raw = (query || '').toLowerCase();
         return /\b(product image|the image|want the image|direct product image|direct image|give image|show image|give me image|see image|show me product image|i want image|want image)\b/i.test(raw) ||
-               (raw.includes('image') && !raw.includes('with image') && !raw.includes('details'));
+            (raw.includes('image') && !raw.includes('with image') && !raw.includes('details'));
     }
 
     // Helper: Check if customer asks for the product link
@@ -369,29 +369,39 @@
         const rawClean = cleanText(query);
         const keywords = extractKeywords(query);
 
-        // 1. Category check
+        // 1. Category / Subcategory check
+        const isWomenQuery = rawClean.includes('women') || rawClean.includes('womens') || rawClean.includes('ladies') || rawClean.includes('lady');
+        const isMenQuery = (rawClean.includes('men') || rawClean.includes('mens') || rawClean.includes('gentleman') || rawClean.includes('gents')) && !isWomenQuery;
+        const isKidsQuery = rawClean.includes('kid') || rawClean.includes('kids') || rawClean.includes('child') || rawClean.includes('children');
+        const isCouplesQuery = rawClean.includes('couple') || rawClean.includes('couples') || rawClean.includes('pair') || rawClean.includes('unisex');
+
         const isLuxuryQuery = rawClean.includes('luxury');
         const isAnalogQuery = rawClean.includes('analog');
         const isDigitalQuery = rawClean.includes('digital');
         const isSportsQuery = rawClean.includes('sport') || rawClean.includes('sports');
 
-        if ((isLuxuryQuery || isAnalogQuery || isDigitalQuery || isSportsQuery) && keywords.length <= 3) {
-            let catTarget = '';
-            if (isLuxuryQuery) catTarget = 'luxury';
-            else if (isAnalogQuery) catTarget = 'analog';
-            else if (isDigitalQuery) catTarget = 'digital';
-            else if (isSportsQuery) catTarget = 'sport';
+        let targetCat = isWomenQuery ? 'women' : (isMenQuery ? 'men' : (isKidsQuery ? 'kids' : (isCouplesQuery ? 'couples' : '')));
+        let targetSubcat = isLuxuryQuery ? 'luxury' : (isAnalogQuery ? 'analog' : (isDigitalQuery ? 'digital' : (isSportsQuery ? 'sports' : '')));
 
+        if (targetCat || targetSubcat) {
             const catMatches = products.filter(p => {
                 const catName = getCategoryName(p.categoryId).toLowerCase();
+                const subcatName = (p.subcategory || '').toLowerCase();
                 const pName = (p.name || '').toLowerCase();
-                return catName.includes(catTarget) || pName.includes(catTarget);
+
+                let catOk = !targetCat || catName.includes(targetCat) || pName.includes(targetCat);
+                let subcatOk = !targetSubcat || subcatName.includes(targetSubcat) || pName.includes(targetSubcat);
+                return catOk && subcatOk;
             });
 
             if (catMatches.length > 0) {
+                let title = [];
+                if (targetCat) title.push(targetCat.charAt(0).toUpperCase() + targetCat.slice(1));
+                if (targetSubcat) title.push(targetSubcat.charAt(0).toUpperCase() + targetSubcat.slice(1));
+                title.push('Watches');
                 return {
                     type: 'category',
-                    categoryName: catTarget.charAt(0).toUpperCase() + catTarget.slice(1) + ' Watches',
+                    categoryName: title.join(' '),
                     matches: deduplicateProducts(catMatches)
                 };
             }
@@ -399,12 +409,12 @@
 
         // 2. General Collection Query
         const isGeneralQuery = rawClean.includes('what watches') ||
-                               rawClean.includes('all watches') ||
-                               rawClean.includes('have watches') ||
-                               rawClean.includes('recommend') ||
-                               rawClean.includes('best watches') ||
-                               rawClean.includes('popular') ||
-                               (keywords.length === 0 && (rawClean.includes('watch') || rawClean.includes('watches')));
+            rawClean.includes('all watches') ||
+            rawClean.includes('have watches') ||
+            rawClean.includes('recommend') ||
+            rawClean.includes('best watches') ||
+            rawClean.includes('popular') ||
+            (keywords.length === 0 && (rawClean.includes('watch') || rawClean.includes('watches')));
 
         if (isGeneralQuery) {
             return {
@@ -597,9 +607,9 @@
                 if (isLinkReq) {
                     typingDiv.remove();
                     const prod = conversationContext.selectedProduct ||
-                                 (conversationContext.activeFilteredProducts.length > 0 ? conversationContext.activeFilteredProducts[0] : null) ||
-                                 (conversationContext.activeProducts.length > 0 ? conversationContext.activeProducts[0] : null) ||
-                                 catalog[0];
+                        (conversationContext.activeFilteredProducts.length > 0 ? conversationContext.activeFilteredProducts[0] : null) ||
+                        (conversationContext.activeProducts.length > 0 ? conversationContext.activeProducts[0] : null) ||
+                        catalog[0];
 
                     const id = prod ? (prod.productId || prod.id) : 1;
                     const name = prod ? resolveDisplayName(prod) : 'the watch';
@@ -623,9 +633,9 @@
                 if (isImageOnly) {
                     typingDiv.remove();
                     const prod = conversationContext.selectedProduct ||
-                                 (conversationContext.activeFilteredProducts.length > 0 ? conversationContext.activeFilteredProducts[0] : null) ||
-                                 (conversationContext.activeProducts.length > 0 ? conversationContext.activeProducts[0] : null) ||
-                                 catalog[0];
+                        (conversationContext.activeFilteredProducts.length > 0 ? conversationContext.activeFilteredProducts[0] : null) ||
+                        (conversationContext.activeProducts.length > 0 ? conversationContext.activeProducts[0] : null) ||
+                        catalog[0];
 
                     const name = resolveDisplayName(prod);
                     const imgUrl = resolveProductImage(prod);
@@ -650,8 +660,8 @@
                 if (isSuggest) {
                     typingDiv.remove();
                     let pool = conversationContext.activeFilteredProducts.length > 0 ?
-                               conversationContext.activeFilteredProducts :
-                               (conversationContext.activeProducts.length > 0 ? conversationContext.activeProducts : catalog);
+                        conversationContext.activeFilteredProducts :
+                        (conversationContext.activeProducts.length > 0 ? conversationContext.activeProducts : catalog);
 
                     const chosen = pool[0];
                     conversationContext.selectedProduct = chosen;

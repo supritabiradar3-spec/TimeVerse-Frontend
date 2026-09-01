@@ -1618,6 +1618,11 @@ body:not(.light-theme) .remove-cart-item-btn:hover {
     align-self: flex-start !important;
 }
 
+.filter-main {
+    flex-grow: 1 !important;
+    min-width: 0 !important;
+}
+
 /* Detail page main product image contain alignment */
 .product-detail-img-container,
 .details-image-wrapper {

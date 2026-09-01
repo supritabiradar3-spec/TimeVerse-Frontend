@@ -116,9 +116,9 @@
                         <h4 class="footer-heading">Boutique</h4>
                         <ul class="footer-links">
                             <li><a href="./products.html">All Collections</a></li>
-                            <li><a href="./products.html?categoryId=3">Luxury Series</a></li>
-                            <li><a href="./products.html?categoryId=1">Analog Series</a></li>
-                            <li><a href="./products.html?categoryId=4">Sports Chronos</a></li>
+                            <li><a href="./products.html?subcategory=Luxury">Luxury Series</a></li>
+                            <li><a href="./products.html?subcategory=Analog">Analog Series</a></li>
+                            <li><a href="./products.html?subcategory=Sports">Sports Chronos</a></li>
                         </ul>
                     </div>
                     <div>

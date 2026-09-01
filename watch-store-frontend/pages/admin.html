@@ -1982,6 +1982,13 @@
                                 <option value="3">Kids</option>
                                 <option value="4">Couples</option>
                             </select>
+                            <select id="product-subcategory-filter" class="admin-filter-select">
+                                <option value="">Subcategory ▼</option>
+                                <option value="Analog">Analog</option>
+                                <option value="Digital">Digital</option>
+                                <option value="Luxury">Luxury</option>
+                                <option value="Sports">Sports</option>
+                            </select>
                             <select id="product-stock-filter" class="admin-filter-select">
                                 <option value="">Stock ▼</option>
                                 <option value="in">In Stock (5+)</option>
@@ -2004,6 +2011,7 @@
                                         <th>Image</th>
                                         <th>Name</th>
                                         <th>Category</th>
+                                        <th>Subcategory</th>
                                         <th>Price</th>
                                         <th>Stock</th>
                                         <th>Rating</th>
@@ -2209,23 +2217,23 @@
                                 Category Images</h4>
                             <div class="d-grid grid-cols-2 gap-20">
                                 <div class="form-group">
-                                    <label class="form-label">Analog Watches Image URL</label>
-                                    <input type="url" id="setting-cat-analog" class="form-control"
+                                    <label class="form-label">Women Collection Image URL</label>
+                                    <input type="url" id="setting-cat-women" class="form-control"
                                         placeholder="https://...">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Digital Watches Image URL</label>
-                                    <input type="url" id="setting-cat-digital" class="form-control"
+                                    <label class="form-label">Men Collection Image URL</label>
+                                    <input type="url" id="setting-cat-men" class="form-control"
                                         placeholder="https://...">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Luxury Watches Image URL</label>
-                                    <input type="url" id="setting-cat-luxury" class="form-control"
+                                    <label class="form-label">Kids Collection Image URL</label>
+                                    <input type="url" id="setting-cat-kids" class="form-control"
                                         placeholder="https://...">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Sports Watches Image URL</label>
-                                    <input type="url" id="setting-cat-sports" class="form-control"
+                                    <label class="form-label">Couples Collection Image URL</label>
+                                    <input type="url" id="setting-cat-couples" class="form-control"
                                         placeholder="https://...">
                                 </div>
                             </div>
@@ -2372,6 +2380,16 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label class="form-label">Subcategory *</label>
+                        <select id="add-subcategory" class="form-control" required>
+                            <option value="Analog">Analog</option>
+                            <option value="Digital">Digital</option>
+                            <option value="Luxury">Luxury</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+
                     <div class="d-grid grid-cols-2 gap-20">
                         <div class="form-group">
                             <label class="form-label">Price (INR) *</label>
@@ -2512,6 +2530,16 @@
                             <option value="2">Men</option>
                             <option value="3">Kids</option>
                             <option value="4">Couples</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-subcategory" class="form-label">Subcategory *</label>
+                        <select id="edit-subcategory" class="form-control" required>
+                            <option value="Analog">Analog</option>
+                            <option value="Digital">Digital</option>
+                            <option value="Luxury">Luxury</option>
+                            <option value="Sports">Sports</option>
                         </select>
                     </div>
 

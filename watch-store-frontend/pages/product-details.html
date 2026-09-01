@@ -215,8 +215,9 @@
                 const displayName = window.resolveProductName ? window.resolveProductName(product.name, product.productId) : (product.name && product.name.trim().toLowerCase() === 'titan neo updated' ? 'Titan Neo' : product.name);
                 watchName.textContent = displayName;
                 document.title = `TimeVerse | ${displayName}`;
-                refId.textContent = `#TV-PROD-${product.productId}`;
-                categoryLabel.textContent = categoryNameMap[product.categoryId] || 'Curated Timepiece';
+                const mainCatName = categoryNameMap[product.categoryId] || 'Curated Timepiece';
+                const subcatName = product.subcategory || '';
+                categoryLabel.textContent = subcatName ? `${mainCatName} • ${subcatName}` : mainCatName;
                 watchDesc.textContent = product.description || 'No description available for this timepiece.';
                 
                 watchPrice.textContent = new Intl.NumberFormat('en-IN', {

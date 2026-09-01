@@ -1,120 +1,506 @@
 // Products Catalog Module for TimeVerse
+// Professional View Collection Flow: Watch Type -> Customer Group (Women | Men | Kids | Couples)
 
 (function () {
+    const CATEGORY_MAP = {
+        1: 'Women',
+        2: 'Men',
+        3: 'Kids',
+        4: 'Couples',
+        25: 'Women',
+        26: 'Men',
+        27: 'Kids',
+        28: 'Couples'
+    };
+
+    const SUBCATEGORIES = ['Analog', 'Digital', 'Luxury', 'Sports'];
+
+    const CUSTOMER_GROUPS = [
+        { name: 'Women', id: 25 },
+        { name: 'Men', id: 26 },
+        { name: 'Kids', id: 27 },
+        { name: 'Couples', id: 28 }
+    ];
+
+    const WATCH_COLLECTIONS = [
+        { name: 'Analog Watches', subcategory: 'Analog' },
+        { name: 'Digital Watches', subcategory: 'Digital' },
+        { name: 'Luxury Watches', subcategory: 'Luxury' },
+        { name: 'Sports Watches', subcategory: 'Sports' }
+    ];
+
     // Current catalog state
     const state = {
         keyword: '',
         categoryId: null,
+        subcategory: null,
         minPrice: null,
         maxPrice: null,
         inStock: null,
         page: 0,
-        size: 9,
+        size: 20,
         sortBy: 'productId',
         direction: 'asc'
     };
 
     let allLoadedCategories = [];
 
-    // Load categories list and insert in sidebar
-    async function loadCategories() {
-        const categoriesContainer = document.getElementById('categories-list');
-        if (!categoriesContainer) return;
+    function getCustomerGroups() {
+        const canonicalGroups = ['Women', 'Men', 'Kids', 'Couples'];
+        if (allLoadedCategories && allLoadedCategories.length > 0) {
+            return canonicalGroups.map((groupName, idx) => {
+                const clean = groupName.toLowerCase();
+                const matched = allLoadedCategories.find(c => {
+                    if (!c || !c.categoryName) return false;
+                    const name = c.categoryName.toLowerCase().trim();
+                    if (name === clean) return true;
+                    if (clean === 'kids' && (name.includes('kid') || name.includes('child') || name.includes('youth'))) return true;
+                    if (clean === 'couples' && (name.includes('couple') || name.includes('pair'))) return true;
+                    return false;
+                });
+                return {
+                    name: groupName,
+                    id: matched ? matched.categoryId : (idx + 1)
+                };
+            });
+        }
+        return [
+            { name: 'Women', id: 25 },
+            { name: 'Men', id: 26 },
+            { name: 'Kids', id: 27 },
+            { name: 'Couples', id: 28 }
+        ];
+    }
 
-        try {
-            const response = await api.getCategories();
-            let categoryList = [];
+    function getCategoryNameById(id) {
+        if (!id && id !== 0) return null;
+        if (allLoadedCategories && allLoadedCategories.length > 0) {
+            const matched = allLoadedCategories.find(c => String(c.categoryId) === String(id));
+            if (matched && matched.categoryName) return matched.categoryName;
+        }
+        return CATEGORY_MAP[id] || 'Collection';
+    }
+    window.getCategoryNameById = getCategoryNameById;
 
-            if (response) {
-                if (Array.isArray(response)) {
-                    categoryList = response;
-                } else if (response.data && Array.isArray(response.data)) {
-                    categoryList = response.data;
-                } else if (response.content && Array.isArray(response.content)) {
-                    categoryList = response.content;
-                }
+    // Parse URL Query Parameters on initialization
+    function parseUrlParameters(categoryList) {
+        const params = new URLSearchParams(window.location.search);
+        const urlCatId = params.get('categoryId');
+        const urlCategoryName = params.get('category') || params.get('mainCategory') || params.get('group');
+        const urlSubcategory = params.get('subcategory') || params.get('subCategory') || params.get('watchType');
+
+        // Check if watchType / subcategory was passed
+        if (urlSubcategory) {
+            const matchedSub = SUBCATEGORIES.find(s => s.toLowerCase() === urlSubcategory.toLowerCase().trim());
+            if (matchedSub) {
+                state.subcategory = matchedSub;
             }
+        }
 
-            allLoadedCategories = categoryList;
+        // Check if categoryName was actually a watch type (e.g., "Digital Watches")
+        if (urlCategoryName && !state.subcategory) {
+            const cleanName = urlCategoryName.toLowerCase().trim();
+            const matchedWatchCol = WATCH_COLLECTIONS.find(wc =>
+                wc.name.toLowerCase() === cleanName || wc.subcategory.toLowerCase() === cleanName
+            );
+            if (matchedWatchCol) {
+                state.subcategory = matchedWatchCol.subcategory;
+            }
+        }
 
-            // Check URL parameter for category
-            const params = new URLSearchParams(window.location.search);
-            const urlCatId = params.get('categoryId');
-            const urlCategoryName = params.get('category') || params.get('mainCategory');
+        // Helper to match category from list by name
+        function findCategoryByName(nameKey) {
+            if (!categoryList || categoryList.length === 0) return null;
+            const target = nameKey.toLowerCase().trim();
+            return categoryList.find(c => {
+                if (!c || !c.categoryName) return false;
+                const cn = c.categoryName.toLowerCase().trim();
+                if (cn === target) return true;
+                if (target === 'kids' && (cn.includes('kid') || cn.includes('child') || cn.includes('youth'))) return true;
+                if (target === 'couples' && (cn.includes('couple') || cn.includes('pair'))) return true;
+                if (target === 'women' && cn.includes('women')) return true;
+                if (target === 'men' && (cn.includes('men') && !cn.includes('women'))) return true;
+                return false;
+            });
+        }
 
-            if (urlCatId) {
-                const parsedId = parseInt(urlCatId, 10);
-                if (!isNaN(parsedId) && parsedId > 0) {
-                    state.categoryId = parsedId;
-                }
-            } else if (urlCategoryName) {
-                const cleanName = urlCategoryName.toLowerCase().trim();
-                const matchedCat = categoryList.find(cat =>
-                    cat.categoryName && cat.categoryName.toLowerCase().trim() === cleanName
-                );
-                if (matchedCat) {
-                    state.categoryId = matchedCat.categoryId;
+        // Parse customer group / category ID
+        if (urlCatId) {
+            const parsedId = parseInt(urlCatId, 10);
+            if (!isNaN(parsedId)) {
+                const directMatch = categoryList && categoryList.find(c => c.categoryId === parsedId);
+                if (directMatch) {
+                    state.categoryId = directMatch.categoryId;
                 } else {
-                    // Fallback map
-                    const catMap = { 'women': 1, 'men': 2, 'kids': 3, 'couples': 4 };
-                    if (catMap[cleanName]) {
-                        state.categoryId = catMap[cleanName];
+                    const canonicalGroupMap = { 1: 'women', 2: 'men', 3: 'kids', 4: 'couples' };
+                    const groupKey = canonicalGroupMap[parsedId];
+                    if (groupKey) {
+                        const nameMatch = findCategoryByName(groupKey);
+                        if (nameMatch) {
+                            state.categoryId = nameMatch.categoryId;
+                        } else {
+                            state.categoryId = parsedId;
+                        }
+                    } else {
+                        state.categoryId = parsedId;
                     }
                 }
             }
+        } else if (urlCategoryName && !state.subcategory) {
+            const cleanName = urlCategoryName.toLowerCase().trim();
+            const matchedCat = findCategoryByName(cleanName);
+            if (matchedCat) {
+                state.categoryId = matchedCat.categoryId;
+            } else {
+                const groupMap = { 'women': 'women', 'men': 'men', 'kids': 'kids', 'couples': 'couples' };
+                const groupKey = groupMap[cleanName] || (
+                    cleanName.includes('kid') || cleanName.includes('child') ? 'kids' :
+                    cleanName.includes('couple') || cleanName.includes('pair') ? 'couples' :
+                    cleanName.includes('women') ? 'women' :
+                    cleanName.includes('men') ? 'men' : null
+                );
+                if (groupKey) {
+                    const mappedCat = findCategoryByName(groupKey);
+                    if (mappedCat) {
+                        state.categoryId = mappedCat.categoryId;
+                    } else {
+                        const fallbackMap = { 'women': 25, 'men': 26, 'kids': 27, 'couples': 28 };
+                        state.categoryId = fallbackMap[groupKey] || null;
+                    }
+                }
+            }
+        }
+    }
 
-            const isAllActive = !state.categoryId;
+    // Update Header Banner Title, Breadcrumbs, and Subtitle
+    function updateHeaderAndBreadcrumbs() {
+        const titleEl = document.getElementById('showroom-page-title') || document.querySelector('.showroom-page-header h1');
+        const breadcrumbsEl = document.getElementById('showroom-breadcrumbs') || document.querySelector('.showroom-page-header .breadcrumbs');
+        const subtitleEl = document.getElementById('showroom-subtitle');
 
-            let categoriesHTML = `
+        const catName = state.categoryId ? getCategoryNameById(state.categoryId) : null;
+        const subcatName = state.subcategory || null;
+
+        // Title
+        if (titleEl) {
+            if (subcatName && catName) {
+                titleEl.textContent = `${catName}'s ${subcatName} Watches`;
+            } else if (subcatName) {
+                titleEl.textContent = `${subcatName} Watches Collection`;
+            } else if (catName) {
+                titleEl.textContent = `${catName}'s Watch Collection`;
+            } else {
+                titleEl.textContent = 'The Showroom';
+            }
+        }
+
+        // Breadcrumbs
+        if (breadcrumbsEl) {
+            if (subcatName && catName) {
+                breadcrumbsEl.innerHTML = `
+                    <a href="./index.html">Home</a>
+                    <span class="sep">/</span>
+                    <a href="./products.html" class="breadcrumb-all-link">Showroom</a>
+                    <span class="sep">/</span>
+                    <a href="./products.html?subcategory=${encodeURIComponent(subcatName)}" class="breadcrumb-subcat-link">${subcatName} Watches</a>
+                    <span class="sep">/</span>
+                    <span class="current">${catName}</span>
+                `;
+                const subcatLink = breadcrumbsEl.querySelector('.breadcrumb-subcat-link');
+                if (subcatLink) {
+                    subcatLink.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        state.categoryId = null;
+                        state.page = 0;
+                        updateUrlState();
+                        renderCategoriesSidebar();
+                        updateHeaderAndBreadcrumbs();
+                        loadProducts();
+                    });
+                }
+                const allLink = breadcrumbsEl.querySelector('.breadcrumb-all-link');
+                if (allLink) {
+                    allLink.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        state.subcategory = null;
+                        state.categoryId = null;
+                        state.page = 0;
+                        updateUrlState();
+                        renderCategoriesSidebar();
+                        updateHeaderAndBreadcrumbs();
+                        loadProducts();
+                    });
+                }
+            } else if (subcatName) {
+                breadcrumbsEl.innerHTML = `
+                    <a href="./index.html">Home</a>
+                    <span class="sep">/</span>
+                    <a href="./products.html" class="breadcrumb-all-link">Showroom</a>
+                    <span class="sep">/</span>
+                    <span class="current">${subcatName} Watches</span>
+                `;
+                const allLink = breadcrumbsEl.querySelector('.breadcrumb-all-link');
+                if (allLink) {
+                    allLink.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        state.subcategory = null;
+                        state.categoryId = null;
+                        state.page = 0;
+                        updateUrlState();
+                        renderCategoriesSidebar();
+                        updateHeaderAndBreadcrumbs();
+                        loadProducts();
+                    });
+                }
+            } else if (catName) {
+                breadcrumbsEl.innerHTML = `
+                    <a href="./index.html">Home</a>
+                    <span class="sep">/</span>
+                    <a href="./products.html" class="breadcrumb-all-link">Showroom</a>
+                    <span class="sep">/</span>
+                    <span class="current">${catName}</span>
+                `;
+            } else {
+                breadcrumbsEl.innerHTML = `
+                    <a href="./index.html">Home</a>
+                    <span class="sep">/</span>
+                    <span class="current">Collection</span>
+                `;
+            }
+        }
+
+        // Subtitle
+        if (subtitleEl) {
+            if (subcatName && catName) {
+                subtitleEl.textContent = `Exquisite ${catName}'s ${subcatName} timepieces.`;
+            } else if (subcatName) {
+                subtitleEl.textContent = `Showing ${subcatName} Watches across Women, Men, Kids & Couples.`;
+            } else if (catName) {
+                subtitleEl.textContent = `Showing ${catName}'s timepieces across Analog, Digital, Luxury & Sports.`;
+            } else {
+                subtitleEl.textContent = 'Exquisite mechanical watches, handpicked for you.';
+            }
+        }
+    }
+
+    // Render Categories in Sidebar according to the active View Collection context
+    function renderCategoriesSidebar() {
+        const categoriesContainer = document.getElementById('categories-list');
+        const widgetTitleEl = document.getElementById('filter-widget-category-title') || document.querySelector('.filter-widget-title');
+        if (!categoriesContainer) return;
+
+        let categoriesHTML = '';
+
+        if (state.subcategory) {
+            // Context: A specific watch type collection is active (e.g. "Digital")
+            // Show: Categories -> View All Watch Types -> All [Type] Watches -> Filter by Group: -> Women, Men, Kids, Couples
+            if (widgetTitleEl) {
+                widgetTitleEl.textContent = 'Categories';
+            }
+
+            const isAllSubcatActive = state.subcategory && !state.categoryId;
+            const groups = getCustomerGroups();
+
+            categoriesHTML += `
                 <li class="filter-category-item" style="margin-bottom: 10px;">
-                    <span class="filter-category-link ${isAllActive ? 'active' : ''}" data-id="" style="font-weight: 600; cursor: pointer;">
-                        All Timepieces
-                    </span>
+                    <div class="filter-back-to-all"
+                         style="font-size: 0.8rem; color: var(--gold, #A88548); cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 4px 6px; border-radius: 4px; transition: background 0.2s ease;">
+                        <span>&larr; View All Watch Types</span>
+                    </div>
+                </li>
+                <li class="filter-category-item" style="margin-bottom: 6px;">
+                    <div class="filter-category-header filter-all-subcat ${isAllSubcatActive ? 'active' : ''}"
+                         style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.92rem; color: ${isAllSubcatActive ? 'var(--gold, #A88548)' : 'var(--white, #fff)'}; background: ${isAllSubcatActive ? 'rgba(168, 133, 72, 0.15)' : 'transparent'}; border: 1px solid ${isAllSubcatActive ? 'rgba(168, 133, 72, 0.3)' : 'transparent'}; transition: all 0.2s ease;">
+                        <span>All ${state.subcategory} Watches</span>
+                    </div>
+                </li>
+                <li class="filter-category-item" style="margin: 10px 0 6px 0;">
+                    <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gold, #A88548); padding: 4px 6px; font-weight: 600;">
+                        Filter by Group:
+                    </div>
                 </li>
             `;
 
-            // Render 4 main categories
-            const mainNames = ["Women", "Men", "Kids", "Couples"];
-            mainNames.forEach((mainName, idx) => {
-                const catObj = categoryList.find(c => (c.categoryName || '').toLowerCase() === mainName.toLowerCase());
-                const catId = catObj ? catObj.categoryId : (idx + 1);
-                const isActive = state.categoryId === catId;
-
+            groups.forEach(grp => {
+                const isGroupActive = state.categoryId === grp.id;
                 categoriesHTML += `
-                    <li class="filter-category-item" style="margin: 6px 0;">
-                        <span class="filter-category-link ${isActive ? 'active' : ''}"
-                              data-id="${catId}"
-                              style="font-size: 0.92rem; padding: 6px 10px; display: block; border-radius: 4px; cursor: pointer; transition: all 0.2s ease;">
-                            ${mainName}
-                        </span>
+                    <li class="filter-category-item" style="margin: 3px 0;">
+                        <div class="filter-group-choice ${isGroupActive ? 'active' : ''}"
+                             data-group-id="${grp.id}"
+                             data-group-name="${grp.name}"
+                             style="display: flex; justify-content: space-between; align-items: center; padding: 7px 12px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; font-weight: ${isGroupActive ? '600' : '400'}; color: ${isGroupActive ? 'var(--gold, #A88548)' : 'var(--white, #fff)'}; background: ${isGroupActive ? 'rgba(168, 133, 72, 0.15)' : 'rgba(255,255,255,0.02)'}; border: 1px solid ${isGroupActive ? 'rgba(168, 133, 72, 0.3)' : 'rgba(255,255,255,0.04)'}; transition: all 0.2s ease;">
+                            <span>${grp.name}</span>
+                        </div>
                     </li>
                 `;
             });
 
             categoriesContainer.innerHTML = categoriesHTML;
 
-            // Bind click handlers for category links
-            const links = categoriesContainer.querySelectorAll('.filter-category-link');
-            links.forEach(link => {
-                link.addEventListener('click', function () {
-                    links.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-
-                    const rawId = this.dataset.id;
-                    const parsedId = parseInt(rawId, 10);
-                    if (!isNaN(parsedId) && parsedId > 0) {
-                        state.categoryId = parsedId;
-                    } else {
-                        state.categoryId = null;
-                    }
+            // Bind click handler for "View All Watch Types"
+            const backBtn = categoriesContainer.querySelector('.filter-back-to-all');
+            if (backBtn) {
+                backBtn.addEventListener('click', function () {
+                    state.subcategory = null;
+                    state.categoryId = null;
                     state.page = 0;
+                    updateUrlState();
+                    renderCategoriesSidebar();
+                    updateHeaderAndBreadcrumbs();
+                    loadProducts();
+                });
+            }
+
+            // Bind click handler for "All [Type] Watches"
+            const allSubcatBtn = categoriesContainer.querySelector('.filter-all-subcat');
+            if (allSubcatBtn) {
+                allSubcatBtn.addEventListener('click', function () {
+                    state.categoryId = null;
+                    state.page = 0;
+                    updateUrlState();
+                    renderCategoriesSidebar();
+                    updateHeaderAndBreadcrumbs();
+                    loadProducts();
+                });
+            }
+
+            // Bind click handlers for Customer Groups
+            const groupChoices = categoriesContainer.querySelectorAll('.filter-group-choice');
+            groupChoices.forEach(choice => {
+                choice.addEventListener('click', function () {
+                    const rawGroupId = this.dataset.groupId;
+                    const parsedGroupId = parseInt(rawGroupId, 10);
+                    state.categoryId = parsedGroupId;
+                    state.page = 0;
+                    updateUrlState();
+                    renderCategoriesSidebar();
+                    updateHeaderAndBreadcrumbs();
                     loadProducts();
                 });
             });
 
+        } else {
+            // Context: General showroom overview (No specific watch type selected yet)
+            if (widgetTitleEl) {
+                widgetTitleEl.textContent = 'Categories';
+            }
+
+            const isAllActive = !state.categoryId && !state.subcategory;
+
+            categoriesHTML += `
+                <li class="filter-category-item" style="margin-bottom: 8px;">
+                    <div class="filter-category-header filter-all-timepieces ${isAllActive ? 'active' : ''}"
+                         data-id=""
+                         style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.95rem; color: ${isAllActive ? 'var(--gold, #A88548)' : 'var(--white, #fff)'}; background: ${isAllActive ? 'rgba(168, 133, 72, 0.15)' : 'transparent'}; border: 1px solid ${isAllActive ? 'rgba(168, 133, 72, 0.3)' : 'transparent'}; transition: all 0.2s ease;">
+                        <span>All Timepieces</span>
+                    </div>
+                </li>
+                <li class="filter-category-item" style="margin: 8px 0 4px 0;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--light-gray, #a0a0a0); padding: 4px 10px; font-weight: 600;">
+                        Watch Collections:
+                    </div>
+                </li>
+            `;
+
+            WATCH_COLLECTIONS.forEach(wc => {
+                categoriesHTML += `
+                    <li class="filter-category-item" style="margin: 4px 0;">
+                        <div class="filter-watch-col-choice"
+                             data-subcat="${wc.subcategory}"
+                             style="display: flex; justify-content: space-between; align-items: center; padding: 7px 12px; border-radius: 5px; cursor: pointer; font-size: 0.92rem; font-weight: 500; color: var(--white, #fff); background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); transition: all 0.2s ease;">
+                            <span>${wc.name}</span>
+                        </div>
+                    </li>
+                `;
+            });
+
+            categoriesContainer.innerHTML = categoriesHTML;
+
+            // Bind click handler for "All Timepieces"
+            const allBtn = categoriesContainer.querySelector('.filter-all-timepieces');
+            if (allBtn) {
+                allBtn.addEventListener('click', function () {
+                    state.categoryId = null;
+                    state.subcategory = null;
+                    state.page = 0;
+                    updateUrlState();
+                    renderCategoriesSidebar();
+                    updateHeaderAndBreadcrumbs();
+                    loadProducts();
+                });
+            }
+
+            // Bind click handlers for Watch Collections
+            const watchColChoices = categoriesContainer.querySelectorAll('.filter-watch-col-choice');
+            watchColChoices.forEach(choice => {
+                choice.addEventListener('click', function () {
+                    const subcat = this.dataset.subcat;
+                    state.subcategory = subcat;
+                    state.categoryId = null;
+                    state.page = 0;
+                    updateUrlState();
+                    renderCategoriesSidebar();
+                    updateHeaderAndBreadcrumbs();
+                    loadProducts();
+                });
+            });
+        }
+    }
+
+    // Load categories list and insert hierarchical sidebar
+    async function loadCategories() {
+        try {
+            let categoryList = [];
+            if (window.api && typeof window.api.getCategories === 'function') {
+                const response = await api.getCategories();
+                if (response) {
+                    if (Array.isArray(response)) {
+                        categoryList = response;
+                    } else if (response.data && Array.isArray(response.data)) {
+                        categoryList = response.data;
+                    } else if (response.content && Array.isArray(response.content)) {
+                        categoryList = response.content;
+                    }
+                }
+            }
+
+            allLoadedCategories = categoryList;
+
+            // Parse URL Query parameters
+            parseUrlParameters(categoryList);
+
+            // Render categories sidebar & update header
+            renderCategoriesSidebar();
+            updateHeaderAndBreadcrumbs();
+
         } catch (err) {
             console.error("Failed to load categories in sidebar:", err);
+            parseUrlParameters([]);
+            renderCategoriesSidebar();
+            updateHeaderAndBreadcrumbs();
         }
+    }
+
+    function updateUrlState() {
+        const url = new URL(window.location);
+        if (state.categoryId) {
+            url.searchParams.set('categoryId', state.categoryId);
+            const catName = getCategoryNameById(state.categoryId);
+            if (catName) url.searchParams.set('category', catName);
+        } else {
+            url.searchParams.delete('categoryId');
+            url.searchParams.delete('category');
+            url.searchParams.delete('group');
+        }
+
+        if (state.subcategory) {
+            url.searchParams.set('subcategory', state.subcategory);
+        } else {
+            url.searchParams.delete('subcategory');
+            url.searchParams.delete('watchType');
+        }
+
+        window.history.replaceState({}, '', url);
     }
 
     // Load product list using filter api with resilient fallback
@@ -137,7 +523,7 @@
             // Sanitize filter state before making request
             const cleanFilters = {
                 page: typeof state.page === 'number' && !isNaN(state.page) && state.page >= 0 ? state.page : 0,
-                size: typeof state.size === 'number' && !isNaN(state.size) && state.size > 0 ? state.size : 9,
+                size: typeof state.size === 'number' && !isNaN(state.size) && state.size > 0 ? state.size : 12,
                 sortBy: state.sortBy || 'productId',
                 direction: state.direction || 'asc'
             };
@@ -147,6 +533,9 @@
             }
             if (typeof state.categoryId === 'number' && !isNaN(state.categoryId) && state.categoryId > 0) {
                 cleanFilters.categoryId = state.categoryId;
+            }
+            if (state.subcategory && String(state.subcategory).trim()) {
+                cleanFilters.subcategory = String(state.subcategory).trim();
             }
             if (typeof state.minPrice === 'number' && !isNaN(state.minPrice) && state.minPrice >= 0) {
                 cleanFilters.minPrice = state.minPrice;
@@ -162,60 +551,69 @@
             let totalPages = 1;
             let totalElements = 0;
 
-            try {
-                const res = await api.filterProducts(cleanFilters);
-                if (res && res.content) {
-                    products = res.content;
-                    totalPages = res.totalPages || 1;
-                    totalElements = res.totalElements || products.length;
-                } else if (Array.isArray(res)) {
-                    products = res;
-                    totalElements = res.length;
-                    totalPages = 1;
-                } else if (res && res.data) {
-                    products = Array.isArray(res.data) ? res.data : (res.data.content || []);
-                    totalPages = res.data.totalPages || 1;
-                    totalElements = res.data.totalElements || products.length;
-                }
-            } catch (filterErr) {
-                console.warn('Filter API fallback to getAllProducts:', filterErr);
-                const allRes = await api.getAllProducts();
-                let allList = Array.isArray(allRes) ? allRes : (allRes && allRes.data && Array.isArray(allRes.data) ? allRes.data : []);
+            const fetchPagePromise = api.filterProducts(cleanFilters).catch(filterErr => {
+                console.warn('Filter API fallback:', filterErr);
+                return null;
+            });
 
-                // Filter out any integration test products
-                allList = allList.filter(p => p.name && !p.name.includes("Integration Test") && p.productId < 109);
+            // Parallel execution of wishlist and products fetching
+            const [wishlistItems, res] = await Promise.all([wishlistPromise, fetchPagePromise]);
 
-                if (cleanFilters.categoryId) {
-                    allList = allList.filter(p => p.categoryId === cleanFilters.categoryId);
-                }
-                if (cleanFilters.keyword) {
-                    const kw = cleanFilters.keyword.toLowerCase();
-                    allList = allList.filter(p =>
-                        (p.name && p.name.toLowerCase().includes(kw)) ||
-                        (p.description && p.description.toLowerCase().includes(kw))
-                    );
-                }
-                if (cleanFilters.minPrice !== undefined) {
-                    allList = allList.filter(p => p.price >= cleanFilters.minPrice);
-                }
-                if (cleanFilters.maxPrice !== undefined) {
-                    allList = allList.filter(p => p.price <= cleanFilters.maxPrice);
-                }
-                if (cleanFilters.inStock) {
-                    allList = allList.filter(p => p.stock > 0);
-                }
+            if (res && res.content) {
+                products = res.content;
+                totalPages = res.totalPages || 1;
+                totalElements = res.totalElements || products.length;
+            } else if (Array.isArray(res)) {
+                products = res;
+                totalElements = res.length;
+                totalPages = 1;
+            } else if (res && res.data) {
+                products = Array.isArray(res.data) ? res.data : (res.data.content || []);
+                totalPages = res.data.totalPages || 1;
+                totalElements = res.data.totalElements || products.length;
+            } else {
+                // Fallback to getAllProducts if filter endpoint returned null or failed
+                try {
+                    const allRes = await api.getAllProducts();
+                    let allList = Array.isArray(allRes) ? allRes : (allRes && allRes.data && Array.isArray(allRes.data) ? allRes.data : []);
+                    allList = allList.filter(p => p.name && !p.name.includes("Integration Test"));
 
-                totalElements = allList.length;
-                totalPages = Math.ceil(totalElements / cleanFilters.size) || 1;
-                const startIdx = cleanFilters.page * cleanFilters.size;
-                products = allList.slice(startIdx, startIdx + cleanFilters.size);
+                    if (cleanFilters.categoryId) {
+                        allList = allList.filter(p => p.categoryId === cleanFilters.categoryId);
+                    }
+                    if (cleanFilters.subcategory) {
+                        allList = allList.filter(p => p.subcategory && p.subcategory.toLowerCase() === cleanFilters.subcategory.toLowerCase());
+                    }
+                    if (cleanFilters.keyword) {
+                        const kw = cleanFilters.keyword.toLowerCase();
+                        allList = allList.filter(p =>
+                            (p.name && p.name.toLowerCase().includes(kw)) ||
+                            (p.description && p.description.toLowerCase().includes(kw))
+                        );
+                    }
+                    if (cleanFilters.minPrice !== undefined) {
+                        allList = allList.filter(p => p.price >= cleanFilters.minPrice);
+                    }
+                    if (cleanFilters.maxPrice !== undefined) {
+                        allList = allList.filter(p => p.price <= cleanFilters.maxPrice);
+                    }
+                    if (cleanFilters.inStock) {
+                        allList = allList.filter(p => p.stock > 0);
+                    }
+
+                    totalElements = allList.length;
+                    totalPages = Math.ceil(totalElements / cleanFilters.size) || 1;
+                    const startIdx = cleanFilters.page * cleanFilters.size;
+                    products = allList.slice(startIdx, startIdx + cleanFilters.size);
+                } catch (fallbackErr) {
+                    console.error("Catalog fallback error:", fallbackErr);
+                }
             }
 
-            // Filter out any integration test products if present
-            products = (products || []).filter(p => p.name && !p.name.includes("Integration Test") && p.productId < 109);
+            // Filter out any test products
+            products = (products || []).filter(p => p.name && !p.name.includes("Integration Test"));
 
-            // Await wishlist to resolve active states
-            const wishlistItems = await wishlistPromise;
+            // Populate wishlist IDs
             if (wishlistItems && Array.isArray(wishlistItems)) {
                 window.wishlistProductIds = new Set(wishlistItems.map(item => item.productId));
             }
@@ -225,66 +623,14 @@
                 productGrid.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
                         <h3 style="color: var(--white); font-family: var(--font-title); margin-bottom: 10px;">No Timepieces Found</h3>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Try adjusting your search criteria or explore other categories.</p>
+                        <p style="color: var(--gray); font-size: 0.9rem;">Try adjusting your search criteria or explore other categories/subcategories.</p>
                     </div>
                 `;
                 if (paginationContainer) paginationContainer.innerHTML = '';
                 return;
             }
 
-            productGrid.innerHTML = products.map(p => {
-                const mainImage = (p.images && p.images.length > 0)
-                    ? p.images[0].imageUrl
-                    : 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&auto=format&fit=crop';
-
-                const inWishlist = window.wishlistProductIds ? window.wishlistProductIds.has(p.productId) : false;
-                const wishlistClass = inWishlist ? 'active' : '';
-                const stock = Number(p.stock || 0);
-                const outOfStock = stock <= 0;
-
-                const displayName = window.resolveProductName ? window.resolveProductName(p.name, p.productId) : (p.name && p.name.trim().toLowerCase() === 'titan neo updated' ? 'Titan Neo' : p.name);
-                const displayRating = (typeof window.getProductDisplayRating === 'function')
-                    ? window.getProductDisplayRating(p)
-                    : (p.rating ? Number(p.rating).toFixed(1) : '4.8');
-
-                const ratingBadge = `
-                    <div class="product-card-rating" style="position: absolute; bottom: 10px; left: 10px; z-index: 5; background: rgba(14, 13, 11, 0.85); backdrop-filter: blur(4px); border: 1px solid rgba(168, 133, 72, 0.3); border-radius: 4px; padding: 3px 8px; display: flex; align-items: center; gap: 4px;">
-                        <span style="color: var(--gold, #A88548); font-size: 0.85rem;">★</span>
-                        <span style="color: #FFFFFF; font-size: 0.78rem; font-weight: 600; font-family: var(--font-body);">${displayRating}</span>
-                    </div>
-                `;
-
-                return `
-                    <div class="product-card" onclick="window.location.href='./product-details.html?id=${p.productId}'">
-                        <div class="product-img-wrapper" style="position: relative;">
-                            <img src="${mainImage}" alt="${displayName}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600'">
-                            ${ratingBadge}
-                            ${token && role !== 'ADMIN' ? `
-                                <button class="product-wishlist-btn ${wishlistClass}"
-                                        data-product-id="${p.productId}"
-                                        onclick="event.stopPropagation(); window.toggleWishlist(${p.productId}, this);"
-                                        title="${inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="${inWishlist ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                    </svg>
-                                </button>
-                            ` : ''}
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-title" title="${displayName}">${displayName}</h3>
-                            <div class="product-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
-                            <div class="product-actions" onclick="event.stopPropagation();">
-                                <button class="btn-product-action btn-add-cart"
-                                        data-product-id="${p.productId}"
-                                        ${outOfStock ? 'disabled' : ''}
-                                        onclick="window.addToCart(${p.productId});">
-                                    ${outOfStock ? 'Out of Stock' : 'Add to Cart'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            productGrid.innerHTML = products.map(p => createProductCardHtml(p)).join('');
 
             // Render Pagination
             if (paginationContainer) {
@@ -464,7 +810,7 @@
             });
         }
 
-        // Initial loadings
+        // Initial loadings - sequential to ensure categories & URL parameters are resolved before fetching products
         if (document.getElementById('catalog-products-grid')) {
             await loadCategories();
             await loadProducts();
