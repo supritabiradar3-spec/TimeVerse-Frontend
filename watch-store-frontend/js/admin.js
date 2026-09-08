@@ -30,7 +30,16 @@
         return;
     }
 
+    function isActiveCatalogProduct(product) {
+        const id = Number(product?.productId);
+        return Number.isFinite(id) && id >= 1 && id <= 160;
+    }
+
     const CATEGORY_MAP = {
+        25: 'Women',
+        26: 'Men',
+        27: 'Kids',
+        28: 'Couples',
         1: 'Women',
         2: 'Men',
         3: 'Kids',
@@ -42,6 +51,10 @@
         "Men": "../men-watch.jpg",
         "Kids": "../kids-watch.jpg",
         "Couples": "../couples-watch.jpg",
+        25: "../women-watch.jpg",
+        26: "../men-watch.jpg",
+        27: "../kids-watch.jpg",
+        28: "../couples-watch.jpg",
         1: "../women-watch.jpg",
         2: "../men-watch.jpg",
         3: "../kids-watch.jpg",
@@ -634,14 +647,17 @@
             const { customers, customerOrders } = extractCustomerOrders(ordersRes, usersRes);
             allCachedOrders = customerOrders;
 
+            // Filter active products (IDs 1–160)
+            const activeProducts = allCachedProducts.filter(isActiveCatalogProduct);
+
             // Total valid revenue from current customer unique orders
             const revenueSum = customerOrders.reduce((sum, order) => sum + calculateOrderNetRevenue(order), 0);
             const paidOrders = customerOrders.filter(order => calculateOrderNetRevenue(order) > 0);
-            const lowStock = allCachedProducts.filter(product => Number(product.stock || 0) < 5).length;
-            const inventoryValue = allCachedProducts.reduce((sum, product) => sum + (Number(product.price || 0) * Number(product.stock || 0)), 0);
+            const lowStock = activeProducts.filter(product => Number(product.stock || 0) < 5).length;
+            const inventoryValue = activeProducts.reduce((sum, product) => sum + (Number(product.price || 0) * Number(product.stock || 0)), 0);
 
             const totalProductsEl = document.getElementById('total-products');
-            if (totalProductsEl) totalProductsEl.innerText = allCachedProducts.length;
+            if (totalProductsEl) totalProductsEl.innerText = activeProducts.length;
 
             const totalCategoriesEl = document.getElementById('total-categories-metric');
             if (totalCategoriesEl) totalCategoriesEl.innerText = allCachedCategories.length;
@@ -664,8 +680,8 @@
             const inventoryValueEl = document.getElementById('inventory-value');
             if (inventoryValueEl) inventoryValueEl.innerText = formatCurrency(inventoryValue);
 
-            populateInventoryTable(allCachedProducts, allCachedCategories);
-            renderDashboardCharts(allCachedProducts, customerOrders, allCachedCategories);
+            populateInventoryTable(activeProducts, allCachedCategories);
+            renderDashboardCharts(activeProducts, customerOrders, allCachedCategories);
             setAdminWelcomeName();
         } catch (e) {
             console.error('Dashboard stats error:', e);
@@ -806,7 +822,10 @@
                         loadAdminProducts();
                         loadDashboard();
                     } catch (err) {
-                        showAlert(`Failed to delete watch: ${err.message}`, 'error');
+                        const errMsg = (err.message && (err.message.includes('500') || err.message.includes('constraint') || err.message.includes('foreign key') || err.message.includes('DataIntegrityViolationException') || err.message.includes('foreign')))
+                            ? 'This product cannot be deleted because it is referenced by existing customer records.'
+                            : `Failed to delete watch: ${err.message || 'This product cannot be deleted because it is referenced by existing customer records.'}`;
+                        showAlert(errMsg, 'error');
                     }
                 }
             });
@@ -840,7 +859,10 @@
                 const selectedSubcat = subcatFilter ? subcatFilter.value : '';
                 const selectedStock = stockFilter ? stockFilter.value : '';
 
-                let filtered = (allCachedProducts || []).filter(prod => {
+                // Focus on active catalog products only (IDs 1–160)
+                const activeProducts = (allCachedProducts || []).filter(isActiveCatalogProduct);
+
+                let filtered = activeProducts.filter(prod => {
                     if (!prod) return false;
                     const name = String(prod.name || '').toLowerCase();
                     const prodId = String(prod.productId || '');
