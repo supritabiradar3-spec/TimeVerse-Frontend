@@ -24,28 +24,47 @@
             font-family: var(--font-body);
         }
 
-        /* Page Header */
+        /* Page Header - Compact Premium Admin Dashboard Banner */
         .page-header {
-            background: linear-gradient(180deg, rgba(250, 249, 246, 0.85) 0%, rgba(250, 249, 246, 1) 100%),
+            background: linear-gradient(180deg, rgba(250, 249, 246, 0.72) 0%, rgba(250, 249, 246, 0.88) 100%),
                 url('https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=1920') center/cover no-repeat;
-            padding: 110px 0 35px 0;
+            padding: 75px 0 20px 0;
+            height: 195px;
+            min-height: 180px;
+            max-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            box-sizing: border-box;
+        }
+
+        body:not(.light-theme) .page-header {
+            background: linear-gradient(180deg, rgba(13, 13, 14, 0.72) 0%, rgba(13, 13, 14, 0.88) 100%),
+                url('https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=1920') center/cover no-repeat;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.15);
         }
 
         .page-header h1 {
-            font-size: 2.2rem;
+            font-size: 2.1rem;
             font-weight: 700;
             color: #111111;
             letter-spacing: 0.5px;
             font-family: var(--font-title);
+            margin: 0 0 6px 0;
+            line-height: 1.2;
+        }
+
+        body:not(.light-theme) .page-header h1 {
+            color: #FFFFFF !important;
         }
 
         .breadcrumbs {
             font-size: 0.85rem;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             color: #6B6A67;
-            margin-top: 8px;
+            margin-top: 0;
         }
 
         .breadcrumbs a {
@@ -55,6 +74,10 @@
 
         .breadcrumbs a:hover {
             color: #111111;
+        }
+
+        body:not(.light-theme) .breadcrumbs a {
+            color: #CBD5E1 !important;
         }
 
         .breadcrumbs span {

@@ -71,6 +71,202 @@
                 width: 100%;
             }
         }
+        /* Light Premium Luxury Hero Banner for Checkout Page */
+        .checkout-page-header {
+            margin-top: 80px;
+            padding: 35px 0;
+            min-height: 260px;
+            max-height: 320px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #FAF8F5 0%, #F5F1E8 50%, #EDE6D8 100%) !important;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.35);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .checkout-page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: radial-gradient(circle at 80% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .checkout-hero-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            gap: 30px;
+        }
+
+        .checkout-hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            max-width: 620px;
+        }
+
+        .checkout-page-tagline {
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 2.5px !important;
+            color: #A88548 !important;
+            text-transform: uppercase !important;
+            margin-bottom: 8px !important;
+            font-family: var(--font-body, 'Outfit', sans-serif) !important;
+            display: inline-block;
+        }
+
+        .checkout-page-header h1,
+        .checkout-page-title {
+            font-family: 'Cinzel', serif !important;
+            font-size: 2.4rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 1px !important;
+            color: #121212 !important;
+            margin: 0 0 10px 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .checkout-page-subtitle {
+            font-size: 0.95rem !important;
+            color: #4E4C47 !important;
+            margin: 0 0 14px 0 !important;
+            max-width: 540px !important;
+            line-height: 1.5 !important;
+            font-family: var(--font-body, 'Outfit', sans-serif) !important;
+        }
+
+        .checkout-page-header .breadcrumbs {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 0.5px !important;
+            color: #666664 !important;
+            margin: 0 !important;
+            font-weight: 500 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .checkout-page-header .breadcrumbs a {
+            color: #1F3A5F !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: color 0.2s ease !important;
+        }
+
+        .checkout-page-header .breadcrumbs a:hover {
+            color: #C5A059 !important;
+        }
+
+        .checkout-page-header .breadcrumbs span.sep {
+            color: #C5A059 !important;
+            font-weight: 600 !important;
+        }
+
+        .checkout-page-header .breadcrumbs span.current {
+            color: #A88548 !important;
+            font-weight: 600 !important;
+        }
+
+        .checkout-hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-shrink: 0;
+            padding-right: 20px;
+        }
+
+        .checkout-hero-img {
+            height: 220px;
+            width: auto;
+            max-width: 240px;
+            object-fit: contain;
+            filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        @media (max-width: 992px) {
+            .checkout-page-header {
+                min-height: 230px;
+                padding: 28px 0;
+            }
+
+            .checkout-hero-img {
+                height: 170px;
+                max-width: 190px;
+            }
+
+            .checkout-page-header h1,
+            .checkout-page-title {
+                font-size: 2.0rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .checkout-page-header {
+                margin-top: 60px !important;
+                padding: 24px 15px !important;
+                min-height: auto !important;
+                max-height: none !important;
+            }
+
+            .checkout-hero-container {
+                flex-direction: column-reverse;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .checkout-hero-content {
+                align-items: center;
+                text-align: center;
+            }
+
+            .checkout-page-header .breadcrumbs {
+                justify-content: center;
+            }
+
+            .checkout-hero-visual {
+                padding-right: 0;
+                justify-content: center;
+            }
+
+            .checkout-hero-img {
+                height: 140px;
+            }
+
+            .checkout-page-header h1,
+            .checkout-page-title {
+                font-size: 1.7rem !important;
+            }
+
+            .checkout-page-subtitle {
+                font-size: 0.88rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .checkout-hero-img {
+                height: 115px;
+            }
+
+            .checkout-page-header h1,
+            .checkout-page-title {
+                font-size: 1.45rem !important;
+            }
+        }
     </style>
 </head>
 
@@ -79,13 +275,19 @@
     <!-- Header Holder -->
     <header></header>
 
-    <!-- Page Header Hero -->
-    <section class="page-header">
-        <div class="container">
-            <h1>Secure Checkout</h1>
-            <div class="breadcrumbs">
-                <a href="./index.html">Home</a> &nbsp;/&nbsp; <a href="./cart.html">Cart</a> &nbsp;/&nbsp;
-                <span>Checkout</span>
+    <!-- Page Header Hero (Light Premium Luxury Banner) -->
+    <section class="checkout-page-header">
+        <div class="container checkout-hero-container">
+            <div class="checkout-hero-content">
+                <span class="checkout-page-tagline">TIME FOR WHAT MATTERS</span>
+                <h1 class="checkout-page-title">Secure Checkout</h1>
+                <p class="checkout-page-subtitle">Complete your order with confidence and get closer to your next favorite timepiece.</p>
+                <div class="breadcrumbs">
+                    <a href="./index.html">Home</a> <span class="sep">/</span> <a href="./cart.html">Cart</a> <span class="sep">/</span> <span class="current">Checkout</span>
+                </div>
+            </div>
+            <div class="checkout-hero-visual">
+                <img src="../hero-watch-luxury.jpg" alt="TimeVerse Luxury Timepiece" class="checkout-hero-img">
             </div>
         </div>
     </section>

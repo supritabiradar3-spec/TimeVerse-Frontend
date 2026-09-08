@@ -205,14 +205,16 @@ img, video, canvas, svg {
     }
 
     .showroom-page-header,
-    .cart-page-header {
-        height: 150px !important;
+    .cart-page-header,
+    .checkout-page-header {
+        height: auto !important;
         min-height: 140px !important;
         margin-top: 60px !important;
     }
 
     .showroom-page-header h1,
-    .cart-page-header h1 {
+    .cart-page-header h1,
+    .checkout-page-header h1 {
         font-size: 1.75rem !important;
     }
 
@@ -423,8 +425,47 @@ img, video, canvas, svg {
     }
 
     .product-card-name {
-        font-size: 1.05rem !important;
-        margin-bottom: 2px !important;
+        font-size: 0.94rem !important;
+        font-weight: 500 !important;
+        line-height: 1.35 !important;
+        letter-spacing: normal !important;
+        min-height: 2.7em !important;
+        margin-bottom: 3px !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .pagination-container,
+    #catalog-pagination {
+        margin: 28px auto 14px auto !important;
+        gap: 6px !important;
+    }
+
+    .pagination-btn {
+        height: 36px !important;
+        min-width: 36px !important;
+        font-size: 0.82rem !important;
+    }
+
+    .pagination-btn-nav {
+        padding: 0 12px !important;
+        min-width: 68px !important;
+    }
+
+    .pagination-btn-num,
+    .pagination-btn:not(:first-child):not(:last-child):not(.pagination-btn-nav) {
+        width: 36px !important;
+        min-width: 36px !important;
+        padding: 0 !important;
+    }
+
+    .pagination-ellipsis {
+        height: 36px !important;
+        min-width: 20px !important;
+        font-size: 0.95rem !important;
     }
 
     .product-card-price {
@@ -640,7 +681,8 @@ img, video, canvas, svg {
     }
 
     .showroom-page-header h1,
-    .cart-page-header h1 {
+    .cart-page-header h1,
+    .checkout-page-header h1 {
         font-size: 1.45rem !important;
     }
 
@@ -662,7 +704,47 @@ img, video, canvas, svg {
     }
 
     .product-card-name {
-        font-size: 0.98rem !important;
+        font-size: 0.88rem !important;
+        font-weight: 500 !important;
+        line-height: 1.35 !important;
+        letter-spacing: normal !important;
+        min-height: 2.7em !important;
+        margin-bottom: 2px !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .pagination-container,
+    #catalog-pagination {
+        margin: 22px auto 12px auto !important;
+        gap: 4px !important;
+    }
+
+    .pagination-btn {
+        height: 34px !important;
+        min-width: 34px !important;
+        font-size: 0.78rem !important;
+    }
+
+    .pagination-btn-nav {
+        padding: 0 8px !important;
+        min-width: 58px !important;
+    }
+
+    .pagination-btn-num,
+    .pagination-btn:not(:first-child):not(:last-child):not(.pagination-btn-nav) {
+        width: 32px !important;
+        min-width: 32px !important;
+        padding: 0 !important;
+    }
+
+    .pagination-ellipsis {
+        height: 34px !important;
+        min-width: 16px !important;
+        font-size: 0.85rem !important;
     }
 
     .product-card-price {

@@ -38,7 +38,7 @@
         maxPrice: null,
         inStock: null,
         page: 0,
-        size: 20,
+        size: 10,
         sortBy: 'productId',
         direction: 'asc'
     };
@@ -523,7 +523,7 @@
             // Sanitize filter state before making request
             const cleanFilters = {
                 page: typeof state.page === 'number' && !isNaN(state.page) && state.page >= 0 ? state.page : 0,
-                size: typeof state.size === 'number' && !isNaN(state.size) && state.size > 0 ? state.size : 12,
+                size: typeof state.size === 'number' && !isNaN(state.size) && state.size > 0 ? state.size : 10,
                 sortBy: state.sortBy || 'productId',
                 direction: state.direction || 'asc'
             };
@@ -620,13 +620,20 @@
 
             // Render products
             if (!products || products.length === 0) {
+                if (state.page > 0) {
+                    state.page = 0;
+                    return loadProducts();
+                }
                 productGrid.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
                         <h3 style="color: var(--white); font-family: var(--font-title); margin-bottom: 10px;">No Timepieces Found</h3>
                         <p style="color: var(--gray); font-size: 0.9rem;">Try adjusting your search criteria or explore other categories/subcategories.</p>
                     </div>
                 `;
-                if (paginationContainer) paginationContainer.innerHTML = '';
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = '';
+                    paginationContainer.style.display = 'none';
+                }
                 return;
             }
 
@@ -636,23 +643,31 @@
             if (paginationContainer) {
                 if (totalPages <= 1) {
                     paginationContainer.innerHTML = '';
+                    paginationContainer.style.display = 'none';
                 } else {
+                    paginationContainer.style.display = 'flex';
                     let pagHTML = `
-                        <button class="pagination-btn" ${state.page === 0 ? 'disabled' : ''} onclick="window.changeCatalogPage(${state.page - 1})">
+                        <button class="pagination-btn pagination-btn-nav" ${state.page === 0 ? 'disabled' : ''} onclick="window.changeCatalogPage(${state.page - 1})">
                             &larr; Prev
                         </button>
                     `;
 
-                    for (let i = 0; i < totalPages; i++) {
-                        pagHTML += `
-                            <button class="pagination-btn ${state.page === i ? 'active' : ''}" onclick="window.changeCatalogPage(${i})">
-                                ${i + 1}
-                            </button>
-                        `;
+                    const pageItems = getPaginationItems(state.page, totalPages);
+                    for (let i = 0; i < pageItems.length; i++) {
+                        const item = pageItems[i];
+                        if (item === 'ellipsis') {
+                            pagHTML += `<span class="pagination-ellipsis">&hellip;</span>`;
+                        } else {
+                            pagHTML += `
+                                <button class="pagination-btn pagination-btn-num ${state.page === item ? 'active' : ''}" onclick="window.changeCatalogPage(${item})">
+                                    ${item + 1}
+                                </button>
+                            `;
+                        }
                     }
 
                     pagHTML += `
-                        <button class="pagination-btn ${state.page === totalPages - 1 ? 'disabled' : ''} onclick="window.changeCatalogPage(${state.page + 1})">
+                        <button class="pagination-btn pagination-btn-nav" ${state.page === totalPages - 1 ? 'disabled' : ''} onclick="window.changeCatalogPage(${state.page + 1})">
                             Next &rarr;
                         </button>
                     `;
@@ -668,6 +683,50 @@
                 </div>
             `;
         }
+    }
+
+    // Helper to calculate compact pagination page numbers and ellipsis
+    function getPaginationItems(currentPage, totalPages) {
+        if (totalPages <= 7) {
+            const items = [];
+            for (let i = 0; i < totalPages; i++) items.push(i);
+            return items;
+        }
+
+        const cur = currentPage + 1; // 1-indexed
+        const items = [];
+
+        if (cur <= 3) {
+            for (let i = 1; i <= Math.max(3, cur + 1); i++) {
+                items.push(i - 1);
+            }
+            items.push('ellipsis');
+            items.push(totalPages - 2);
+            items.push(totalPages - 1);
+        } else if (cur >= totalPages - 2) {
+            items.push(0);
+            items.push(1);
+            items.push('ellipsis');
+            for (let i = Math.min(totalPages - 2, cur - 1); i <= totalPages; i++) {
+                items.push(i - 1);
+            }
+        } else {
+            items.push(0);
+            items.push('ellipsis');
+            items.push(cur - 2);
+            items.push(cur - 1);
+            items.push(cur);
+            items.push('ellipsis');
+            items.push(totalPages - 1);
+        }
+
+        const result = [];
+        for (let i = 0; i < items.length; i++) {
+            if (i === 0 || items[i] !== items[i - 1]) {
+                result.push(items[i]);
+            }
+        }
+        return result;
     }
 
     // Exposed pagination helper
