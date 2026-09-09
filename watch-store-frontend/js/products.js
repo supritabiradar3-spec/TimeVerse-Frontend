@@ -132,13 +132,17 @@
         }
 
         // Check if categoryName was actually a watch type (e.g., "Digital Watches")
-        if (urlCategoryName && !state.subcategory) {
+        let isWatchCollectionName = false;
+        if (urlCategoryName) {
             const cleanName = urlCategoryName.toLowerCase().trim();
             const matchedWatchCol = WATCH_COLLECTIONS.find(wc =>
                 wc.name.toLowerCase() === cleanName || wc.subcategory.toLowerCase() === cleanName
             );
             if (matchedWatchCol) {
-                state.subcategory = matchedWatchCol.subcategory;
+                isWatchCollectionName = true;
+                if (!state.subcategory) {
+                    state.subcategory = matchedWatchCol.subcategory;
+                }
             }
         }
 
@@ -180,7 +184,7 @@
                     }
                 }
             }
-        } else if (urlCategoryName && !state.subcategory) {
+        } else if (urlCategoryName && !isWatchCollectionName) {
             const cleanName = urlCategoryName.toLowerCase().trim();
             const matchedCat = findCategoryByName(cleanName);
             if (matchedCat) {
