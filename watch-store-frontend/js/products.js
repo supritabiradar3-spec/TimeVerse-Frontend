@@ -108,6 +108,98 @@
     }
     window.getCategoryNameById = getCategoryNameById;
 
+    // Helper to match category from list by name
+    function findCategoryByName(nameKey, list) {
+        const categoryList = (list && list.length > 0) ? list : allLoadedCategories;
+        if (!categoryList || categoryList.length === 0) return null;
+        const target = (nameKey || '').toLowerCase().trim();
+        return categoryList.find(c => {
+            if (!c || !c.categoryName) return false;
+            const cn = c.categoryName.toLowerCase().trim();
+            if (cn === target) return true;
+            if (target === 'kids' && (cn.includes('kid') || cn.includes('child') || cn.includes('youth'))) return true;
+            if (target === 'couples' && (cn.includes('couple') || cn.includes('pair'))) return true;
+            if (target === 'women' && cn.includes('women')) return true;
+            if (target === 'men' && (cn.includes('men') && !cn.includes('women'))) return true;
+            return false;
+        });
+    }
+
+    // Helper to identify customer groups or watch types from a search string
+    function resolveGroupOrSubcategoryFromTerm(rawTerm, list) {
+        if (!rawTerm || typeof rawTerm !== 'string') return null;
+        const clean = rawTerm.toLowerCase().trim().replace(/['"“”]/g, '');
+        if (!clean) return null;
+
+        // Customer groups
+        if (clean === 'women' || clean === 'woman' || clean === 'womens' || clean === 'women watch' || clean === 'womens watch' || clean === 'women watches' || clean === 'ladies' || clean === 'female') {
+            const matched = findCategoryByName('women', list);
+            return {
+                type: 'group',
+                name: 'Women',
+                categoryId: matched ? matched.categoryId : 25
+            };
+        }
+
+        if (clean === 'men' || clean === 'man' || clean === 'mens' || clean === 'men watch' || clean === 'mens watch' || clean === 'men watches' || clean === 'gents' || clean === 'male') {
+            const matched = findCategoryByName('men', list);
+            return {
+                type: 'group',
+                name: 'Men',
+                categoryId: matched ? matched.categoryId : 26
+            };
+        }
+
+        if (clean === 'kids' || clean === 'kid' || clean === 'children' || clean === 'child' || clean === 'youth' || clean === 'kids watch' || clean === 'kids watches') {
+            const matched = findCategoryByName('kids', list);
+            return {
+                type: 'group',
+                name: 'Kids',
+                categoryId: matched ? matched.categoryId : 27
+            };
+        }
+
+        if (clean === 'couples' || clean === 'couple' || clean === 'pair' || clean === 'pairs' || clean === 'couple watch' || clean === 'couple watches' || clean === 'couples watch' || clean === 'couples watches') {
+            const matched = findCategoryByName('couples', list);
+            return {
+                type: 'group',
+                name: 'Couples',
+                categoryId: matched ? matched.categoryId : 28
+            };
+        }
+
+        // Watch types (subcategories)
+        if (clean === 'analog' || clean === 'analogue' || clean === 'analog watch' || clean === 'analog watches') {
+            return {
+                type: 'subcategory',
+                subcategory: 'Analog'
+            };
+        }
+
+        if (clean === 'digital' || clean === 'digital watch' || clean === 'digital watches') {
+            return {
+                type: 'subcategory',
+                subcategory: 'Digital'
+            };
+        }
+
+        if (clean === 'luxury' || clean === 'luxury watch' || clean === 'luxury watches') {
+            return {
+                type: 'subcategory',
+                subcategory: 'Luxury'
+            };
+        }
+
+        if (clean === 'sports' || clean === 'sport' || clean === 'sports watch' || clean === 'sports watches' || clean === 'sport watch') {
+            return {
+                type: 'subcategory',
+                subcategory: 'Sports'
+            };
+        }
+
+        return null;
+    }
+
     // Parse URL Query Parameters on initialization
     function parseUrlParameters(categoryList) {
         const params = new URLSearchParams(window.location.search);
@@ -115,13 +207,6 @@
         const urlCategoryName = params.get('category') || params.get('mainCategory') || params.get('group');
         const urlSubcategory = params.get('subcategory') || params.get('subCategory') || params.get('watchType');
         const urlKeyword = params.get('search') || params.get('q') || params.get('keyword');
-
-        // Check if search keyword was passed
-        if (urlKeyword && urlKeyword.trim()) {
-            state.keyword = urlKeyword.trim();
-        } else {
-            state.keyword = '';
-        }
 
         // Check if watchType / subcategory was passed
         if (urlSubcategory) {
@@ -146,22 +231,6 @@
             }
         }
 
-        // Helper to match category from list by name
-        function findCategoryByName(nameKey) {
-            if (!categoryList || categoryList.length === 0) return null;
-            const target = nameKey.toLowerCase().trim();
-            return categoryList.find(c => {
-                if (!c || !c.categoryName) return false;
-                const cn = c.categoryName.toLowerCase().trim();
-                if (cn === target) return true;
-                if (target === 'kids' && (cn.includes('kid') || cn.includes('child') || cn.includes('youth'))) return true;
-                if (target === 'couples' && (cn.includes('couple') || cn.includes('pair'))) return true;
-                if (target === 'women' && cn.includes('women')) return true;
-                if (target === 'men' && (cn.includes('men') && !cn.includes('women'))) return true;
-                return false;
-            });
-        }
-
         // Parse customer group / category ID
         if (urlCatId) {
             const parsedId = parseInt(urlCatId, 10);
@@ -173,7 +242,7 @@
                     const canonicalGroupMap = { 1: 'women', 2: 'men', 3: 'kids', 4: 'couples' };
                     const groupKey = canonicalGroupMap[parsedId];
                     if (groupKey) {
-                        const nameMatch = findCategoryByName(groupKey);
+                        const nameMatch = findCategoryByName(groupKey, categoryList);
                         if (nameMatch) {
                             state.categoryId = nameMatch.categoryId;
                         } else {
@@ -186,7 +255,7 @@
             }
         } else if (urlCategoryName && !isWatchCollectionName) {
             const cleanName = urlCategoryName.toLowerCase().trim();
-            const matchedCat = findCategoryByName(cleanName);
+            const matchedCat = findCategoryByName(cleanName, categoryList);
             if (matchedCat) {
                 state.categoryId = matchedCat.categoryId;
             } else {
@@ -198,7 +267,7 @@
                     cleanName.includes('men') ? 'men' : null
                 );
                 if (groupKey) {
-                    const mappedCat = findCategoryByName(groupKey);
+                    const mappedCat = findCategoryByName(groupKey, categoryList);
                     if (mappedCat) {
                         state.categoryId = mappedCat.categoryId;
                     } else {
@@ -207,6 +276,28 @@
                     }
                 }
             }
+        }
+
+        // Check if search keyword was passed
+        if (urlKeyword && urlKeyword.trim()) {
+            const resolved = resolveGroupOrSubcategoryFromTerm(urlKeyword.trim(), categoryList);
+            if (resolved) {
+                if (resolved.type === 'group') {
+                    if (!state.categoryId) {
+                        state.categoryId = resolved.categoryId;
+                    }
+                } else if (resolved.type === 'subcategory') {
+                    if (!state.subcategory) {
+                        state.subcategory = resolved.subcategory;
+                    }
+                }
+                // Clear ordinary keyword so backend search is not restricted
+                state.keyword = '';
+            } else {
+                state.keyword = urlKeyword.trim();
+            }
+        } else {
+            state.keyword = '';
         }
     }
 
@@ -873,6 +964,38 @@
         }
         syncSearchInputs(state.keyword);
 
+        function handleSearchInput(rawVal) {
+            const val = (rawVal || '').trim();
+            if (!val) {
+                clearKeywordSearch();
+                state.page = 0;
+                updateUrlState();
+                loadProducts();
+                return;
+            }
+
+            const resolved = resolveGroupOrSubcategoryFromTerm(val, allLoadedCategories);
+            if (resolved) {
+                if (resolved.type === 'group') {
+                    state.categoryId = resolved.categoryId;
+                    state.keyword = '';
+                } else if (resolved.type === 'subcategory') {
+                    state.subcategory = resolved.subcategory;
+                    state.keyword = '';
+                }
+                state.page = 0;
+                updateUrlState();
+                renderCategoriesSidebar();
+                updateHeaderAndBreadcrumbs();
+                loadProducts();
+            } else {
+                state.keyword = val;
+                state.page = 0;
+                updateUrlState();
+                loadProducts();
+            }
+        }
+
         // Search listener (Debounced + Enter key)
         let searchTimeout;
         if (searchInput) {
@@ -880,10 +1003,7 @@
                 clearTimeout(searchTimeout);
                 const val = this.value;
                 searchTimeout = setTimeout(() => {
-                    state.keyword = val.trim();
-                    state.page = 0;
-                    updateUrlState();
-                    loadProducts();
+                    handleSearchInput(val);
                 }, 500);
             });
 
@@ -891,10 +1011,7 @@
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     clearTimeout(searchTimeout);
-                    state.keyword = this.value.trim();
-                    state.page = 0;
-                    updateUrlState();
-                    loadProducts();
+                    handleSearchInput(this.value);
                 }
             });
         }
