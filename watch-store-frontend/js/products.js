@@ -45,6 +45,32 @@
 
     let allLoadedCategories = [];
 
+    // Helper to clear any active search keyword across state, UI inputs, and URL params
+    function clearKeywordSearch() {
+        state.keyword = '';
+        const searchInput = document.getElementById('catalog-search');
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        document.querySelectorAll('.nav-search-input').forEach(input => {
+            input.value = '';
+        });
+    }
+
+    // Helper to synchronize search input elements across the page
+    function syncSearchInputs(keyword) {
+        const text = (keyword !== undefined && keyword !== null) ? String(keyword) : (state.keyword || '');
+        const searchInput = document.getElementById('catalog-search');
+        if (searchInput && searchInput.value !== text) {
+            searchInput.value = text;
+        }
+        document.querySelectorAll('.nav-search-input').forEach(input => {
+            if (input.value !== text) {
+                input.value = text;
+            }
+        });
+    }
+
     function getCustomerGroups() {
         const canonicalGroups = ['Women', 'Men', 'Kids', 'Couples'];
         if (allLoadedCategories && allLoadedCategories.length > 0) {
@@ -88,6 +114,14 @@
         const urlCatId = params.get('categoryId');
         const urlCategoryName = params.get('category') || params.get('mainCategory') || params.get('group');
         const urlSubcategory = params.get('subcategory') || params.get('subCategory') || params.get('watchType');
+        const urlKeyword = params.get('search') || params.get('q') || params.get('keyword');
+
+        // Check if search keyword was passed
+        if (urlKeyword && urlKeyword.trim()) {
+            state.keyword = urlKeyword.trim();
+        } else {
+            state.keyword = '';
+        }
 
         // Check if watchType / subcategory was passed
         if (urlSubcategory) {
@@ -210,6 +244,7 @@
                 if (subcatLink) {
                     subcatLink.addEventListener('click', function (e) {
                         e.preventDefault();
+                        clearKeywordSearch();
                         state.categoryId = null;
                         state.page = 0;
                         updateUrlState();
@@ -222,6 +257,7 @@
                 if (allLink) {
                     allLink.addEventListener('click', function (e) {
                         e.preventDefault();
+                        clearKeywordSearch();
                         state.subcategory = null;
                         state.categoryId = null;
                         state.page = 0;
@@ -243,6 +279,7 @@
                 if (allLink) {
                     allLink.addEventListener('click', function (e) {
                         e.preventDefault();
+                        clearKeywordSearch();
                         state.subcategory = null;
                         state.categoryId = null;
                         state.page = 0;
@@ -341,6 +378,7 @@
             const backBtn = categoriesContainer.querySelector('.filter-back-to-all');
             if (backBtn) {
                 backBtn.addEventListener('click', function () {
+                    clearKeywordSearch();
                     state.subcategory = null;
                     state.categoryId = null;
                     state.page = 0;
@@ -355,6 +393,7 @@
             const allSubcatBtn = categoriesContainer.querySelector('.filter-all-subcat');
             if (allSubcatBtn) {
                 allSubcatBtn.addEventListener('click', function () {
+                    clearKeywordSearch();
                     state.categoryId = null;
                     state.page = 0;
                     updateUrlState();
@@ -368,6 +407,7 @@
             const groupChoices = categoriesContainer.querySelectorAll('.filter-group-choice');
             groupChoices.forEach(choice => {
                 choice.addEventListener('click', function () {
+                    clearKeywordSearch();
                     const rawGroupId = this.dataset.groupId;
                     const parsedGroupId = parseInt(rawGroupId, 10);
                     state.categoryId = parsedGroupId;
@@ -420,6 +460,7 @@
             const allBtn = categoriesContainer.querySelector('.filter-all-timepieces');
             if (allBtn) {
                 allBtn.addEventListener('click', function () {
+                    clearKeywordSearch();
                     state.categoryId = null;
                     state.subcategory = null;
                     state.page = 0;
@@ -434,6 +475,7 @@
             const watchColChoices = categoriesContainer.querySelectorAll('.filter-watch-col-choice');
             watchColChoices.forEach(choice => {
                 choice.addEventListener('click', function () {
+                    clearKeywordSearch();
                     const subcat = this.dataset.subcat;
                     state.subcategory = subcat;
                     state.categoryId = null;
@@ -498,6 +540,14 @@
         } else {
             url.searchParams.delete('subcategory');
             url.searchParams.delete('watchType');
+        }
+
+        if (state.keyword && String(state.keyword).trim()) {
+            url.searchParams.set('search', String(state.keyword).trim());
+        } else {
+            url.searchParams.delete('search');
+            url.searchParams.delete('q');
+            url.searchParams.delete('keyword');
         }
 
         window.history.replaceState({}, '', url);
@@ -812,21 +862,36 @@
 
         const params = new URLSearchParams(window.location.search);
         const urlKeyword = params.get('search') || params.get('q') || params.get('keyword');
-        if (urlKeyword) {
+        if (urlKeyword && urlKeyword.trim()) {
             state.keyword = urlKeyword.trim();
-            if (searchInput) searchInput.value = state.keyword;
+        } else {
+            state.keyword = '';
         }
+        syncSearchInputs(state.keyword);
 
-        // Search listener (Debounced)
+        // Search listener (Debounced + Enter key)
         let searchTimeout;
         if (searchInput) {
             searchInput.addEventListener('input', function () {
                 clearTimeout(searchTimeout);
+                const val = this.value;
                 searchTimeout = setTimeout(() => {
-                    state.keyword = this.value.trim();
+                    state.keyword = val.trim();
                     state.page = 0;
+                    updateUrlState();
                     loadProducts();
                 }, 500);
+            });
+
+            searchInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    clearTimeout(searchTimeout);
+                    state.keyword = this.value.trim();
+                    state.page = 0;
+                    updateUrlState();
+                    loadProducts();
+                }
             });
         }
 
@@ -869,9 +934,19 @@
             });
         }
 
+        // Popstate handler for browser back/forward navigation
+        window.addEventListener('popstate', async function () {
+            parseUrlParameters(allLoadedCategories);
+            syncSearchInputs(state.keyword);
+            renderCategoriesSidebar();
+            updateHeaderAndBreadcrumbs();
+            await loadProducts();
+        });
+
         // Initial loadings - sequential to ensure categories & URL parameters are resolved before fetching products
         if (document.getElementById('catalog-products-grid')) {
             await loadCategories();
+            syncSearchInputs(state.keyword);
             await loadProducts();
         }
     });
