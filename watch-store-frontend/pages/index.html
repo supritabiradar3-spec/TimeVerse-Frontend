@@ -1779,14 +1779,14 @@
     <footer></footer>
 
     <!-- Component Logic Scripts -->
-    <script src="../components/loader.js"></script>
-    <script src="../js/api.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../components/alert.js"></script>
-    <script src="../components/product-card.js"></script>
-    <script src="../js/category.js"></script>
-    <script src="../components/footer.js"></script>
-    <script src="../components/navbar.js"></script>
+    <script src="../components/loader.js?v=20260921-1"></script>
+    <script src="../js/api.js?v=20260921-1"></script>
+    <script src="../js/auth.js?v=20260921-1"></script>
+    <script src="../components/alert.js?v=20260921-1"></script>
+    <script src="../components/product-card.js?v=20260921-1"></script>
+    <script src="../js/category.js?v=20260921-1"></script>
+    <script src="../components/footer.js?v=20260921-1"></script>
+    <script src="../components/navbar.js?v=20260921-1"></script>
 
     <!-- Page Specific Script -->
     <script>
@@ -1812,43 +1812,136 @@
             if (sportsImg) {
                 sportsImg.src = '../sports-watch.jpg';
             }
+
             const featuredGrid = document.getElementById('featured-products-grid');
             const trendingGrid = document.getElementById('trending-products-grid');
             const bestsellersGrid = document.getElementById('bestsellers-products-grid');
             const newarrivalsGrid = document.getElementById('newarrivals-products-grid');
 
-            if (featuredGrid) featuredGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading featured masterpieces...</p>';
-            if (trendingGrid) trendingGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading trending timepieces...</p>';
-            if (bestsellersGrid) bestsellersGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading best sellers...</p>';
-            if (newarrivalsGrid) newarrivalsGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">Loading new arrivals...</p>';
+            // Helper to generate skeleton cards for smooth loading state
+            function getSkeletonsHtml(count = 4) {
+                let html = '';
+                for (let i = 0; i < count; i++) {
+                    html += `
+                        <div class="skeleton-card" style="min-height: 380px; background: rgba(255, 255, 255, 0.03); border: var(--border, 1px solid rgba(255,255,255,0.08)); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div style="width: 100%; height: 200px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; animation: pulse 1.5s infinite;"></div>
+                            <div style="margin-top: 15px;">
+                                <div style="width: 40%; height: 14px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; margin-bottom: 8px;"></div>
+                                <div style="width: 85%; height: 18px; background: rgba(255, 255, 255, 0.08); border-radius: 4px; margin-bottom: 12px;"></div>
+                                <div style="width: 50%; height: 18px; background: rgba(255, 255, 255, 0.08); border-radius: 4px;"></div>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <div style="flex: 1; height: 36px; background: rgba(255, 255, 255, 0.05); border-radius: 6px;"></div>
+                                <div style="flex: 1; height: 36px; background: rgba(255, 255, 255, 0.08); border-radius: 6px;"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+                return html;
+            }
 
+            // Immediately display skeleton cards in all four sections
+            const skeletonHtml = getSkeletonsHtml(4);
+            if (featuredGrid) featuredGrid.innerHTML = skeletonHtml;
+            if (trendingGrid) trendingGrid.innerHTML = skeletonHtml;
+            if (bestsellersGrid) bestsellersGrid.innerHTML = skeletonHtml;
+            if (newarrivalsGrid) newarrivalsGrid.innerHTML = skeletonHtml;
+
+            // Load Categories safely (non-blocking)
             try {
-                // Prefetch wishlist concurrently if logged in and not admin
-                const token = localStorage.getItem('token');
-                const role = localStorage.getItem('role') || 'CUSTOMER';
-                const wishlistPromise = (token && role !== 'ADMIN' && !window.wishlistProductIds)
-                    ? api.getWishlist().catch(e => {
-                        console.warn("Failed to load wishlist for homepage:", e);
-                        return [];
-                    })
-                    : Promise.resolve(null);
+                if (typeof window.loadHomepageCategories === 'function') {
+                    window.loadHomepageCategories().catch(e => console.warn('Categories load warning:', e));
+                }
+            } catch (catErr) {
+                console.warn('Failed to load homepage categories:', catErr);
+            }
 
-                const productsPromise = api.getAllProducts().catch(async (apiErr) => {
-                    console.warn("api.getAllProducts error, attempting fallback to filterProducts:", apiErr);
-                    return api.filterProducts({ page: 0, size: 40 });
-                });
+            // Prefetch wishlist safely (non-blocking)
+            const token = localStorage.getItem('token');
+            const role = (localStorage.getItem('role') || 'CUSTOMER').toUpperCase();
+            if (token && role !== 'ADMIN' && !window.wishlistProductIds) {
+                if (window.api && typeof window.api.getWishlist === 'function') {
+                    window.api.getWishlist().then(wishlist => {
+                        if (Array.isArray(wishlist)) {
+                            window.wishlistProductIds = new Set(wishlist.map(item => item.productId));
+                            if (typeof window.updateNavbarWishlistCount === 'function') {
+                                window.updateNavbarWishlistCount(wishlist.length);
+                            }
+                        }
+                    }).catch(e => console.warn('Wishlist prefetch warning:', e));
+                }
+            }
 
-                const [wishlistRes, response] = await Promise.all([wishlistPromise, productsPromise]);
-
-                if (wishlistRes && Array.isArray(wishlistRes)) {
-                    window.wishlistProductIds = new Set(wishlistRes.map(item => item.productId));
-                    if (typeof window.updateNavbarWishlistCount === 'function') {
-                        window.updateNavbarWishlistCount(wishlistRes.length);
+            // Resilient product fetch helper with automatic retry for Render cold-starts
+            async function fetchProductsWithRetry(maxRetries = 3, delayMs = 2000) {
+                let lastError = null;
+                for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                    try {
+                        if (!window.api || typeof window.api.getAllProducts !== 'function') {
+                            throw new Error('API client not initialized');
+                        }
+                        const res = await window.api.getAllProducts();
+                        const list = Array.isArray(res) ? res : (res && (res.content || res.data) ? (res.content || res.data) : []);
+                        if (list && list.length > 0) {
+                            return list;
+                        }
+                    } catch (err) {
+                        lastError = err;
+                        console.warn(`Product fetch attempt ${attempt}/${maxRetries} failed:`, err.message || err);
+                        if (attempt < maxRetries) {
+                            await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+                        }
                     }
                 }
 
-                let products = Array.isArray(response) ? response : (response && (response.content || response.data) ? (response.content || response.data) : []);
-                console.log("Products received:", products);
+                // Fallback attempt to filterProducts if getAllProducts failed
+                try {
+                    if (window.api && typeof window.api.filterProducts === 'function') {
+                        const fallbackRes = await window.api.filterProducts({ page: 0, size: 40 });
+                        const list = Array.isArray(fallbackRes) ? fallbackRes : (fallbackRes && (fallbackRes.content || fallbackRes.data) ? (fallbackRes.content || fallbackRes.data) : []);
+                        if (list && list.length > 0) {
+                            return list;
+                        }
+                    }
+                } catch (fallbackErr) {
+                    console.warn('Fallback filterProducts also failed:', fallbackErr);
+                }
+
+                throw lastError || new Error('Unable to retrieve products');
+            }
+
+            // Safe product card rendering helper
+            function renderSectionCards(gridElement, productList, fallbackSectionHtml = '') {
+                if (!gridElement) return;
+                if (!productList || productList.length === 0) {
+                    if (fallbackSectionHtml) {
+                        gridElement.innerHTML = fallbackSectionHtml;
+                    }
+                    return;
+                }
+
+                let html = '';
+                for (const prod of productList) {
+                    try {
+                        if (typeof window.createProductCardHtml === 'function') {
+                            html += window.createProductCardHtml(prod);
+                        }
+                    } catch (cardErr) {
+                        console.error('Error rendering product card for ID:', prod && prod.productId, cardErr);
+                    }
+                }
+
+                if (html) {
+                    gridElement.innerHTML = html;
+                } else if (fallbackSectionHtml) {
+                    gridElement.innerHTML = fallbackSectionHtml;
+                }
+            }
+
+            // Main load pipeline
+            try {
+                const products = await fetchProductsWithRetry(3, 2000);
+                console.log('Homepage products loaded successfully, count:', products.length);
 
                 if (products && products.length > 0) {
                     const selectedIds = new Set();
@@ -1857,7 +1950,7 @@
                         const result = [];
                         for (const p of candidates) {
                             if (result.length >= count) break;
-                            if (!selectedIds.has(p.productId)) {
+                            if (p && p.productId && !selectedIds.has(p.productId)) {
                                 result.push(p);
                                 selectedIds.add(p.productId);
                             }
@@ -1865,7 +1958,7 @@
                         if (result.length < count) {
                             for (const p of candidates) {
                                 if (result.length >= count) break;
-                                if (!result.some(x => x.productId === p.productId)) {
+                                if (p && p.productId && !result.some(x => x.productId === p.productId)) {
                                     result.push(p);
                                 }
                             }
@@ -1873,63 +1966,49 @@
                         return result;
                     };
 
-                    // 1. Featured Masterpieces (first 4)
+                    // 1. Featured Masterpieces (first 4 unique items)
                     const featured = getUnique(products, 4);
-                    let featuredHTML = "";
-                    featured.forEach(prod => {
-                        featuredHTML += createProductCardHtml(prod);
-                    });
-                    if (featuredGrid) featuredGrid.innerHTML = featuredHTML;
+                    renderSectionCards(featuredGrid, featured);
 
-                    // 2. Trending Series (next 4 different products)
+                    // 2. Trending Series (next 4 unique items)
                     const trending = getUnique(products, 4);
-                    let trendingHTML = "";
-                    if (trending.length > 0) {
-                        trending.forEach(prod => {
-                            trendingHTML += createProductCardHtml(prod);
-                        });
-                        if (trendingGrid) trendingGrid.innerHTML = trendingHTML;
-                    } else {
-                        if (trendingGrid) trendingGrid.innerHTML = featuredHTML;
-                    }
+                    renderSectionCards(trendingGrid, trending, featuredGrid ? featuredGrid.innerHTML : '');
 
-                    // 3. Best Sellers (next 4 different products)
+                    // 3. Best Sellers (next 4 unique items)
                     const bestsellers = getUnique(products, 4);
-                    let bestsellersHTML = "";
-                    if (bestsellers.length > 0) {
-                        bestsellers.forEach(prod => {
-                            bestsellersHTML += createProductCardHtml(prod);
-                        });
-                        if (bestsellersGrid) bestsellersGrid.innerHTML = bestsellersHTML;
-                    } else {
-                        if (bestsellersGrid) bestsellersGrid.innerHTML = featuredHTML;
-                    }
+                    renderSectionCards(bestsellersGrid, bestsellers, featuredGrid ? featuredGrid.innerHTML : '');
 
                     // 4. New Arrivals (newest items reverse-sorted and non-overlapping)
                     const newarrivals = getUnique(products, 4, true);
-                    let newarrivalsHTML = "";
-                    if (newarrivals.length > 0) {
-                        newarrivals.forEach(prod => {
-                            newarrivalsHTML += createProductCardHtml(prod);
-                        });
-                        if (newarrivalsGrid) newarrivalsGrid.innerHTML = newarrivalsHTML;
-                    } else {
-                        if (newarrivalsGrid) newarrivalsGrid.innerHTML = featuredHTML;
+                    renderSectionCards(newarrivalsGrid, newarrivals, featuredGrid ? featuredGrid.innerHTML : '');
+
+                    // Trigger image aspect-ratio normalization
+                    if (typeof window.normalizeProductImages === 'function') {
+                        setTimeout(window.normalizeProductImages, 150);
                     }
                 } else {
-                    const fallbackMsg = '<p style="grid-column:1/-1;text-align:center;color:var(--light-gray);">No timepieces currently available in showroom.</p>';
-                    if (featuredGrid) featuredGrid.innerHTML = fallbackMsg;
-                    if (trendingGrid) trendingGrid.innerHTML = fallbackMsg;
-                    if (bestsellersGrid) bestsellersGrid.innerHTML = fallbackMsg;
-                    if (newarrivalsGrid) newarrivalsGrid.innerHTML = fallbackMsg;
+                    const emptyMsg = '<p style="grid-column:1/-1;text-align:center;color:var(--text-secondary, #9CA3AF);font-size:1rem;padding:40px 0;">No timepieces currently available in showroom.</p>';
+                    if (featuredGrid) featuredGrid.innerHTML = emptyMsg;
+                    if (trendingGrid) trendingGrid.innerHTML = emptyMsg;
+                    if (bestsellersGrid) bestsellersGrid.innerHTML = emptyMsg;
+                    if (newarrivalsGrid) newarrivalsGrid.innerHTML = emptyMsg;
                 }
             } catch (error) {
-                console.error("Product loading error:", error);
-                const errorMsg = '<p style="grid-column:1/-1;text-align:center;color:red;">Unable to load showroom products.</p>';
-                if (featuredGrid) featuredGrid.innerHTML = errorMsg;
-                if (trendingGrid) trendingGrid.innerHTML = errorMsg;
-                if (bestsellersGrid) bestsellersGrid.innerHTML = errorMsg;
-                if (newarrivalsGrid) newarrivalsGrid.innerHTML = errorMsg;
+                console.error('Homepage product loading failed after retries:', error);
+                const retryBtnHtml = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px;">
+                        <p style="color: var(--text-secondary, #9CA3AF); margin-bottom: 15px; font-size: 0.95rem;">
+                            Connecting to TimeVerse luxury showcase...
+                        </p>
+                        <button onclick="window.location.reload()" class="btn-luxury" style="padding: 8px 24px; font-size: 0.82rem; cursor: pointer;">
+                            Refresh Showroom
+                        </button>
+                    </div>
+                `;
+                if (featuredGrid) featuredGrid.innerHTML = retryBtnHtml;
+                if (trendingGrid) trendingGrid.innerHTML = retryBtnHtml;
+                if (bestsellersGrid) bestsellersGrid.innerHTML = retryBtnHtml;
+                if (newarrivalsGrid) newarrivalsGrid.innerHTML = retryBtnHtml;
             }
 
             // Scroll to hash on load if present
@@ -2018,6 +2097,7 @@
         });
     </script>
 
+
     <!-- Chatbot Widget -->
     <div id="timeverse-chat-widget" class="chat-widget">
         <button id="chat-toggle-btn" class="chat-toggle-btn" title="Chat with TimeVerse AI">
@@ -2044,7 +2124,7 @@
     </div>
 
     <!-- Chatbot Logic Script -->
-    <script src="../js/chatbot.js?v=1"></script>
+    <script src="../js/chatbot.js?v=20260921-1"></script>
 </body>
 
 </html>
